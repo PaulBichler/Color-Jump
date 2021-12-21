@@ -3,6 +3,7 @@
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/System/Time.hpp>
 
+#include "LevelManager.hpp"
 #include "Player.hpp"
 #include "ResourceHolder.hpp"
 #include "ResourceIdentifiers.hpp"
@@ -27,6 +28,8 @@ private:
 
 	TextureHolder m_textures;
 	FontHolder m_fonts;
+
+	LevelManager m_level_manager;
 
 	StateStack m_stack;
 

@@ -14,6 +14,7 @@
 #include <array>
 
 #include "CommandQueue.hpp"
+#include "LevelManager.hpp"
 
 //Foward
 namespace sf
@@ -25,7 +26,7 @@ namespace sf
 class World : private sf::NonCopyable
 {
 public:
-	explicit World(sf::RenderWindow& window, FontHolder& font);
+	explicit World(sf::RenderWindow& window, FontHolder& font, LevelManager& level_manager);
 	void Update(sf::Time dt);
 	void Draw();
 	CommandQueue& getCommandQueue();
@@ -66,6 +67,7 @@ private:
 	SceneNode m_scenegraph;
 	std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)> m_scene_layers;
 	CommandQueue m_command_queue;
+	LevelManager& m_level_manager;
 
 	sf::FloatRect m_world_bounds;
 	sf::Vector2f m_spawn_position;

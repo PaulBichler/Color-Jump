@@ -1,10 +1,11 @@
 #pragma once
 enum class Textures
 {
+	kLevelTileSet,
 	kEagle,
 	kRaptor,
 	kAvenger,
-	kDesert,
+	kBackground,
 	kBullet,
 	kMissile,
 	kHealthRefill,

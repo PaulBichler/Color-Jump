@@ -1,5 +1,4 @@
 #include "Application.hpp"
-
 #include "State.hpp"
 #include "StateID.hpp"
 #include "TitleState.hpp"
@@ -11,10 +10,11 @@
 const sf::Time Application::kTimePerFrame = sf::seconds(1.f / 60.f);
 
 Application::Application()
-:m_window(sf::VideoMode(1024, 768), "States", sf::Style::Close)
-, m_stack(State::Context(m_window, m_textures, m_fonts, m_player))
+:m_window(sf::VideoMode(1344, 960), "States", sf::Style::Close)
+, m_stack(State::Context(m_window, m_textures, m_fonts, m_player, m_level_manager))
 , m_statistics_numframes(0)
 {
+
 	m_window.setKeyRepeatEnabled(false);
 
 	m_fonts.Load(Fonts::Main, "Media/Fonts/Sansation.ttf");

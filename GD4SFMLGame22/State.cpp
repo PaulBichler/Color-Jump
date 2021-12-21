@@ -2,11 +2,12 @@
 
 #include "StateStack.hpp"
 
-State::Context::Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, Player& player)
+State::Context::Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, Player& player, LevelManager& level_manager)
 : window(&window)
 , textures(&textures)
 , fonts(&fonts)
 , player(&player)
+, level_manager(&level_manager)
 {
 }
 

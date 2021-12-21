@@ -7,6 +7,8 @@
 
 #include <memory>
 
+#include "LevelManager.hpp"
+
 namespace sf
 {
 	class RenderWindow;
@@ -22,11 +24,12 @@ public:
 
 	struct Context
 	{
-		Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, Player& player);
+		Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, Player& player, LevelManager& level_manager);
 		sf::RenderWindow* window;
 		TextureHolder* textures;
 		FontHolder* fonts;
 		Player* player;
+		LevelManager* level_manager;
 	};
 
 public:

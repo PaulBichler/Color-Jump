@@ -4,20 +4,22 @@
 #include <iostream>
 #include <limits>
 
+#include "LevelLoader.hpp"
 #include "Pickup.hpp"
 #include "Projectile.hpp"
 #include "Utility.hpp"
 
-World::World(sf::RenderWindow& window, FontHolder& font)
+World::World(sf::RenderWindow& window, FontHolder& font, LevelManager& level_manager)
 	: m_window(window)
 	, m_camera(window.getDefaultView())
 	, m_textures()
 	, m_fonts(font)
 	, m_scenegraph()
 	, m_scene_layers()
-	, m_world_bounds(0.f, 0.f, m_camera.getSize().x, 2000)
-	, m_spawn_position(m_camera.getSize().x/2.f, m_world_bounds.height - m_camera.getSize().y /2.f)
-	, m_scrollspeed(-50.f)
+	, m_level_manager(level_manager)
+	, m_world_bounds(0.f, 0.f, m_camera.getSize().x, m_camera.getSize().y)
+	, m_spawn_position(m_camera.getSize().x / 2.f, m_world_bounds.height - m_camera.getSize().y / 2.f)
+	, m_scrollspeed(0)
 	, m_player_aircraft(nullptr)
 {
 	LoadTextures();
@@ -64,10 +66,12 @@ void World::LoadTextures()
 	m_textures.Load(Textures::kEagle, "Media/Textures/Eagle.png");
 	m_textures.Load(Textures::kRaptor, "Media/Textures/Raptor.png");
 	m_textures.Load(Textures::kAvenger, "Media/Textures/Avenger.png");
-	m_textures.Load(Textures::kDesert, "Media/Textures/Desert.png");
+	m_textures.Load(Textures::kBackground, "Media/Textures/Desert.png");
 
 	m_textures.Load(Textures::kBullet, "Media/Textures/Bullet.png");
 	m_textures.Load(Textures::kMissile, "Media/Textures/Missile.png");
+
+	m_textures.Load(Textures::kLevelTileSet, "Media/Textures/TileSet.png");
 }
 
 void World::BuildScene()
@@ -75,28 +79,37 @@ void World::BuildScene()
 	//Initialize the different layers
 	for (std::size_t i = 0; i < static_cast<int>(Layers::kLayerCount); ++i)
 	{
-		Category::Type category = (i == static_cast<int>(Layers::kAir)) ? Category::Type::kScene : Category::Type::kNone;
+		Category::Type category = i == static_cast<int>(Layers::kLevel) ? Category::Type::kScene : Category::Type::kNone;
 		SceneNode::Ptr layer(new SceneNode(category));
 		m_scene_layers[i] = layer.get();
 		m_scenegraph.AttachChild(std::move(layer));
 	}
 
-	//Prepare the background
-	sf::Texture& texture = m_textures.Get(Textures::kDesert);
-	sf::IntRect textureRect(m_world_bounds);
-	//Tile the texture to cover our world
-	texture.setRepeated(true);
+	const LevelManager::LevelData current_level_data = m_level_manager.GetCurrentLevelData();
+	const LevelLoader level_loader(m_textures);
 
-	//Add the background sprite to our scene
-	std::unique_ptr<SpriteNode> background_sprite(new SpriteNode(texture, textureRect));
-	background_sprite->setPosition(m_world_bounds.left, m_world_bounds.top);
-	m_scene_layers[static_cast<int>(Layers::kBackground)]->AttachChild(std::move(background_sprite));
+	SceneNode::Ptr level_bg = level_loader.LoadLevel(current_level_data.m_background_layer_path, current_level_data.m_tile_size);
+	m_scene_layers[static_cast<int>(Layers::kBackground)]->AttachChild(std::move(level_bg));
+
+	SceneNode::Ptr level = level_loader.LoadLevel(current_level_data.m_platform_layer_path, current_level_data.m_tile_size);
+	m_scene_layers[static_cast<int>(Layers::kLevel)]->AttachChild(std::move(level));
+
+	////Prepare the background
+	//sf::Texture& texture = m_textures.Get(Textures::kBackground);
+	//const sf::IntRect textureRect(m_world_bounds);
+	////Tile the texture to cover our world
+	//texture.setRepeated(true);
+
+	////Add the background sprite to our scene
+	//std::unique_ptr<SpriteNode> background_sprite(new SpriteNode(texture, textureRect));
+	//background_sprite->setPosition(m_world_bounds.left, m_world_bounds.top);
+	//m_scene_layers[static_cast<int>(Layers::kBackground)]->AttachChild(std::move(background_sprite));
 
 	//Add player's aircraft
 	std::unique_ptr<Aircraft> leader(new Aircraft(AircraftType::kEagle, m_textures, m_fonts));
 	m_player_aircraft = leader.get();
 	m_player_aircraft->setPosition(m_spawn_position);
-	m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(leader));
+	m_scene_layers[static_cast<int>(Layers::kLevel)]->AttachChild(std::move(leader));
 
 	// //Add two escorts
 	// std::unique_ptr<Aircraft> leftEscort(new Aircraft(AircraftType::kRaptor, m_textures, m_fonts));
@@ -107,7 +120,7 @@ void World::BuildScene()
 	// rightEscort->setPosition(80.f, 50.f);
 	// m_player_aircraft->AttachChild(std::move(rightEscort));
 
-	AddEnemies();
+	/*AddEnemies();*/
 }
 
 CommandQueue& World::getCommandQueue()
@@ -165,7 +178,7 @@ void World::SpawnEnemies()
 		std::unique_ptr<Aircraft> enemy(new Aircraft(spawn.m_type, m_textures, m_fonts));
 		enemy->setPosition(spawn.m_x, spawn.m_y);
 		enemy->setRotation(180.f);
-		m_scene_layers[static_cast<int>(Layers::kAir)]->AttachChild(std::move(enemy));
+		m_scene_layers[static_cast<int>(Layers::kLevel)]->AttachChild(std::move(enemy));
 
 		m_enemy_spawn_points.pop_back();
 		
