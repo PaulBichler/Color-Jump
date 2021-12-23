@@ -88,11 +88,12 @@ void World::BuildScene()
 	const LevelManager::LevelData current_level_data = m_level_manager.GetCurrentLevelData();
 	const LevelLoader level_loader(m_textures);
 
-	SceneNode::Ptr level_bg = level_loader.LoadLevel(current_level_data.m_background_layer_path, current_level_data.m_tile_size);
-	m_scene_layers[static_cast<int>(Layers::kBackground)]->AttachChild(std::move(level_bg));
+	LevelLoader::LevelInfo level = level_loader.LoadLevel(current_level_data);
+	m_scene_layers[static_cast<int>(Layers::kBackground)]->AttachChild(std::move(level.background_parent));
+	m_scene_layers[static_cast<int>(Layers::kLevel)]->AttachChild(std::move(level.platforms_parent));
 
-	SceneNode::Ptr level = level_loader.LoadLevel(current_level_data.m_platform_layer_path, current_level_data.m_tile_size);
-	m_scene_layers[static_cast<int>(Layers::kLevel)]->AttachChild(std::move(level));
+	m_player_1_character = level.player_1;
+	m_player_2_character = level.player_2;
 
 	////Prepare the background
 	//sf::Texture& texture = m_textures.Get(Textures::kBackground);

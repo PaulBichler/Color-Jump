@@ -4,6 +4,7 @@
 #include <sstream>
 #include <SFML/Graphics/View.hpp>
 
+#include "ETileType.hpp"
 #include "ResourceHolder.hpp"
 
 LevelLoader::LevelLoader(TextureHolder& textures)
@@ -11,7 +12,16 @@ LevelLoader::LevelLoader(TextureHolder& textures)
 {
 }
 
-SceneNode::Ptr LevelLoader::LoadLevel(const std::string& csv_path, sf::Vector2u tile_size) const
+LevelLoader::LevelInfo LevelLoader::LoadLevel(const LevelManager::LevelData& level_data) const
+{
+	LevelInfo level_info;
+	level_info.background_parent = LoadLevelLayer(level_info, level_data.m_background_layer_path, level_data.m_tile_size);
+	level_info.platforms_parent = LoadLevelLayer(level_info, level_data.m_platform_layer_path, level_data.m_tile_size);
+
+	return level_info;
+}
+
+SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::string& csv_path, sf::Vector2u tile_size) const
 {
 	SceneNode::Ptr levelParent = std::make_unique<SceneNode>();
 
@@ -30,13 +40,28 @@ SceneNode::Ptr LevelLoader::LoadLevel(const std::string& csv_path, sf::Vector2u 
 		std::string token;
 		while (std::getline(ss, token, ','))
 		{
-			Tile* tilePtr = tile_factory.CreateTile(std::stoi(token), spawn_pos);
+			int id = std::stoi(token);
+			ETileType tile_type = static_cast<ETileType>(id);
 
-			if(tilePtr != nullptr)
+			if(tile_type == kRedPlayer)
 			{
-				std::unique_ptr<Tile> tile(tilePtr);
-				levelParent->AttachChild(std::move(tile));
+				std::unique_ptr<Character> player_1(tile_factory.CreatePlayer(id, ECharacterType::kRed));
+				levelParent->AttachChild(std::move(player_1));
+				level_info.player_1 = player_1.get();
 			}
+			else if(tile_type == kBluePlayer)
+			{
+				std::unique_ptr<Character> player_2(tile_factory.CreatePlayer(id, ECharacterType::kBlue));
+				levelParent->AttachChild(std::move(player_2));
+				level_info.player_2 = player_2.get();
+			}
+			else if(tile_type != kNone)
+			{
+				SceneNode::Ptr tilePtr(tile_factory.CreateTile(id, spawn_pos));
+				if(tilePtr.get() != nullptr)
+					levelParent->AttachChild(std::move(tilePtr));
+			}
+
 
 			spawn_pos.x += tile_size.x;
 		}

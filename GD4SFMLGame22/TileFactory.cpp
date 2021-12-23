@@ -2,7 +2,6 @@
 
 #include <SFML/Graphics/Sprite.hpp>
 
-#include "ETileType.hpp"
 #include "ResourceHolder.hpp"
 #include "SpriteNode.hpp"
 #include "Tile.hpp"
@@ -11,10 +10,10 @@ sf::IntRect TileFactory::GetSubRect(int pos) const
 {
 	sf::IntRect subRect;
 	/*subRect.top = m_tile_size.y * ((pos - 1) / m_tile_map_columns); */
-	subRect.top = m_tile_size.y * ((pos) / m_tile_map_columns); 
+	subRect.top = m_tile_size.y * (pos / m_tile_map_columns); 
 	subRect.height = m_tile_size.y;
 	//subRect.left = m_tile_size.x * ((pos - 1) % m_tile_map_columns);
-	subRect.left = m_tile_size.x * ((pos) % m_tile_map_columns);
+	subRect.left = m_tile_size.x * (pos % m_tile_map_columns);
 	subRect.width = m_tile_size.x;
 
 	return subRect;
@@ -53,4 +52,9 @@ Tile* TileFactory::CreateTile(int pos, sf::Vector2f spawn_pos) const
 	tile->setPosition(spawn_pos);
 
 	return tile;
+}
+
+Character* TileFactory::CreatePlayer(int id, ECharacterType type) const
+{
+	return new Character(type, m_textures, GetSubRect(id));
 }

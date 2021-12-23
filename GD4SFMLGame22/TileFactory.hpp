@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics/Texture.hpp>
 
+#include "Character.hpp"
+#include "ETileType.hpp"
 #include "SpriteNode.hpp"
 #include "Tile.hpp"
 
@@ -17,5 +19,6 @@ public:
 	TileFactory(TextureHolder& textures, sf::Vector2u tile_size);
 
 	Tile* CreateTile(int pos, sf::Vector2f spawn_pos) const;
+	Character* CreatePlayer(int id, ECharacterType type) const;
 };
 

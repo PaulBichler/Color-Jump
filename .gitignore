@@ -348,7 +348,3 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
-
-GD4SFMLGame22/GD4SFMLGame22.vcxproj
-
-GD4SFMLGame22/GD4SFMLGame22.vcxproj.filters
