@@ -40,8 +40,8 @@ private:
 	void UpdateChildren(sf::Time dt, CommandQueue& commands);
 
 	//Note draw is from sf::Drawable hence the name, lower case d
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-	virtual void DrawCurrent(sf::RenderTarget&, sf::RenderStates states) const;
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+	virtual void DrawCurrent(sf::RenderTarget& render_target, sf::RenderStates states) const;
 	void DrawChildren(sf::RenderTarget& target, sf::RenderStates states) const;
 
 	void DrawBoundingRect(sf::RenderTarget& target, sf::RenderStates states, sf::FloatRect& bounding_rect) const;

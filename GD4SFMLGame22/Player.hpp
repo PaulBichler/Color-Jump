@@ -8,6 +8,8 @@
 class Player
 {
 public:
+	void InitPlayerOne();
+	void InitPlayerTwo();
 	Player();
 	void HandleEvent(const sf::Event& event, CommandQueue& commands);
 	void HandleRealtimeInput(CommandQueue& commands);

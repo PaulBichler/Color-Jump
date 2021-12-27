@@ -76,7 +76,7 @@ void SceneNode::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	DrawBoundingRect(target, states, rect);
 }
 
-void SceneNode::DrawCurrent(sf::RenderTarget&, sf::RenderStates states) const
+void SceneNode::DrawCurrent(sf::RenderTarget& render_target, sf::RenderStates states) const
 {
 	//Do nothing by default
 }

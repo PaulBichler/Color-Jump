@@ -7,21 +7,23 @@
 #include "ETileType.hpp"
 #include "ResourceHolder.hpp"
 
-LevelLoader::LevelLoader(TextureHolder& textures)
-	: m_textures(textures)
+LevelLoader::LevelLoader(TextureHolder& textures): m_textures(textures)
 {
 }
 
 LevelLoader::LevelInfo LevelLoader::LoadLevel(const LevelManager::LevelData& level_data) const
 {
 	LevelInfo level_info;
-	level_info.background_parent = LoadLevelLayer(level_info, level_data.m_background_layer_path, level_data.m_tile_size);
+	level_info.background_parent = LoadLevelLayer(level_info, level_data.m_background_layer_path,
+	                                              level_data.m_tile_size);
 	level_info.platforms_parent = LoadLevelLayer(level_info, level_data.m_platform_layer_path, level_data.m_tile_size);
 
 	return level_info;
 }
 
-SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::string& csv_path, sf::Vector2u tile_size) const
+
+SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::string& csv_path,
+                                           sf::Vector2u tile_size) const
 {
 	SceneNode::Ptr levelParent = std::make_unique<SceneNode>();
 
@@ -43,22 +45,22 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::str
 			int id = std::stoi(token);
 			ETileType tile_type = static_cast<ETileType>(id);
 
-			if(tile_type == kRedPlayer)
+			if (tile_type == kRedPlayer)
 			{
-				std::unique_ptr<Character> player_1(tile_factory.CreatePlayer(id, ECharacterType::kRed));
-				levelParent->AttachChild(std::move(player_1));
+				std::unique_ptr<Character> player_1(tile_factory.CreatePlayer(id, ECharacterType::kRed, spawn_pos));
 				level_info.player_1 = player_1.get();
+				levelParent->AttachChild(std::move(player_1));
 			}
-			else if(tile_type == kBluePlayer)
+			else if (tile_type == kBluePlayer)
 			{
-				std::unique_ptr<Character> player_2(tile_factory.CreatePlayer(id, ECharacterType::kBlue));
-				levelParent->AttachChild(std::move(player_2));
+				std::unique_ptr<Character> player_2(tile_factory.CreatePlayer(id, ECharacterType::kBlue, spawn_pos));
 				level_info.player_2 = player_2.get();
+				levelParent->AttachChild(std::move(player_2));
 			}
-			else if(tile_type != kNone)
+			else if (tile_type != kNone)
 			{
 				SceneNode::Ptr tilePtr(tile_factory.CreateTile(id, spawn_pos));
-				if(tilePtr.get() != nullptr)
+				if (tilePtr.get() != nullptr)
 					levelParent->AttachChild(std::move(tilePtr));
 			}
 

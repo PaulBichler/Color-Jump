@@ -8,17 +8,18 @@
 
 SettingsState::SettingsState(StateStack& stack, Context context)
 	: State(stack, context)
-	, m_gui_container()
+	  , m_gui_container()
 {
 	m_background_sprite.setTexture(context.textures->Get(Textures::kTitleScreen));
 
 	// Build key binding buttons and labels
-	AddButtonLabel(PlayerAction::kMoveLeft, 300.f, "Move Left", context);
-	AddButtonLabel(PlayerAction::kMoveRight, 350.f, "Move Right", context);
-	AddButtonLabel(PlayerAction::kMoveUp, 400.f, "Move Up", context);
-	AddButtonLabel(PlayerAction::kMoveDown, 450.f, "Move Down", context);
-	AddButtonLabel(PlayerAction::kFire, 500.f, "Fire", context);
-	AddButtonLabel(PlayerAction::kLaunchMissile, 550.f, "Missile", context);
+	AddButtonLabel(PlayerAction::kMoveLeftOne, 300.f, "Move Left", context);
+	AddButtonLabel(PlayerAction::kMoveRightOne, 350.f, "Move Right", context);
+	AddButtonLabel(PlayerAction::kMoveUpOne, 400.f, "Move Up", context);
+
+	AddButtonLabel(PlayerAction::kMoveLeftTwo, 480.f, 300.f, "Move Left", context);
+	AddButtonLabel(PlayerAction::kMoveRightTwo, 480.f, 350.f, "Move Right", context);
+	AddButtonLabel(PlayerAction::kMoveUpTwo, 480.f, 400.f, "Move Up", context);
 
 	UpdateLabels();
 
@@ -84,16 +85,19 @@ void SettingsState::UpdateLabels()
 
 void SettingsState::AddButtonLabel(PlayerAction action, float y, const std::string& text, Context context)
 {
+	AddButtonLabel(action, 80.f, y, text, context);
+}
+
+void SettingsState::AddButtonLabel(PlayerAction action, float x, float y, const std::string& text, Context context)
+{
 	m_binding_buttons[static_cast<int>(action)] = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
-	m_binding_buttons[static_cast<int>(action)]->setPosition(80.f, y);
+	m_binding_buttons[static_cast<int>(action)]->setPosition(x, y);
 	m_binding_buttons[static_cast<int>(action)]->SetText(text);
 	m_binding_buttons[static_cast<int>(action)]->SetToggle(true);
 
 	m_binding_labels[static_cast<int>(action)] = std::make_shared<GUI::Label>("", *context.fonts);
-	m_binding_labels[static_cast<int>(action)]->setPosition(300.f, y + 15.f);
+	m_binding_labels[static_cast<int>(action)]->setPosition(300.f + x, y + 15.f);
 
 	m_gui_container.Pack(m_binding_buttons[static_cast<int>(action)]);
 	m_gui_container.Pack(m_binding_labels[static_cast<int>(action)]);
 }
-
-

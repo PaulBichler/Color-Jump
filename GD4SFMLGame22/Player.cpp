@@ -2,39 +2,58 @@
 #include "Aircraft.hpp"
 #include <algorithm>
 
-struct AircraftMover
+#include "Character.hpp"
+
+
+struct CharacterMover
 {
-	AircraftMover(float vx, float vy) : velocity(vx, vy)
+	CharacterMover(float vx, float vy) : velocity(vx, vy)
 	{
 		
 	}
 
-	void operator()(Aircraft& aircraft, sf::Time) const
+	void operator()(Character& character, sf::Time) const
 	{
-		aircraft.Accelerate(velocity * aircraft.GetMaxSpeed());
+		character.Accelerate(velocity * character.GetMaxSpeed());
 	}
 
 	sf::Vector2f velocity;
 };
 
+void Player::InitPlayerOne()
+{
+	m_action_binding[PlayerAction::kMoveLeftOne].action = DerivedAction<Character>(CharacterMover(-1, 0.f));
+	m_action_binding[PlayerAction::kMoveLeftOne].category = Category::kPlayerOne;
+	m_action_binding[PlayerAction::kMoveRightOne].action = DerivedAction<Character>(CharacterMover(+1, 0.f));
+	m_action_binding[PlayerAction::kMoveRightOne].category = Category::kPlayerOne;
+	m_action_binding[PlayerAction::kMoveUpOne].action = DerivedAction<Character>(CharacterMover(0, -50.f));
+	m_action_binding[PlayerAction::kMoveUpOne].category = Category::kPlayerOne;
+}
+
+void Player::InitPlayerTwo()
+{
+	m_action_binding[PlayerAction::kMoveLeftTwo].action = DerivedAction<Character>(CharacterMover(-1, 0.f));
+	m_action_binding[PlayerAction::kMoveLeftTwo].category = Category::kPlayerTwo;
+	m_action_binding[PlayerAction::kMoveRightTwo].action = DerivedAction<Character>(CharacterMover(+1, 0.f));
+	m_action_binding[PlayerAction::kMoveRightTwo].category = Category::kPlayerTwo;
+	m_action_binding[PlayerAction::kMoveUpTwo].action = DerivedAction<Character>(CharacterMover(0, -50.f));
+	m_action_binding[PlayerAction::kMoveUpTwo].category = Category::kPlayerTwo;
+}
+
 Player::Player()
 {
 	//Set initial key bindings
-	m_key_binding[sf::Keyboard::A] = PlayerAction::kMoveLeft;
-	m_key_binding[sf::Keyboard::D] = PlayerAction::kMoveRight;
-	m_key_binding[sf::Keyboard::W] = PlayerAction::kMoveUp;
-	m_key_binding[sf::Keyboard::S] = PlayerAction::kMoveDown;
-	m_key_binding[sf::Keyboard::Space] = PlayerAction::kFire;
-	m_key_binding[sf::Keyboard::M] = PlayerAction::kLaunchMissile;
+	m_key_binding[sf::Keyboard::A] = PlayerAction::kMoveLeftOne;
+	m_key_binding[sf::Keyboard::D] = PlayerAction::kMoveRightOne;
+	m_key_binding[sf::Keyboard::W] = PlayerAction::kMoveUpOne;
 
-	//Set initial action bindings
-	InitialiseActions();
+	InitPlayerOne();
 
-	//Assign all categories to the player's aircraft
-	for(auto& pair : m_action_binding)
-	{
-		pair.second.category = Category::kPlayerAircraft;
-	}
+	m_key_binding[sf::Keyboard::Left] = PlayerAction::kMoveLeftTwo;
+	m_key_binding[sf::Keyboard::Right] = PlayerAction::kMoveRightTwo;
+	m_key_binding[sf::Keyboard::Up] = PlayerAction::kMoveUpTwo;
+
+	InitPlayerTwo();
 }
 
 
@@ -93,35 +112,17 @@ sf::Keyboard::Key Player::GetAssignedKey(PlayerAction action) const
 
 void Player::InitialiseActions()
 {
-	const float player_speed = 200.f;
-
-	m_action_binding[PlayerAction::kMoveLeft].action = DerivedAction<Aircraft>(AircraftMover(-1, 0.f));
-	m_action_binding[PlayerAction::kMoveRight].action = DerivedAction<Aircraft>(AircraftMover(+1, 0.f));
-	m_action_binding[PlayerAction::kMoveUp].action = DerivedAction<Aircraft>(AircraftMover(0.f, -1));
-	m_action_binding[PlayerAction::kMoveDown].action = DerivedAction<Aircraft>(AircraftMover(0, 1));
-
-	m_action_binding[PlayerAction::kFire].action = DerivedAction<Aircraft>([](Aircraft& a, sf::Time
-		)
-	{
-		a.Fire();
-	});
-
-	m_action_binding[PlayerAction::kLaunchMissile].action = DerivedAction<Aircraft>([](Aircraft& a, sf::Time
-		)
-	{
-		a.LaunchMissile();
-	});
+	
 }
 
 bool Player::IsRealtimeAction(PlayerAction action)
 {
 	switch(action)
 	{
-	case PlayerAction::kMoveLeft:
-	case PlayerAction::kMoveRight:
-	case PlayerAction::kMoveUp:
-	case PlayerAction::kMoveDown:
-	case PlayerAction::kFire:
+	case PlayerAction::kMoveLeftOne:
+	case PlayerAction::kMoveRightOne:
+	case PlayerAction::kMoveLeftTwo:
+	case PlayerAction::kMoveRightTwo:
 		return true;
 	default:
 		return false;

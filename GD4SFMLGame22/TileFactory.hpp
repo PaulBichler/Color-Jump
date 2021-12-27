@@ -19,6 +19,6 @@ public:
 	TileFactory(TextureHolder& textures, sf::Vector2u tile_size);
 
 	Tile* CreateTile(int pos, sf::Vector2f spawn_pos) const;
-	Character* CreatePlayer(int id, ECharacterType type) const;
+	Character* CreatePlayer(int id, ECharacterType type, sf::Vector2f spawn_pos) const;
 };
 

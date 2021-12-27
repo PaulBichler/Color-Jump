@@ -26,6 +26,5 @@ private:
 
 private:
 	TextureHolder& m_textures;
-
 };
 

@@ -4,8 +4,8 @@ enum ETileType
 {
 	kNone = -1,
 	kStart,
-	kBluePlayer,
-	kRedPlayer,
+	kBluePlayer = 75,
+	kRedPlayer = 64,
 	kRedPlatform,
 	kBluePlatform,
 	kImpactPlatform,

@@ -10,7 +10,7 @@ sf::IntRect TileFactory::GetSubRect(int pos) const
 {
 	sf::IntRect subRect;
 	/*subRect.top = m_tile_size.y * ((pos - 1) / m_tile_map_columns); */
-	subRect.top = m_tile_size.y * (pos / m_tile_map_columns); 
+	subRect.top = m_tile_size.y * (pos / m_tile_map_columns);
 	subRect.height = m_tile_size.y;
 	//subRect.left = m_tile_size.x * ((pos - 1) % m_tile_map_columns);
 	subRect.left = m_tile_size.x * (pos % m_tile_map_columns);
@@ -21,14 +21,14 @@ sf::IntRect TileFactory::GetSubRect(int pos) const
 
 TileFactory::TileFactory(TextureHolder& textures, sf::Vector2u tile_size)
 	: m_textures(textures),
-	m_tile_size(tile_size)
+	  m_tile_size(tile_size)
 {
 	m_tile_map_columns = textures.Get(Textures::kLevelTileSet).getSize().x / tile_size.x;
 }
 
 Tile* TileFactory::CreateTile(int pos, sf::Vector2f spawn_pos) const
 {
-	if(pos == -1)
+	if (pos == -1)
 		return nullptr;
 
 	/*switch (static_cast<ETileType>(pos))
@@ -54,7 +54,10 @@ Tile* TileFactory::CreateTile(int pos, sf::Vector2f spawn_pos) const
 	return tile;
 }
 
-Character* TileFactory::CreatePlayer(int id, ECharacterType type) const
+Character* TileFactory::CreatePlayer(int id, ECharacterType type, sf::Vector2f spawn_pos) const
 {
-	return new Character(type, m_textures, GetSubRect(id));
+	Character* character = new Character(type, m_textures, GetSubRect(id));
+	character->setPosition(spawn_pos);
+
+	return character;
 }

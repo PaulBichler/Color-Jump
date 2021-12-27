@@ -88,12 +88,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\include;C:\Users\loanej\dev\SFML-2.5.1\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Dylan\Documents\GD4\SFML-2.5.1\include;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\include;C:\Users\loanej\dev\SFML-2.5.1\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\lib;C:\Users\loanej\dev\SFML-2.5.1\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Dylan\Documents\GD4\SFML-2.5.1\lib;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\lib;C:\Users\loanej\dev\SFML-2.5.1\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;%(AdditionalDependencies);sfml-graphics.lib;sfml-window.lib;sfml-system.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

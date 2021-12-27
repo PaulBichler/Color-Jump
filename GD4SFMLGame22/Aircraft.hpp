@@ -32,7 +32,7 @@ public:
 
 
 private:
-	virtual void DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
+	void DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
 	virtual void UpdateCurrent(sf::Time dt, CommandQueue& commands) override;
 	
 	void CheckProjectileLaunch(sf::Time dt, CommandQueue& commands);
