@@ -12,6 +12,11 @@ namespace Category
 		kPickup = 1 << 4,
 		kAlliedProjectile = 1 << 5,
 		kEnemyProjectile = 1 << 6,
+		kBluePlayer = 1 << 7,
+		kRedPlayer = 1 << 8,
+		kPlatform = 1 << 9,
+		kBluePlatform = 1 << 10,
+		kRedPlatform = 1 << 11,
 
 		kAircraft = kPlayerAircraft | kAlliedAircraft | kEnemyAircraft,
 		kProjectile = kAlliedProjectile | kEnemyProjectile,

@@ -1,7 +1,9 @@
 #include "TileFactory.hpp"
 
 #include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
+#include "PlatformPart.hpp"
 #include "ResourceHolder.hpp"
 #include "SpriteNode.hpp"
 #include "Tile.hpp"
@@ -26,29 +28,38 @@ TileFactory::TileFactory(TextureHolder& textures, sf::Vector2u tile_size)
 	m_tile_map_columns = textures.Get(Textures::kLevelTileSet).getSize().x / tile_size.x;
 }
 
+PlatformPart* TileFactory::CreatePlatformPart(int pos, sf::Vector2f spawn_pos, Platform* parent) const
+{
+	const sf::IntRect sub_rect = GetSubRect(pos);
+	PlatformPart* platform_part = new PlatformPart(m_textures, sub_rect, parent);
+	platform_part->setPosition(spawn_pos);
+	parent->AddPlatformPart(platform_part);
+
+	return platform_part;
+}
+
 Tile* TileFactory::CreateTile(int pos, sf::Vector2f spawn_pos) const
 {
-	if(pos == -1)
-		return nullptr;
+	const sf::IntRect sub_rect = GetSubRect(pos);
 
-	/*switch (static_cast<ETileType>(pos))
-	{
-	case kStart:
-		return CreateStartTile();
-	case kBluePlatform:
-		return CreateBluePlatform();
-	case kRedPlatform:
-		return CreateRedPlatform();
-	case kImpactPlatform:
-		return CreateImpactPlatform();
-	case kFinish:
-		return CreateFinishTile();
-	default:
-		assert(false && "Tile Type could not be found in enumeration!");
-		break;
-	}*/
+	//switch (static_cast<ETileType>(pos))
+	//{
+	///*case kPlatform:
+	//	return CreatePlatformPart(sub_rect);*/
+	////case kBluePlatform:
+	////	return CreateBluePlatform();
+	////case kRedPlatform:
+	////	return CreateRedPlatform();
+	////case kImpactPlatform:
+	////	return CreateImpactPlatform();
+	////case kFinish:
+	////	return CreateFinishTile();
+	//default:
+	//	assert(false && "Tile Type could not be found in enumeration!");
+	//	break;
+	//}
 
-	Tile* tile = new Tile(m_textures, GetSubRect(pos));
+	Tile* tile = new Tile(m_textures, sub_rect);
 	tile->setPosition(spawn_pos);
 
 	return tile;

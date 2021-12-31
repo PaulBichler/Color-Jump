@@ -12,9 +12,7 @@
 World::World(sf::RenderWindow& window, FontHolder& font, LevelManager& level_manager)
 	: m_window(window)
 	, m_camera(window.getDefaultView())
-	, m_textures()
 	, m_fonts(font)
-	, m_scenegraph()
 	, m_scene_layers()
 	, m_level_manager(level_manager)
 	, m_world_bounds(0.f, 0.f, m_camera.getSize().x, m_camera.getSize().y)
@@ -90,7 +88,7 @@ void World::BuildScene()
 
 	LevelLoader::LevelInfo level = level_loader.LoadLevel(current_level_data);
 	m_scene_layers[static_cast<int>(Layers::kBackground)]->AttachChild(std::move(level.background_parent));
-	m_scene_layers[static_cast<int>(Layers::kLevel)]->AttachChild(std::move(level.platforms_parent));
+	m_scene_layers[static_cast<int>(Layers::kLevel)]->AttachChild(std::move(level.level_parent));
 
 	m_player_1_character = level.player_1;
 	m_player_2_character = level.player_2;
@@ -307,8 +305,6 @@ void World::HandleCollisions()
 			aircraft.Damage(projectile.GetDamage());
 			projectile.Destroy();
 		}
-
-
 	}
 }
 
