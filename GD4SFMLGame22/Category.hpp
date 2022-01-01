@@ -14,6 +14,9 @@ namespace Category
 		kEnemyProjectile = 1 << 6,
 		kPlayerOne = 1 << 7,
 		kPlayerTwo = 1 << 8,
+		kPlatform = 1 << 9,
+		kBluePlatform = 1 << 10,
+		kRedPlatform = 1 << 11,
 
 		kAircraft = kPlayerAircraft | kAlliedAircraft | kEnemyAircraft,
 		kPlayer = kPlayerOne | kPlayerTwo,

@@ -75,7 +75,7 @@ private:
 	std::vector<SpawnPoint> m_enemy_spawn_points;
 	std::vector<Aircraft*>	m_active_enemies;
 
-	Character* m_player_1_character;
-	Character* m_player_2_character;
+	Character* m_player_1_character{};
+	Character* m_player_2_character{};
 };
 
