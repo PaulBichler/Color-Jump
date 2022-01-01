@@ -5,3 +5,8 @@ PlatformPart::PlatformPart(const TextureHolder& textures, const sf::IntRect sub_
 	m_parent(platform)
 {
 }
+
+Platform* PlatformPart::GetPlatform() const
+{
+	return m_parent;
+}

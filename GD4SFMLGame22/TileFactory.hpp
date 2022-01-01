@@ -19,6 +19,6 @@ public:
 
 	PlatformPart* CreatePlatformPart(int pos, sf::Vector2f spawn_pos, Platform* parent) const;
 	Tile* CreateTile(int pos, sf::Vector2f spawn_pos) const;
-	Character* CreatePlayer(int id, ECharacterType type) const;
+	Character* CreatePlayer(int id, ECharacterType type, sf::Vector2f spawn_pos) const;
 };
 

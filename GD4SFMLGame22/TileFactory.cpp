@@ -65,7 +65,9 @@ Tile* TileFactory::CreateTile(int pos, sf::Vector2f spawn_pos) const
 	return tile;
 }
 
-Character* TileFactory::CreatePlayer(int id, ECharacterType type) const
+Character* TileFactory::CreatePlayer(int id, ECharacterType type, sf::Vector2f spawn_pos) const
 {
-	return new Character(type, m_textures, GetSubRect(id));
+	Character* character = new Character(type, m_textures, GetSubRect(id));
+	character->setPosition(spawn_pos);
+	return character;
 }
