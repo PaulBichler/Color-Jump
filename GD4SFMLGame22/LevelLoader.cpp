@@ -53,15 +53,15 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::str
 			}
 			else if(tile_type == kPlatform)
 			{
-				CreatePlatform(EPlatformType::kNormal, level_info, row, col, level_parent, spawn_pos);
+				CreatePlatform(EPlatformType::kNormal, tile_type, level_info, row, col, level_parent, spawn_pos);
 			}
 			else if(tile_type == kImpactPlatform)
 			{
-				CreatePlatform(EPlatformType::kImpact, level_info, row, col, level_parent, spawn_pos);
+				CreatePlatform(EPlatformType::kImpact, tile_type, level_info, row, col, level_parent, spawn_pos);
 			}
 			else if(tile_type != kNone)
 			{
-				SceneNode::Ptr tilePtr(m_tile_factory.CreateTile(id, spawn_pos));
+				SceneNode::Ptr tilePtr(m_tile_factory.CreateTile(id, spawn_pos, tile_type));
 				if(tilePtr.get() != nullptr)
 					level_parent->AttachChild(std::move(tilePtr));
 			}
@@ -77,7 +77,7 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::str
 	return level_parent;
 }
 
-std::vector<std::vector<int>> LevelLoader::LevelDataToVector(const std::string& csv_path)
+std::vector<std::vector<int>> LevelLoader::LevelDataToVector(const std::string& csv_path) const
 {
 	std::vector<std::vector<int>> levelDataVector;
 	std::ifstream in(csv_path);
@@ -102,18 +102,18 @@ std::vector<std::vector<int>> LevelLoader::LevelDataToVector(const std::string& 
 	return levelDataVector;
 }
 
-void LevelLoader::CreatePlatform(EPlatformType type, LevelInfo& level_info, int row, int col, SceneNode::Ptr& parent, sf::Vector2f spawn_pos)
+void LevelLoader::CreatePlatform(EPlatformType type, ETileType tile_type, LevelInfo& level_info, int row, int col, SceneNode::Ptr& parent, sf::Vector2f spawn_pos)
 {
 	std::unique_ptr<Platform> platform(new Platform(type, m_textures));
-	AddPlatformParts(platform.get(), row, col, parent, spawn_pos);
+	AddPlatformParts(platform.get(), row, col, parent, tile_type, spawn_pos);
 	level_info.platforms.emplace_back(std::move(platform));
 }
 
-void LevelLoader::AddPlatformParts(Platform* platform, int row, int col, SceneNode::Ptr& parent, sf::Vector2f spawn_pos)
+void LevelLoader::AddPlatformParts(Platform* platform, int row, int col, SceneNode::Ptr& parent, ETileType tile_type, sf::Vector2f spawn_pos)
 {
 	ETileType type = static_cast<ETileType>(m_level_data_vector[row][col]);
 
-	std::unique_ptr<PlatformPart> platform_part(m_tile_factory.CreatePlatformPart(type, spawn_pos, platform));
+	std::unique_ptr<PlatformPart> platform_part(m_tile_factory.CreatePlatformPart(type, spawn_pos, platform, tile_type));
 	parent->AttachChild(std::move(platform_part));
 
 	//Is vertical platform
@@ -123,7 +123,7 @@ void LevelLoader::AddPlatformParts(Platform* platform, int row, int col, SceneNo
 			break;
 
 		spawn_pos.y += m_level_data.m_tile_size.y;
-		std::unique_ptr<PlatformPart> vertical_platform_part(m_tile_factory.CreatePlatformPart(type, spawn_pos, platform));
+		std::unique_ptr<PlatformPart> vertical_platform_part(m_tile_factory.CreatePlatformPart(type, spawn_pos, platform, tile_type));
 		parent->AttachChild(std::move(vertical_platform_part));
 		m_level_data_vector[i][col] = -1;
 	}
@@ -135,7 +135,7 @@ void LevelLoader::AddPlatformParts(Platform* platform, int row, int col, SceneNo
 			break;
 
 		spawn_pos.x += m_level_data.m_tile_size.x;
-		std::unique_ptr<PlatformPart> horizontal_platform_part(m_tile_factory.CreatePlatformPart(type, spawn_pos, platform));
+		std::unique_ptr<PlatformPart> horizontal_platform_part(m_tile_factory.CreatePlatformPart(type, spawn_pos, platform, tile_type));
 		parent->AttachChild(std::move(horizontal_platform_part));
 		m_level_data_vector[row][j] = -1;
 	}

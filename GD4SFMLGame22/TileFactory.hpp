@@ -17,8 +17,8 @@ private:
 public:
 	TileFactory(TextureHolder& textures, sf::Vector2u tile_size);
 
-	PlatformPart* CreatePlatformPart(int pos, sf::Vector2f spawn_pos, Platform* parent) const;
-	Tile* CreateTile(int pos, sf::Vector2f spawn_pos) const;
+	PlatformPart* CreatePlatformPart(int pos, sf::Vector2f spawn_pos, Platform* parent, ETileType tile_type) const;
+	Tile* CreateTile(int pos, sf::Vector2f spawn_pos, ETileType tile_type) const;
 	Character* CreatePlayer(int id, ECharacterType type, sf::Vector2f spawn_pos) const;
 };
 

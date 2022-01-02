@@ -5,7 +5,7 @@
 class PlatformPart : public Tile
 {
 public:
-	PlatformPart(const TextureHolder& textures, const sf::IntRect sub_rect, Platform* platform);
+	PlatformPart(const TextureHolder& textures, const sf::IntRect sub_rect, Platform* platform, const ETileType type);
 	Platform* GetPlatform() const;
 
 private:

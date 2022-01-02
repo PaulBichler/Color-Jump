@@ -28,17 +28,17 @@ TileFactory::TileFactory(TextureHolder& textures, sf::Vector2u tile_size)
 	m_tile_map_columns = textures.Get(Textures::kLevelTileSet).getSize().x / tile_size.x;
 }
 
-PlatformPart* TileFactory::CreatePlatformPart(int pos, sf::Vector2f spawn_pos, Platform* parent) const
+PlatformPart* TileFactory::CreatePlatformPart(int pos, sf::Vector2f spawn_pos, Platform* parent, ETileType tile_type) const
 {
 	const sf::IntRect sub_rect = GetSubRect(pos);
-	PlatformPart* platform_part = new PlatformPart(m_textures, sub_rect, parent);
+	PlatformPart* platform_part = new PlatformPart(m_textures, sub_rect, parent, tile_type);
 	platform_part->setPosition(spawn_pos);
 	parent->AddPlatformPart(platform_part);
 
 	return platform_part;
 }
 
-Tile* TileFactory::CreateTile(int pos, sf::Vector2f spawn_pos) const
+Tile* TileFactory::CreateTile(int pos, sf::Vector2f spawn_pos, ETileType tile_type) const
 {
 	const sf::IntRect sub_rect = GetSubRect(pos);
 
@@ -59,7 +59,7 @@ Tile* TileFactory::CreateTile(int pos, sf::Vector2f spawn_pos) const
 	//	break;
 	//}
 
-	Tile* tile = new Tile(m_textures, sub_rect);
+	Tile* tile = new Tile(m_textures, sub_rect, tile_type);
 	tile->setPosition(spawn_pos);
 
 	return tile;
