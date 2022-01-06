@@ -129,6 +129,9 @@
     <ClCompile Include="PlatformPart.cpp">
       <Filter>Source Files\Level</Filter>
     </ClCompile>
+    <ClCompile Include="RayGround.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Textures.hpp">
@@ -271,6 +274,9 @@
     </ClInclude>
     <ClInclude Include="EPlatformType.hpp">
       <Filter>Header Files\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="RayGround.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

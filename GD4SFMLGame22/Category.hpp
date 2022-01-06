@@ -17,9 +17,12 @@ namespace Category
 		kPlatform = 1 << 9,
 		kBluePlatform = 1 << 10,
 		kRedPlatform = 1 << 11,
+		kRayOne = 1 << 12,
+		kRayTwo = 1 << 13,
 
 		kAircraft = kPlayerAircraft | kAlliedAircraft | kEnemyAircraft,
 		kPlayer = kPlayerOne | kPlayerTwo,
+		kRay = kRayOne | kRayTwo,
 		kProjectile = kAlliedProjectile | kEnemyProjectile,
 	};
 }

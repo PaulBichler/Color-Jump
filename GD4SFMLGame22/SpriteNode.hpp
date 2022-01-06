@@ -13,7 +13,7 @@ public:
 private:
 	void DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-private:
+protected:
 	sf::Sprite m_sprite;
 };
 

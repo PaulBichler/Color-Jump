@@ -10,3 +10,13 @@ Platform* PlatformPart::GetPlatform() const
 {
 	return m_parent;
 }
+
+sf::FloatRect PlatformPart::GetBoundingRect() const
+{
+	return GetWorldTransform().transformRect(m_sprite.getGlobalBounds());
+}
+
+unsigned PlatformPart::GetCategory() const
+{
+	return Category::kPlatform;
+}

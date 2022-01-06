@@ -35,7 +35,6 @@ public:
 private:
 	void LoadTextures();
 	void BuildScene();
-	void AdaptPlayerVelocity() const;
 
 	sf::FloatRect GetViewBounds() const;
 	sf::FloatRect GetBattlefieldBounds() const;
@@ -43,6 +42,8 @@ private:
 	void AddEnemy(AircraftType type, float relX, float relY);
 	void AddEnemies();
 	void GuideMissiles();
+	static void PlayerGroundRayCast(const std::set<SceneNode::Pair>& pairs);
+	void GetGroundRayCasts(std::set<SceneNode::Pair>& pairs, const SceneNode::Pair pair, const Category::Type category) const;
 	void HandleCollisions();
 	void DestroyEntitiesOutsideView();
 

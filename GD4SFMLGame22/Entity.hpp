@@ -5,7 +5,7 @@
 class Entity : public SceneNode
 {
 public:
-	Entity(int hitpoints);
+	explicit Entity(int hitPoints);
 	virtual void SetVelocity(sf::Vector2f velocity);
 	virtual void SetVelocity(float vx, float vy);
 	virtual void Accelerate(sf::Vector2f velocity);
@@ -19,9 +19,9 @@ public:
 	virtual bool IsDestroyed() const override;
 
 protected:
-	virtual void UpdateCurrent(sf::Time dt, CommandQueue& commands);
+	void UpdateCurrent(sf::Time dt, CommandQueue& commands) override;
+	sf::Vector2f m_velocity;
 
 private:
-	sf::Vector2f m_velocity;
-	unsigned int m_hitpoints;
+	unsigned int m_hitPoints;
 };
