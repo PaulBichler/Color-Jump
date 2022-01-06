@@ -1,4 +1,5 @@
 #pragma once
+#include "ECharacterType.hpp"
 #include "EPlatformType.hpp"
 #include "Tile.hpp"
 
@@ -7,11 +8,15 @@ class PlatformPart;
 class Platform
 {
 public:
-	Platform();
+	Platform(EPlatformType platform_type, TextureHolder& textures);
 	void AddPlatformPart(PlatformPart* tile);
+	virtual bool DoesPlayerCollide(ECharacterType character_type);
 
-private:
+protected:
 	EPlatformType m_type;
+	TextureHolder& m_textures;
 	std::vector<PlatformPart*> m_platform_parts;
+
+	void SetType(EPlatformType type);
 };
 

@@ -70,6 +70,8 @@ void World::LoadTextures()
 	m_textures.Load(Textures::kMissile, "Media/Textures/Missile.png");
 
 	m_textures.Load(Textures::kLevelTileSet, "Media/Textures/TileSet.png");
+	m_textures.Load(Textures::kImpactRedPlatform, "Media/Textures/RedImpactPlatform.png");
+	m_textures.Load(Textures::kImpactBluePlatform, "Media/Textures/BlueImpactPlatform.png");
 }
 
 void World::BuildScene()
@@ -83,10 +85,10 @@ void World::BuildScene()
 		m_scenegraph.AttachChild(std::move(layer));
 	}
 
-	const LevelManager::LevelData current_level_data = m_level_manager.GetCurrentLevelData();
-	const LevelLoader level_loader(m_textures);
+	LevelManager::LevelData current_level_data = m_level_manager.GetCurrentLevelData();
+	LevelLoader level_loader(current_level_data, m_textures);
 
-	LevelLoader::LevelInfo level = level_loader.LoadLevel(current_level_data);
+	LevelLoader::LevelInfo level = level_loader.LoadLevel();
 	m_scene_layers[static_cast<int>(Layers::kBackground)]->AttachChild(std::move(level.background_parent));
 	m_scene_layers[static_cast<int>(Layers::kLevel)]->AttachChild(std::move(level.level_parent));
 

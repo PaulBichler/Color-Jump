@@ -10,6 +10,12 @@ SpriteNode::SpriteNode(const sf::Texture& texture, const sf::IntRect& textureRec
 {
 }
 
+void SpriteNode::SetSpriteTexture(const sf::Texture& texture, const sf::IntRect& textureRect)
+{
+	m_sprite.setTextureRect(textureRect);
+	m_sprite.setTexture(texture);
+}
+
 void SpriteNode::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(m_sprite, states);

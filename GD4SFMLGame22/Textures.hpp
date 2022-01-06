@@ -2,6 +2,8 @@
 enum class Textures
 {
 	kLevelTileSet,
+	kImpactRedPlatform,
+	kImpactBluePlatform,
 	kEagle,
 	kRaptor,
 	kAvenger,
