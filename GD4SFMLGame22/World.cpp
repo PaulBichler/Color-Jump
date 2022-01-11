@@ -90,12 +90,9 @@ void World::BuildScene()
 	LevelManager::LevelData current_level_data = m_level_manager.GetCurrentLevelData();
 	LevelLoader level_loader(current_level_data, m_textures);
 
-	LevelLoader::LevelInfo level = level_loader.LoadLevel();
-	m_scene_layers[static_cast<int>(Layers::kBackground)]->AttachChild(std::move(level.background_parent));
-	m_scene_layers[static_cast<int>(Layers::kLevel)]->AttachChild(std::move(level.level_parent));
-
-	m_player_1_character = level.player_1;
-	m_player_2_character = level.player_2;
+	m_level_info = level_loader.LoadLevel();
+	m_scene_layers[static_cast<int>(Layers::kBackground)]->AttachChild(std::move(m_level_info.background_parent));
+	m_scene_layers[static_cast<int>(Layers::kLevel)]->AttachChild(std::move(m_level_info.level_parent));
 }
 
 CommandQueue& World::getCommandQueue()
@@ -238,12 +235,12 @@ void World::PlayerGroundRayCast(const std::set<SceneNode::Pair>& pairs)
 
 	if (!collide)
 	{
-		if (player_pair.first->GetCategory() == Category::Type::kRay)
+		if (player_pair.first != nullptr && player_pair.first->GetCategory() == Category::Type::kRay)
 		{
-			const auto& ray_ground = static_cast<RayGround&>(*player_pair.first);
+			const auto& ray_ground = dynamic_cast<RayGround&>(*player_pair.first);
 			ray_ground.SetFalling();
 		}
-		else
+		else if(player_pair.second != nullptr)
 		{
 			const auto& ray_ground = static_cast<RayGround&>(*player_pair.second);
 			ray_ground.SetFalling();
@@ -272,8 +269,16 @@ void World::HandleCollisions()
 		if (MatchesCategories(pair, Category::Type::kPlayer, Category::Type::kPlatform))
 		{
 			auto& player = static_cast<Character&>(*pair.first);
-			//Collision
-			player.SetGrounded();
+			auto& platform = static_cast<PlatformPart&>(*pair.second);
+
+			ECharacterType type = player.GetCharacterType();
+			Platform* plat = platform.GetPlatform();
+
+			if(plat->DoesPlayerCollide(type))
+			{
+				//Collision
+				player.SetGrounded();	
+			}
 		}
 
 		GetGroundRayCasts(pairs_player_one, pair, Category::kRayOne);
@@ -287,7 +292,7 @@ void World::HandleCollisions()
 void World::DestroyEntitiesOutsideView()
 {
 	Command command;
-	command.category = Category::Type::kAircraft | Category::Type::kProjectile;
+	command.category = Category::Type::kPlayerOne | Category::kPlayerTwo;
 	command.action = DerivedAction<Entity>([this](Entity& e, sf::Time)
 	{
 		//Does the object intersect with the battlefield

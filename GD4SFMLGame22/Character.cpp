@@ -63,6 +63,11 @@ void Character::SetFalling()
 	m_grounded = false;
 }
 
+ECharacterType Character::GetCharacterType() const
+{
+	return m_type;
+}
+
 void Character::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 {
 	Entity::UpdateCurrent(dt, commands);

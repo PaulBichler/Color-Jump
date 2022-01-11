@@ -15,6 +15,7 @@
 
 #include "Character.hpp"
 #include "CommandQueue.hpp"
+#include "LevelLoader.hpp"
 #include "LevelManager.hpp"
 
 //Foward
@@ -68,6 +69,7 @@ private:
 	SceneNode m_scenegraph;
 	std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)> m_scene_layers;
 	CommandQueue m_command_queue;
+	LevelLoader::LevelInfo m_level_info;
 	LevelManager& m_level_manager;
 
 	sf::FloatRect m_world_bounds;
@@ -75,8 +77,5 @@ private:
 	float m_scrollspeed;
 	std::vector<SpawnPoint> m_enemy_spawn_points;
 	std::vector<Aircraft*>	m_active_enemies;
-
-	Character* m_player_1_character{};
-	Character* m_player_2_character{};
 };
 

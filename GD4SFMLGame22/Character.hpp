@@ -22,6 +22,7 @@ public:
 	void Jump();
 	void SetGrounded();
 	void SetFalling();
+	ECharacterType GetCharacterType() const;
 protected:
 	void UpdateCurrent(sf::Time dt, CommandQueue& commands) override;
 	void UpdateRay() const;
