@@ -18,6 +18,8 @@ public:
 public:
 	LevelManager();
 	LevelData GetCurrentLevelData() const;
+	void NextLevel();
+	bool DoesNextLevelExist() const;
 
 private:
 	std::vector<LevelData> m_levels;

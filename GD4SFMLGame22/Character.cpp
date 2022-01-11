@@ -13,7 +13,8 @@ Character::Character(ECharacterType type, const TextureHolder& textures, const s
 	: Entity(100),
 	  m_type(type),
 	  m_sprite(textures.Get(Textures::kLevelTileSet), texture_rect),
-	  m_grounded(true)
+	  m_grounded(true),
+	  m_current_platform(nullptr)
 {
 	std::cout << "Character created." << std::endl;
 
@@ -48,12 +49,14 @@ void Character::Jump()
 	}
 
 	m_grounded = false;
+	m_current_platform = nullptr;
 	Accelerate(0, -600);
 }
 
-void Character::SetGrounded()
+void Character::SetGrounded(Platform* platform)
 {
 	m_grounded = true;
+	m_current_platform = platform;
 	SetVelocity(m_velocity.x, 0);
 	setPosition(getPosition().x, getPosition().y - 2);
 }
@@ -61,11 +64,25 @@ void Character::SetGrounded()
 void Character::SetFalling()
 {
 	m_grounded = false;
+	m_current_platform = nullptr;
 }
 
 ECharacterType Character::GetCharacterType() const
 {
 	return m_type;
+}
+
+Platform* Character::GetCurrentPlatform() const
+{
+	return m_current_platform;
+}
+
+bool Character::IsOnPlatformOfType(EPlatformType platform_type) const
+{
+	if(m_current_platform == nullptr)
+		return false;
+
+	return m_current_platform->GetPlatformType() == platform_type;
 }
 
 void Character::UpdateCurrent(sf::Time dt, CommandQueue& commands)

@@ -59,6 +59,10 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::str
 			{
 				CreatePlatform(EPlatformType::kImpact, tile_type, level_info, row, col, level_parent, spawn_pos);
 			}
+			else if(tile_type == kFinish)
+			{
+				CreatePlatform(EPlatformType::kGoal, tile_type, level_info, row, col, level_parent, spawn_pos);
+			}
 			else if(tile_type != kNone)
 			{
 				SceneNode::Ptr tilePtr(m_tile_factory.CreateTile(id, spawn_pos, tile_type));

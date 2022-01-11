@@ -32,6 +32,8 @@ public:
 	void Update(sf::Time dt);
 	void Draw();
 	CommandQueue& getCommandQueue();
+	void SetLoseCallback(const std::function<void()>& callback);
+	void SetWinCallback(const std::function<void()>& callback);
 
 private:
 	void LoadTextures();
@@ -71,6 +73,9 @@ private:
 	CommandQueue m_command_queue;
 	LevelLoader::LevelInfo m_level_info;
 	LevelManager& m_level_manager;
+	std::function<void()> m_lose_callback;
+	std::function<void()> m_win_callback;
+	bool m_has_won{};
 
 	sf::FloatRect m_world_bounds;
 	sf::Vector2f m_spawn_position;

@@ -17,3 +17,14 @@ LevelManager::LevelData LevelManager::GetCurrentLevelData() const
 {
 	return m_levels[m_current_index];
 }
+
+void LevelManager::NextLevel()
+{
+	if(DoesNextLevelExist())
+		m_current_index++;
+}
+
+bool LevelManager::DoesNextLevelExist() const
+{
+	return m_current_index + 1 < m_levels.size();
+}

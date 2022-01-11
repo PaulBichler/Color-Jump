@@ -9,6 +9,7 @@ class Platform
 {
 public:
 	Platform(EPlatformType platform_type, TextureHolder& textures);
+	EPlatformType GetPlatformType() const;
 	void AddPlatformPart(PlatformPart* tile);
 	virtual bool DoesPlayerCollide(ECharacterType character_type);
 

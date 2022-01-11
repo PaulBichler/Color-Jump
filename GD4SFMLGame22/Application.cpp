@@ -3,6 +3,8 @@
 #include "StateID.hpp"
 #include "TitleState.hpp"
 #include "GameState.hpp"
+#include "LevelLoseState.hpp"
+#include "LevelWinState.hpp"
 #include "MenuState.hpp"
 #include "PauseState.hpp"
 #include "SettingsState.hpp"
@@ -107,4 +109,6 @@ void Application::RegisterStates()
 	m_stack.RegisterState<GameState>(StateID::kGame);
 	m_stack.RegisterState<PauseState>(StateID::kPause);
 	m_stack.RegisterState<SettingsState>(StateID::kSettings);
+	m_stack.RegisterState<LevelLoseState>(StateID::kLevelLose);
+	m_stack.RegisterState<LevelWinState>(StateID::kLevelWin);
 }
