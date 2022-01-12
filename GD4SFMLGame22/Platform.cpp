@@ -27,17 +27,25 @@ bool Platform::DoesPlayerCollide(const ECharacterType character_type)
 {
 	switch (m_type)
 	{
-	case EPlatformType::kImpact:
+	case EPlatformType::kHorizontalImpact:
 		if (character_type == ECharacterType::kBlue)
-			SetType(EPlatformType::kBlue);
+			SetType(EPlatformType::kHorizontalBlue);
 		else
-			SetType(EPlatformType::kRed);
+			SetType(EPlatformType::kHorizontalRed);
 		break;
-	case EPlatformType::kBlue:
+	case EPlatformType::kVerticalImpact:
+		if (character_type == ECharacterType::kBlue)
+			SetType(EPlatformType::kVerticalBlue);
+		else
+			SetType(EPlatformType::kVerticalRed);
+		break;
+	case EPlatformType::kHorizontalBlue:
+	case EPlatformType::kVerticalBlue:
 		if (character_type != ECharacterType::kBlue)
 			return false;
 		break;
-	case EPlatformType::kRed:
+	case EPlatformType::kHorizontalRed:
+	case EPlatformType::kVerticalRed:
 		if (character_type != ECharacterType::kRed)
 			return false;
 		break;
@@ -58,18 +66,28 @@ void Platform::SetType(const EPlatformType type)
 	{
 		switch (type)
 		{
-		case EPlatformType::kBlue:
+		case EPlatformType::kHorizontalBlue:
 			{
-				sf::Texture& blue_texture = m_textures.Get(Textures::kImpactBluePlatform);
-				part->SetSpriteTexture(blue_texture,
-				                       sf::IntRect(0, 0, blue_texture.getSize().x, blue_texture.getSize().y));
+				sf::Texture& texture = m_textures.Get(Textures::kHImpactBluePlatform);
+				part->SetSpriteTexture(texture, sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
 			}
 			break;
-		case EPlatformType::kRed:
+		case EPlatformType::kHorizontalRed:
 			{
-				sf::Texture& red_texture = m_textures.Get(Textures::kImpactRedPlatform);
-				part->SetSpriteTexture(red_texture,
-				                       sf::IntRect(0, 0, red_texture.getSize().x, red_texture.getSize().y));
+				sf::Texture& texture = m_textures.Get(Textures::kHImpactRedPlatform);
+				part->SetSpriteTexture(texture, sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
+			}
+			break;
+		case EPlatformType::kVerticalBlue:
+			{
+				sf::Texture& texture = m_textures.Get(Textures::kVImpactBluePlatform);
+				part->SetSpriteTexture(texture, sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
+			}
+			break;
+		case EPlatformType::kVerticalRed:
+			{
+				sf::Texture& texture = m_textures.Get(Textures::kVImpactRedPlatform);
+				part->SetSpriteTexture(texture, sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
 			}
 			break;
 		case EPlatformType::kNormal:

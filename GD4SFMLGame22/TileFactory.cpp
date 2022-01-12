@@ -20,13 +20,19 @@ sf::IntRect TileFactory::GetSubRect(int pos, ETileType tile_type, sf::Vector2f& 
 	//adjust rect height and width based on the tile (to correct the collider)
 	switch (tile_type)
 	{
-	case kImpactPlatform:
+	case kHorizontalImpactPlatform:
 		sub_rect.height = 23;
+		break;
+	case kVerticalImpactPlatform:
+		sub_rect.width = 20;
+		sub_rect.left += 22;
+		spawn_pos.x += 22;
 		break;
 	case kBluePlayer:
 	case kRedPlayer:
 		sub_rect.height = 61;
 		sub_rect.left += 12;
+		spawn_pos.x += 32;
 		sub_rect.width = 40;
 		break;
 	case kSpikes:
@@ -35,6 +41,7 @@ sf::IntRect TileFactory::GetSubRect(int pos, ETileType tile_type, sf::Vector2f& 
 		sub_rect.height = 30;
 		sub_rect.width = 56;
 		spawn_pos.y += 34;
+		spawn_pos.x += 4;
 		break;
 	}
 

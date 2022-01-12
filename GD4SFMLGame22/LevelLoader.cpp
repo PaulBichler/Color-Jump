@@ -55,9 +55,13 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::str
 			{
 				CreatePlatform(EPlatformType::kNormal, tile_type, level_info, row, col, level_parent, spawn_pos);
 			}
-			else if(tile_type == kImpactPlatform)
+			else if(tile_type == kHorizontalImpactPlatform)
 			{
-				CreatePlatform(EPlatformType::kImpact, tile_type, level_info, row, col, level_parent, spawn_pos);
+				CreatePlatform(EPlatformType::kHorizontalImpact, tile_type, level_info, row, col, level_parent, spawn_pos);
+			}
+			else if(tile_type == kVerticalImpactPlatform)
+			{
+				CreatePlatform(EPlatformType::kVerticalImpact, tile_type, level_info, row, col, level_parent, spawn_pos);
 			}
 			else if(tile_type == kFinish)
 			{
@@ -110,12 +114,6 @@ void LevelLoader::CreatePlatform(const EPlatformType type, const ETileType tile_
 {
 	std::unique_ptr<Platform> platform(new Platform(type, m_textures));
 	AddPlatformParts(platform.get(), row, col, parent, tile_type, spawn_pos);
-
-	if (tile_type == kImpactPlatform)
-	{
-		platform->SetType(EPlatformType::kImpact);
-	}
-
 	level_info.platforms.emplace_back(std::move(platform));
 }
 

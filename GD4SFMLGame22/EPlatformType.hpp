@@ -3,8 +3,11 @@
 enum class EPlatformType
 {
 	kNormal,
-	kImpact,
-	kRed,
-	kBlue,
+	kHorizontalImpact,
+	kVerticalImpact,
+	kHorizontalRed,
+	kHorizontalBlue,
+	kVerticalRed,
+	kVerticalBlue,
 	kGoal
 };

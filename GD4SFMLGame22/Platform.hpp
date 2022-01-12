@@ -13,6 +13,7 @@ public:
 	void AddPlatformPart(PlatformPart* tile);
 	virtual bool DoesPlayerCollide(ECharacterType character_type);
 	void SetType(EPlatformType type);
+
 protected:
 	EPlatformType m_type;
 	TextureHolder& m_textures;
