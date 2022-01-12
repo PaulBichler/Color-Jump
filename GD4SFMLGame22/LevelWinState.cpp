@@ -23,7 +23,7 @@ LevelWinState::LevelWinState(StateStack& stack, const Context context)
 
 	if(context.level_manager->DoesNextLevelExist()) 
 	{
-		const auto next_level_button = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
+		const auto next_level_button = std::make_shared<GUI::Button>(context);
 		next_level_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 50);
 		next_level_button->SetText("Next Level");
 		next_level_button->SetCallback([this]()
@@ -39,7 +39,7 @@ LevelWinState::LevelWinState(StateStack& stack, const Context context)
 		m_gui_container.Pack(next_level_button);
 	}
 
-	const auto restart_button = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
+	const auto restart_button = std::make_shared<GUI::Button>(context);
 	restart_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 100);
 	restart_button->SetText("Restart Level");
 	restart_button->SetCallback([this]()
@@ -49,7 +49,7 @@ LevelWinState::LevelWinState(StateStack& stack, const Context context)
 		RequestStackPush(StateID::kGame); //Push Game State again to restart the level
 	});
 
-	const auto main_menu_button = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
+	const auto main_menu_button = std::make_shared<GUI::Button>(context);
 	main_menu_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 150);
 	main_menu_button->SetText("Back to Main Menu");
 	main_menu_button->SetCallback([this]()

@@ -1,29 +1,35 @@
 #include "World.hpp"
 
-#include <SFML/Graphics/RenderWindow.hpp>
 #include <iostream>
 #include <limits>
 
-#include "LevelLoader.hpp"
+#include "ParticleNode.hpp"
 #include "Pickup.hpp"
-#include "PlatformPart.hpp"
-#include "Projectile.hpp"
+#include "PostEffect.hpp"
 #include "Utility.hpp"
 
-World::World(sf::RenderWindow& window, FontHolder& font, LevelManager& level_manager)
-	: m_window(window)
-	  , m_camera(window.getDefaultView())
+#include "PlatformPart.hpp"
+
+
+World::World(sf::RenderTarget& output_target, FontHolder& font, SoundPlayer& sounds, LevelManager& level_manager)
+	: m_target(output_target)
+	  , m_camera(output_target.getDefaultView())
+	  , m_textures()
 	  , m_fonts(font)
+	  , m_sounds(sounds)
+	  , m_scenegraph()
 	  , m_scene_layers()
 	  , m_level_manager(level_manager)
 	  , m_world_bounds(0.f, 0.f, m_camera.getSize().x, m_camera.getSize().y)
 	  , m_spawn_position(m_camera.getSize().x / 2.f, m_world_bounds.height - m_camera.getSize().y / 2.f)
 	  , m_scrollspeed(0)
-//, m_player_aircraft(nullptr)
+	  , m_player_aircraft(nullptr)
+
 {
+	m_scene_texture.create(m_target.getSize().x, m_target.getSize().y);
+
 	LoadTextures();
 	BuildScene();
-	Utility::Debug(std::to_string(m_camera.getSize().x) + " " + std::to_string(m_camera.getSize().y));
 	m_camera.setCenter(m_spawn_position);
 }
 
@@ -32,7 +38,6 @@ void World::Update(sf::Time dt)
 	//Scroll the world
 	m_camera.move(0, m_scrollspeed * dt.asSeconds());
 
-	//m_player_aircraft->SetVelocity(0.f, 0.f);
 	DestroyEntitiesOutsideView();
 
 	//Forward commands to the scenegraph until the command queue is empty
@@ -44,27 +49,48 @@ void World::Update(sf::Time dt)
 	HandleCollisions();
 	//Remove all destroyed entities
 	m_scenegraph.RemoveWrecks();
+	
 
 	//Apply movement
 	m_scenegraph.Update(dt, m_command_queue);
-	/*AdaptPlayerPosition();*/
+
+	UpdateSounds();
 }
 
 void World::Draw()
 {
-	m_window.setView(m_camera);
-	m_window.draw(m_scenegraph);
+	if (PostEffect::IsSupported())
+	{
+		m_scene_texture.clear();
+		m_scene_texture.setView(m_camera);
+		m_scene_texture.draw(m_scenegraph);
+		m_scene_texture.display();
+		m_bloom_effect.Apply(m_scene_texture, m_target);
+	}
+	else
+	{
+		m_target.setView(m_camera);
+		m_target.draw(m_scenegraph);
+	}
+}
+
+bool World::HasAlivePlayer() const
+{
+	return !m_player_aircraft->IsMarkedForRemoval();
+}
+
+bool World::HasPlayerReachedEnd() const
+{
+	return !m_world_bounds.contains(m_player_aircraft->getPosition());
 }
 
 void World::LoadTextures()
 {
-	m_textures.Load(Textures::kEagle, "Media/Textures/Eagle.png");
-	m_textures.Load(Textures::kRaptor, "Media/Textures/Raptor.png");
-	m_textures.Load(Textures::kAvenger, "Media/Textures/Avenger.png");
-	m_textures.Load(Textures::kBackground, "Media/Textures/Desert.png");
-
-	m_textures.Load(Textures::kBullet, "Media/Textures/Bullet.png");
-	m_textures.Load(Textures::kMissile, "Media/Textures/Missile.png");
+	m_textures.Load(Textures::kEntities, "Media/Textures/Entities.png");
+	m_textures.Load(Textures::kJungle, "Media/Textures/Jungle.png");
+	m_textures.Load(Textures::kExplosion, "Media/Textures/Explosion.png");
+	m_textures.Load(Textures::kParticle, "Media/Textures/Particle.png");
+	m_textures.Load(Textures::kFinishLine, "Media/Textures/FinishLine.png");
 
 	m_textures.Load(Textures::kLevelTileSet, "Media/Textures/TileSet.png");
 	m_textures.Load(Textures::kImpactPlatform, "Media/Textures/ImpactPlatform.png");
@@ -231,15 +257,23 @@ void World::HandleCollisions()
 void World::DestroyEntitiesOutsideView()
 {
 	Command command;
-	command.category = Category::Type::kPlayerOne | Category::kPlayerTwo;
+	command.category = Category::Type::kEnemyAircraft | Category::Type::kProjectile;
 	command.action = DerivedAction<Entity>([this](Entity& e, sf::Time)
 	{
 		//Does the object intersect with the battlefield
 		if (!GetBattlefieldBounds().intersects(e.GetBoundingRect()))
 		{
 			e.Destroy();
-			m_lose_callback();
 		}
 	});
 	m_command_queue.Push(command);
+}
+
+void World::UpdateSounds() const
+{
+	// Set listener's position to player position
+	m_sounds.SetListenerPosition(m_level_info.player_1->GetWorldPosition());
+
+	// Remove unused sounds
+	m_sounds.RemoveStoppedSounds();
 }

@@ -8,6 +8,8 @@
 #include <memory>
 
 #include "LevelManager.hpp"
+#include "MusicPlayer.hpp"
+#include "SoundPlayer.hpp"
 
 namespace sf
 {
@@ -24,11 +26,13 @@ public:
 
 	struct Context
 	{
-		Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, Player& player, LevelManager& level_manager);
+		Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, Player& player, MusicPlayer& music, SoundPlayer& sounds, LevelManager& level_manager);
 		sf::RenderWindow* window;
 		TextureHolder* textures;
 		FontHolder* fonts;
 		Player* player;
+		MusicPlayer* music;
+		SoundPlayer* sounds;
 		LevelManager* level_manager;
 	};
 

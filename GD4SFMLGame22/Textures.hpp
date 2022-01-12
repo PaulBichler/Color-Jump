@@ -1,6 +1,13 @@
 #pragma once
 enum class Textures
 {
+	kEntities,
+	kJungle,
+	kTitleScreen,
+	kButtons,
+	kExplosion,
+	kParticle,
+	kFinishLine,
 	kLevelTileSet,
 	kImpactRedPlatform,
 	kImpactBluePlatform,
@@ -14,7 +21,6 @@ enum class Textures
 	kMissileRefill,
 	kFireSpread,
 	kFireRate,
-	kTitleScreen,
 	kButtonNormal,
 	kButtonSelected,
 	kButtonPressed,

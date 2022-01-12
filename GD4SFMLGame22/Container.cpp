@@ -7,14 +7,14 @@
 namespace GUI
 {
 	Container::Container()
-	: m_selected_child(-1)
+		: m_selected_child(-1)
 	{
 	}
-	//TODO pass by reference as resharper is suggesting?
-	void Container::Pack(Component::Ptr component)
+	
+	void Container::Pack(const Component::Ptr& component)
 	{
 		m_children.emplace_back(component);
-		if(!HasSelection() && component->IsSelectable())
+		if (!HasSelection() && component->IsSelectable())
 		{
 			Select(m_children.size() - 1);
 		}
@@ -27,26 +27,25 @@ namespace GUI
 
 	void Container::HandleEvent(const sf::Event& event)
 	{
-		if(HasSelection() && m_children[m_selected_child]->IsActive())
+		if (HasSelection() && m_children[m_selected_child]->IsActive())
 		{
 			m_children[m_selected_child]->HandleEvent(event);
 		}
-		else if(event.type == sf::Event::KeyReleased)
+		else if (event.type == sf::Event::KeyReleased)
 		{
-			if(event.key.code == sf::Keyboard::W || event.key.code == sf::Keyboard::Up)
+			if (event.key.code == sf::Keyboard::W || event.key.code == sf::Keyboard::Up)
 			{
 				SelectPrevious();
 			}
-			else if(event.key.code == sf::Keyboard::S || event.key.code == sf::Keyboard::Down)
+			else if (event.key.code == sf::Keyboard::S || event.key.code == sf::Keyboard::Down)
 			{
 				SelectNext();
 			}
-			else if(event.key.code == sf::Keyboard::Return || event.key.code == sf::Keyboard::Space)
+			else if (event.key.code == sf::Keyboard::Return || event.key.code == sf::Keyboard::Space)
 			{
-				if(HasSelection())
+				if (HasSelection())
 				{
 					m_children[m_selected_child]->Activate();
-
 				}
 			}
 		}
@@ -55,11 +54,10 @@ namespace GUI
 	void Container::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		states.transform *= getTransform();
-		for(const Component::Ptr& child : m_children)
+		for (const Component::Ptr& child : m_children)
 		{
 			target.draw(*child, states);
 		}
-
 	}
 
 	bool Container::HasSelection() const
@@ -67,11 +65,11 @@ namespace GUI
 		return m_selected_child >= 0;
 	}
 
-	void Container::Select(std::size_t index)
+	void Container::Select(const std::size_t index)
 	{
-		if(index < m_children.size() && m_children[index]->IsSelectable())
+		if (index < m_children.size() && m_children[index]->IsSelectable())
 		{
-			if(HasSelection())
+			if (HasSelection())
 			{
 				m_children[m_selected_child]->Deselect();
 			}
@@ -82,7 +80,7 @@ namespace GUI
 
 	void Container::SelectNext()
 	{
-		if(!HasSelection())
+		if (!HasSelection())
 		{
 			return;
 		}
@@ -91,7 +89,8 @@ namespace GUI
 		do
 		{
 			next = (next + 1) % m_children.size();
-		} while (!m_children[next]->IsSelectable());
+		}
+		while (!m_children[next]->IsSelectable());
 
 		Select(next);
 	}
@@ -107,7 +106,8 @@ namespace GUI
 		do
 		{
 			prev = (prev + m_children.size() - 1) % m_children.size();
-		} while (!m_children[prev]->IsSelectable());
+		}
+		while (!m_children[prev]->IsSelectable());
 
 		Select(prev);
 	}

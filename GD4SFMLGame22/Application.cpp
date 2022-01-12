@@ -1,4 +1,6 @@
 #include "Application.hpp"
+
+#include "GameOverState.hpp"
 #include "State.hpp"
 #include "StateID.hpp"
 #include "TitleState.hpp"
@@ -13,7 +15,7 @@ const sf::Time Application::kTimePerFrame = sf::seconds(1.f / 60.f);
 
 Application::Application()
 :m_window(sf::VideoMode(1344, 960), "States", sf::Style::Close)
-, m_stack(State::Context(m_window, m_textures, m_fonts, m_player, m_level_manager))
+, m_stack(State::Context(m_window, m_textures, m_fonts, m_player, m_music, m_sounds, m_level_manager))
 , m_statistics_numframes(0)
 {
 
@@ -21,13 +23,11 @@ Application::Application()
 
 	m_fonts.Load(Fonts::Main, "Media/Fonts/Sansation.ttf");
 	m_textures.Load(Textures::kTitleScreen, "Media/Textures/TitleScreen.png");
-	m_textures.Load(Textures::kButtonNormal, "Media/Textures/Button.png");
-	m_textures.Load(Textures::kButtonSelected, "Media/Textures/ButtonSelected.png");
-	m_textures.Load(Textures::kButtonPressed, "Media/Textures/ButtonPressed.png");
+	m_textures.Load(Textures::kButtons, "Media/Textures/Buttons.png");
 
 	m_statistics_text.setFont(m_fonts.Get(Fonts::Main));
 	m_statistics_text.setPosition(5.f, 5.f);
-	m_statistics_text.setCharacterSize(16u);
+	m_statistics_text.setCharacterSize(10u);
 
 	RegisterStates();
 	m_stack.PushState(StateID::kTitle);
