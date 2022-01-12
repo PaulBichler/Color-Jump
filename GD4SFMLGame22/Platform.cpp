@@ -58,12 +58,6 @@ void Platform::SetType(const EPlatformType type)
 	{
 		switch (type)
 		{
-		case EPlatformType::kImpact:
-			{
-				sf::Texture& texture = m_textures.Get(Textures::kImpactPlatform);
-				part->SetSpriteTexture(texture, sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
-			}
-			break;
 		case EPlatformType::kBlue:
 			{
 				sf::Texture& blue_texture = m_textures.Get(Textures::kImpactBluePlatform);
