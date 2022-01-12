@@ -35,6 +35,8 @@ World::World(sf::RenderTarget& output_target, FontHolder& font, SoundPlayer& sou
 
 void World::Update(sf::Time dt)
 {
+	UpdateSounds();
+
 	//Scroll the world
 	m_camera.move(0, m_scrollspeed * dt.asSeconds());
 
@@ -53,8 +55,6 @@ void World::Update(sf::Time dt)
 
 	//Apply movement
 	m_scenegraph.Update(dt, m_command_queue);
-
-	UpdateSounds();
 }
 
 void World::Draw()
@@ -93,7 +93,6 @@ void World::LoadTextures()
 	m_textures.Load(Textures::kFinishLine, "Media/Textures/FinishLine.png");
 
 	m_textures.Load(Textures::kLevelTileSet, "Media/Textures/TileSet.png");
-	m_textures.Load(Textures::kImpactPlatform, "Media/Textures/ImpactPlatform.png");
 	m_textures.Load(Textures::kImpactRedPlatform, "Media/Textures/RedImpactPlatform.png");
 	m_textures.Load(Textures::kImpactBluePlatform, "Media/Textures/BlueImpactPlatform.png");
 }
@@ -262,13 +261,14 @@ void World::HandleCollisions()
 void World::DestroyEntitiesOutsideView()
 {
 	Command command;
-	command.category = Category::Type::kEnemyAircraft | Category::Type::kProjectile;
+	command.category = Category::Type::kPlayerOne | Category::Type::kPlayerTwo;
 	command.action = DerivedAction<Entity>([this](Entity& e, sf::Time)
 	{
 		//Does the object intersect with the battlefield
 		if (!GetBattlefieldBounds().intersects(e.GetBoundingRect()))
 		{
 			e.Destroy();
+			m_lose_callback();
 		}
 	});
 	m_command_queue.Push(command);

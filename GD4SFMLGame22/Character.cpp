@@ -100,6 +100,9 @@ void Character::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 
 void Character::UpdateRay() const
 {
+	if(IsDestroyed())
+		return;
+
 	m_ray->setPosition(0.f, 50.f);
 }
 

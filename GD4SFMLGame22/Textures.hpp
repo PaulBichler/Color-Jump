@@ -23,6 +23,5 @@ enum class Textures
 	kFireRate,
 	kButtonNormal,
 	kButtonSelected,
-	kButtonPressed,
-	kImpactPlatform
+	kButtonPressed
 };
