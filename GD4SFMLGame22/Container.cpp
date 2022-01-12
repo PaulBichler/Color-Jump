@@ -10,11 +10,12 @@ namespace GUI
 	: m_selected_child(-1)
 	{
 	}
+
 	//TODO pass by reference as resharper is suggesting?
 	void Container::Pack(Component::Ptr component)
 	{
 		m_children.emplace_back(component);
-		if(!HasSelection() && component->IsSelectable())
+		if(!HasSelection() && component->IsSelectable() && component->CanBeDrawn())
 		{
 			Select(m_children.size() - 1);
 		}
@@ -57,9 +58,9 @@ namespace GUI
 		states.transform *= getTransform();
 		for(const Component::Ptr& child : m_children)
 		{
-			target.draw(*child, states);
+			if(child->CanBeDrawn())
+				target.draw(*child, states);
 		}
-
 	}
 
 	bool Container::HasSelection() const
@@ -91,7 +92,7 @@ namespace GUI
 		do
 		{
 			next = (next + 1) % m_children.size();
-		} while (!m_children[next]->IsSelectable());
+		} while (!m_children[next]->IsSelectable() || !m_children[next]->CanBeDrawn());
 
 		Select(next);
 	}
@@ -107,7 +108,7 @@ namespace GUI
 		do
 		{
 			prev = (prev + m_children.size() - 1) % m_children.size();
-		} while (!m_children[prev]->IsSelectable());
+		} while (!m_children[prev]->IsSelectable() || !m_children[prev]->CanBeDrawn());
 
 		Select(prev);
 	}

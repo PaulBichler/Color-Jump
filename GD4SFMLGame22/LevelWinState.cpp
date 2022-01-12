@@ -21,26 +21,26 @@ LevelWinState::LevelWinState(StateStack& stack, Context context)
 	Utility::CentreOrigin(m_lost_text);
 	m_lost_text.setPosition(0.5f * viewSize.x, 0.4f * viewSize.y);
 
-	if(context.level_manager->DoesNextLevelExist()) 
+	const auto next_level_button = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
+	next_level_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 100);
+	next_level_button->SetText("Next Level");
+	next_level_button->SetCallback([this]()
 	{
-		const auto next_level_button = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
-		next_level_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 100);
-		next_level_button->SetText("Next Level");
-		next_level_button->SetCallback([this]()
-		{
-			//Set the next level in the level manager
-			GetContext().level_manager->NextLevel();
+		//Set the next level in the level manager
+		GetContext().level_manager->NextLevel();
 
-			RequestStackPop(); //Pop Level Lose State
-			RequestStackPop(); //Pop Game State
-			RequestStackPush(StateID::kGame); //Push Game State again to restart the level
-		});
+		RequestStackPop(); //Pop Level Lose State
+		RequestStackPop(); //Pop Game State
+		RequestStackPush(StateID::kGame); //Push Game State again to restart the level
+	});
 
-		m_gui_container.Pack(next_level_button);
-	}
+	next_level_button->SetDrawPredicate([this]
+	{
+		return GetContext().level_manager->DoesNextLevelExist();
+	});
 
 	const auto restart_button = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
-	restart_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 100);
+	restart_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 150);
 	restart_button->SetText("Restart Level");
 	restart_button->SetCallback([this]()
 	{
@@ -50,7 +50,7 @@ LevelWinState::LevelWinState(StateStack& stack, Context context)
 	});
 
 	const auto main_menu_button = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
-	main_menu_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 150);
+	main_menu_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 200);
 	main_menu_button->SetText("Back to Main Menu");
 	main_menu_button->SetCallback([this]()
 	{
@@ -58,6 +58,7 @@ LevelWinState::LevelWinState(StateStack& stack, Context context)
 		RequestStackPush(StateID::kMenu);
 	});
 
+	m_gui_container.Pack(next_level_button);
 	m_gui_container.Pack(restart_button);
 	m_gui_container.Pack(main_menu_button);
 }
