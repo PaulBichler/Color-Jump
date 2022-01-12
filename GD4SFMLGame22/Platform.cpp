@@ -12,6 +12,11 @@ Platform::Platform(EPlatformType platform_type, TextureHolder& textures)
 	SetType(platform_type);
 }
 
+EPlatformType Platform::GetPlatformType() const
+{
+	return m_type;
+}
+
 void Platform::AddPlatformPart(PlatformPart* tile)
 {
 	m_platform_parts.emplace_back(tile);

@@ -100,6 +100,16 @@ CommandQueue& World::getCommandQueue()
 	return m_command_queue;
 }
 
+void World::SetLoseCallback(const std::function<void()>& callback)
+{
+	m_lose_callback = callback;
+}
+
+void World::SetWinCallback(const std::function<void()>& callback)
+{
+	m_win_callback = callback;
+}
+
 sf::FloatRect World::GetViewBounds() const
 {
 	return sf::FloatRect(m_camera.getCenter() - m_camera.getSize() / 2.f, m_camera.getSize());
@@ -109,8 +119,8 @@ sf::FloatRect World::GetBattlefieldBounds() const
 {
 	//Return camera bounds + a small area at the top where enemies spawn offscreen
 	sf::FloatRect bounds = GetViewBounds();
-	bounds.top -= 100.f;
-	bounds.height += 100.f;
+	bounds.top -= 300.f;
+	bounds.height += 300.f;
 
 	return bounds;
 }
@@ -269,15 +279,25 @@ void World::HandleCollisions()
 		if (MatchesCategories(pair, Category::Type::kPlayer, Category::Type::kPlatform))
 		{
 			auto& player = static_cast<Character&>(*pair.first);
-			auto& platform = static_cast<PlatformPart&>(*pair.second);
+			auto& platform_part = static_cast<PlatformPart&>(*pair.second);
+			Platform* platform = platform_part.GetPlatform();
 
-			ECharacterType type = player.GetCharacterType();
-			Platform* plat = platform.GetPlatform();
-
-			if(plat->DoesPlayerCollide(type))
+			if(platform->DoesPlayerCollide(player.GetCharacterType()))
 			{
 				//Collision
-				player.SetGrounded();	
+				player.SetGrounded(platform);	
+			}
+
+			//Check Win Condition
+			if(!m_has_won && platform->GetPlatformType() == EPlatformType::kGoal)
+			{
+				if(m_level_info.player_1->IsOnPlatformOfType(EPlatformType::kGoal) &&
+					m_level_info.player_2->IsOnPlatformOfType(EPlatformType::kGoal))
+				{
+					//Win
+					m_win_callback();
+					m_has_won = true;
+				}
 			}
 		}
 
@@ -299,6 +319,7 @@ void World::DestroyEntitiesOutsideView()
 		if (!GetBattlefieldBounds().intersects(e.GetBoundingRect()))
 		{
 			e.Destroy();
+			m_lose_callback();
 		}
 	});
 	m_command_queue.Push(command);
