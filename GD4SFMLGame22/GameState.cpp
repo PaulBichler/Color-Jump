@@ -4,9 +4,18 @@
 
 GameState::GameState(StateStack& stack, Context context)
 : State(stack, context)
-, m_world(*context.window, *context.fonts, *context.level_manager)
+, m_world(*context.window, *context.fonts, *context.sounds, *context.level_manager)
 , m_player(*context.player)
 {
+	m_world.SetLoseCallback([this]
+	{
+		RequestStackPush(StateID::kLevelLose);	
+	});
+
+	m_world.SetWinCallback([this]
+	{
+		RequestStackPush(StateID::kLevelWin);	
+	});
 }
 
 void GameState::Draw()

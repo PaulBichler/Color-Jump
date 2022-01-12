@@ -20,5 +20,6 @@ public:
 	static sf::Vector2f UnitVector(sf::Vector2f vector);
 	static float Length(sf::Vector2f vector);
 	static float ToDegrees(float angle);
+	static void Debug(const std::string& message);
 };
 

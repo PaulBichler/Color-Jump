@@ -59,6 +59,10 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::str
 			{
 				CreatePlatform(EPlatformType::kImpact, tile_type, level_info, row, col, level_parent, spawn_pos);
 			}
+			else if(tile_type == kFinish)
+			{
+				CreatePlatform(EPlatformType::kGoal, tile_type, level_info, row, col, level_parent, spawn_pos);
+			}
 			else if(tile_type != kNone)
 			{
 				SceneNode::Ptr tilePtr(m_tile_factory.CreateTile(id, spawn_pos, tile_type, is_collider_layer));
@@ -102,16 +106,22 @@ std::vector<std::vector<int>> LevelLoader::LevelDataToVector(const std::string& 
 	return levelDataVector;
 }
 
-void LevelLoader::CreatePlatform(EPlatformType type, ETileType tile_type, LevelInfo& level_info, int row, int col, SceneNode::Ptr& parent, sf::Vector2f spawn_pos)
+void LevelLoader::CreatePlatform(const EPlatformType type, const ETileType tile_type, LevelInfo& level_info, const int row, const int col, const SceneNode::Ptr& parent, const sf::Vector2f spawn_pos)
 {
 	std::unique_ptr<Platform> platform(new Platform(type, m_textures));
 	AddPlatformParts(platform.get(), row, col, parent, tile_type, spawn_pos);
+
+	if (tile_type == kImpactPlatform)
+	{
+		platform->SetType(EPlatformType::kImpact);
+	}
+
 	level_info.platforms.emplace_back(std::move(platform));
 }
 
-void LevelLoader::AddPlatformParts(Platform* platform, int row, int col, SceneNode::Ptr& parent, ETileType tile_type, sf::Vector2f spawn_pos)
+void LevelLoader::AddPlatformParts(Platform* platform, const int row, const int col, const SceneNode::Ptr& parent, const ETileType tile_type, sf::Vector2f spawn_pos)
 {
-	ETileType type = static_cast<ETileType>(m_level_data_vector[row][col]);
+	const ETileType type = static_cast<ETileType>(m_level_data_vector[row][col]);
 
 	std::unique_ptr<PlatformPart> platform_part(m_tile_factory.CreatePlatformPart(type, spawn_pos, platform, tile_type));
 	parent->AttachChild(std::move(platform_part));

@@ -3,11 +3,13 @@
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/System/Time.hpp>
 
-#include "LevelManager.hpp"
+#include "MusicPlayer.hpp"
 #include "Player.hpp"
 #include "ResourceHolder.hpp"
 #include "ResourceIdentifiers.hpp"
 #include "StateStack.hpp"
+
+#include "LevelManager.hpp"
 
 class Application
 {
@@ -29,7 +31,8 @@ private:
 	TextureHolder m_textures;
 	FontHolder m_fonts;
 
-	LevelManager m_level_manager;
+	MusicPlayer m_music;
+	SoundPlayer m_sounds;
 
 	StateStack m_stack;
 
@@ -38,5 +41,7 @@ private:
 
 	std::size_t m_statistics_numframes;
 	static const sf::Time kTimePerFrame;
+
+	LevelManager m_level_manager;
 };
 

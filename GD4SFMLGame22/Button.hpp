@@ -9,6 +9,10 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 
+#include "ButtonType.hpp"
+#include "SoundPlayer.hpp"
+#include "State.hpp"
+
 namespace GUI
 {
 	class Button : public Component
@@ -18,29 +22,28 @@ namespace GUI
 		typedef std::function<void()> Callback;
 
 	public:
-		Button(const FontHolder& fonts, const TextureHolder& textures);
+		explicit Button(State::Context context);
 		void SetCallback(Callback callback);
 		void SetText(const std::string& text);
 		void SetToggle(bool flag);
 
-		virtual bool IsSelectable() const override;
-		virtual void Select() override;
-		virtual void Deselect() override;
-		virtual void Activate() override;
-		virtual void Deactivate() override;
-		virtual void HandleEvent(const sf::Event& event) override;
+		bool IsSelectable() const override;
+		void Select() override;
+		void Deselect() override;
+		void Activate() override;
+		void Deactivate() override;
+		void HandleEvent(const sf::Event& event) override;
 
 	private:
-		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+		void ChangeTexture(ButtonType buttonType);
 
 	private:
 		Callback m_callback;
-		const sf::Texture& m_normal_texture;
-		const sf::Texture& m_selected_texture;
-		const sf::Texture& m_pressed_texture;
 		sf::Sprite m_sprite;
 		sf::Text m_text;
 		bool m_is_toggle;
+		SoundPlayer& m_sounds;
 	};
 }
 

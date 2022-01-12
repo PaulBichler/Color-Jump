@@ -6,17 +6,18 @@
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
+#include "ButtonType.hpp"
+
 namespace GUI
 {
-	Button::Button(const FontHolder& fonts, const TextureHolder& textures)
-	: m_normal_texture(textures.Get(Textures::kButtonNormal))
-	, m_selected_texture(textures.Get(Textures::kButtonSelected))
-	, m_pressed_texture(textures.Get(Textures::kButtonPressed))
-	, m_text("", fonts.Get(Fonts::Main), 16)
-	, m_is_toggle(false)
+	Button::Button(const State::Context context)
+		: m_sprite(context.textures->Get(Textures::kButtons))
+		, m_text("", context.fonts->Get(Fonts::Main), 16)
+		, m_is_toggle(false)
+		, m_sounds(*context.sounds)
 	{
-		m_sprite.setTexture(m_normal_texture);
-		sf::FloatRect bounds = m_sprite.getLocalBounds();
+		ChangeTexture(ButtonType::Normal);
+		const sf::FloatRect bounds = m_sprite.getLocalBounds();
 		m_text.setPosition(bounds.width / 2, bounds.height / 2);
 
 	}
@@ -32,7 +33,7 @@ namespace GUI
 		Utility::CentreOrigin(m_text);
 	}
 
-	void Button::SetToggle(bool flag)
+	void Button::SetToggle(const bool flag)
 	{
 		m_is_toggle = flag;
 	}
@@ -45,45 +46,46 @@ namespace GUI
 	void Button::Select()
 	{
 		Component::Select();
-		m_sprite.setTexture(m_selected_texture);
+		ChangeTexture(ButtonType::Selected);
 	}
 
 	void Button::Deselect()
 	{
 		Component::Deselect();
-		m_sprite.setTexture(m_normal_texture);
+		ChangeTexture(ButtonType::Normal);
 	}
 
 	void Button::Activate()
 	{
 		Component::Activate();
 		//If toggle then show button is pressed or toggled
-		if(m_is_toggle)
+		if (m_is_toggle)
 		{
-			m_sprite.setTexture(m_pressed_texture);
+			ChangeTexture(ButtonType::Pressed);
 		}
-		if(m_callback)
+		if (m_callback)
 		{
 			m_callback();
 		}
-		if(!m_is_toggle)
+		if (!m_is_toggle)
 		{
 			Deactivate();
 		}
+		m_sounds.Play(SoundEffect::kButton);
 	}
 
 	void Button::Deactivate()
 	{
 		Component::Deactivate();
-		if(m_is_toggle)
+		if (m_is_toggle)
 		{
-			if(IsSelected())
+			if (IsSelected())
 			{
-				m_sprite.setTexture(m_selected_texture);
+				ChangeTexture(ButtonType::Selected);
 			}
 			else
 			{
-				m_sprite.setTexture(m_normal_texture);
+				ChangeTexture(ButtonType::Normal);
 			}
 		}
 	}
@@ -97,5 +99,11 @@ namespace GUI
 		states.transform *= getTransform();
 		target.draw(m_sprite, states);
 		target.draw(m_text, states);
+	}
+
+	void Button::ChangeTexture(ButtonType buttonType)
+	{
+		const sf::IntRect textureRect(0, 50 * static_cast<int>(buttonType), 200, 50);
+		m_sprite.setTextureRect(textureRect);
 	}
 }

@@ -1,6 +1,6 @@
 #include "LevelManager.hpp"
 
-LevelManager::LevelData::LevelData(std::string platform_layer_path, std::string background_layer_path, sf::Vector2u tile_size)
+LevelManager::LevelData::LevelData(std::string platform_layer_path, std::string background_layer_path, const sf::Vector2u tile_size)
 	: m_platform_layer_path(std::move(platform_layer_path)),
 	m_background_layer_path(std::move(background_layer_path)),
 	m_tile_size(tile_size)
@@ -20,4 +20,15 @@ LevelManager::LevelManager() : m_current_index(0)
 LevelManager::LevelData LevelManager::GetCurrentLevelData() const
 {
 	return m_levels[m_current_index];
+}
+
+void LevelManager::NextLevel()
+{
+	if(DoesNextLevelExist())
+		m_current_index++;
+}
+
+bool LevelManager::DoesNextLevelExist() const
+{
+	return m_current_index + 1 < m_levels.size();
 }

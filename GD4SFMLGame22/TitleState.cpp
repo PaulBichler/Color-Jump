@@ -5,7 +5,7 @@
 
 #include "ResourceHolder.hpp"
 
-TitleState::TitleState(StateStack& stack, Context context)
+TitleState::TitleState(StateStack& stack, const Context context)
 : State(stack, context)
 , m_show_text(true)
 , m_text_effect_time(sf::Time::Zero)
@@ -28,7 +28,7 @@ void TitleState::Draw()
 	}
 }
 
-bool TitleState::Update(sf::Time dt)
+bool TitleState::Update(const sf::Time dt)
 {
 	m_text_effect_time += dt;
 

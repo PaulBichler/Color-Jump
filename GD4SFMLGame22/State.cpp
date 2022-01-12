@@ -2,18 +2,20 @@
 
 #include "StateStack.hpp"
 
-State::Context::Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, Player& player, LevelManager& level_manager)
-: window(&window)
-, textures(&textures)
-, fonts(&fonts)
-, player(&player)
-, level_manager(&level_manager)
+State::Context::Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, Player& player,
+                        MusicPlayer& music, SoundPlayer& sounds, LevelManager& level_manager)
+	: window(&window)
+	  , textures(&textures), fonts(&fonts)
+	  , player(&player)
+	  , music(&music)
+	  , sounds(&sounds)
+	  , level_manager(&level_manager)
 {
 }
 
 State::State(StateStack& stack, Context context)
-:m_stack(&stack)
-, m_context(context)
+	: m_stack(&stack)
+	  , m_context(context)
 {
 }
 

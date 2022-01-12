@@ -3,5 +3,6 @@ enum class Layers
 {
 	kBackground,
 	kLevel,
-	kLayerCount
+	kLayerCount,
+	kUpperAir
 };
