@@ -8,6 +8,7 @@ enum ETileType
 	kRedPlayer = 64,
 	kRedPlatform,
 	kBluePlatform,
-	kImpactPlatform = 85,
+	kImpactPlatform = 49,
+	kSpikes = 90,
 	kFinish = 37
 };

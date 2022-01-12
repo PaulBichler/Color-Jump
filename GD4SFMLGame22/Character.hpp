@@ -5,7 +5,6 @@
 #include "Entity.hpp"
 #include "RayGround.hpp"
 #include "ResourceIdentifiers.hpp"
-#include "TextNode.hpp"
 
 class Character : public Entity
 {

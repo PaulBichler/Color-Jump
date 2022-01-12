@@ -281,6 +281,11 @@ void World::HandleCollisions()
 			}
 		}
 
+		if (MatchesCategories(pair, Category::Type::kPlayer, Category::Type::kEnemyTrap))
+		{
+			m_lose_callback();
+		}
+
 		GetGroundRayCasts(pairs_player_one, pair, Category::kRayOne);
 		GetGroundRayCasts(pairs_player_two, pair, Category::kRayTwo);
 	}

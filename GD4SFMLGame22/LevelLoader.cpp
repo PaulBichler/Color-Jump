@@ -19,13 +19,13 @@ LevelLoader::LevelLoader(LevelManager::LevelData& level_data, TextureHolder& tex
 LevelLoader::LevelInfo LevelLoader::LoadLevel()
 {
 	LevelInfo level_info;
-	level_info.background_parent = LoadLevelLayer(level_info, m_level_data.m_background_layer_path);
-	level_info.level_parent = LoadLevelLayer(level_info, m_level_data.m_platform_layer_path);
+	level_info.background_parent = LoadLevelLayer(level_info, m_level_data.m_background_layer_path, false);
+	level_info.level_parent = LoadLevelLayer(level_info, m_level_data.m_platform_layer_path, true);
 
 	return level_info;
 }
 
-SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::string& csv_path)
+SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::string& csv_path, const bool is_collider_layer)
 {
 	SceneNode::Ptr level_parent = std::make_unique<SceneNode>();
 	sf::Vector2f spawn_pos(0.f, 0.f);
@@ -41,13 +41,13 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::str
 
 			if(tile_type == kRedPlayer)
 			{
-				std::unique_ptr<Character> player_1(m_tile_factory.CreatePlayer(id, ECharacterType::kRed, spawn_pos));
+				std::unique_ptr<Character> player_1(m_tile_factory.CreatePlayer(id, tile_type, ECharacterType::kRed, spawn_pos));
 				level_info.player_1 = player_1.get();
 				level_parent->AttachChild(std::move(player_1));
 			}
 			else if(tile_type == kBluePlayer)
 			{
-				std::unique_ptr<Character> player_2(m_tile_factory.CreatePlayer(id, ECharacterType::kBlue, spawn_pos));
+				std::unique_ptr<Character> player_2(m_tile_factory.CreatePlayer(id, tile_type, ECharacterType::kBlue, spawn_pos));
 				level_info.player_2 = player_2.get();
 				level_parent->AttachChild(std::move(player_2));
 			}
@@ -61,7 +61,7 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::str
 			}
 			else if(tile_type != kNone)
 			{
-				SceneNode::Ptr tilePtr(m_tile_factory.CreateTile(id, spawn_pos, tile_type));
+				SceneNode::Ptr tilePtr(m_tile_factory.CreateTile(id, spawn_pos, tile_type, is_collider_layer));
 				if(tilePtr.get() != nullptr)
 					level_parent->AttachChild(std::move(tilePtr));
 			}

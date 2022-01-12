@@ -23,7 +23,7 @@ public:
 	LevelInfo LoadLevel();
 
 private:
-	SceneNode::Ptr LoadLevelLayer(LevelInfo& level_info, const std::string& csv_path);
+	SceneNode::Ptr LoadLevelLayer(LevelInfo& level_info, const std::string& csv_path, bool is_collider_layer);
 	std::vector<std::vector<int>> LevelDataToVector(const std::string& csv_path) const;
 
 private:
