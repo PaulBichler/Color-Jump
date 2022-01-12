@@ -8,7 +8,7 @@
 #include "Button.hpp"
 #include "Utility.hpp"
 
-LevelWinState::LevelWinState(StateStack& stack, Context context)
+LevelWinState::LevelWinState(StateStack& stack, const Context context)
 	: State(stack, context)
 {
 	const sf::Font& font = context.fonts->Get(Fonts::Main);
@@ -24,7 +24,7 @@ LevelWinState::LevelWinState(StateStack& stack, Context context)
 	if(context.level_manager->DoesNextLevelExist()) 
 	{
 		const auto next_level_button = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
-		next_level_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 100);
+		next_level_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 50);
 		next_level_button->SetText("Next Level");
 		next_level_button->SetCallback([this]()
 		{

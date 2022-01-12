@@ -12,12 +12,10 @@ public:
 	EPlatformType GetPlatformType() const;
 	void AddPlatformPart(PlatformPart* tile);
 	virtual bool DoesPlayerCollide(ECharacterType character_type);
-
+	void SetType(EPlatformType type);
 protected:
 	EPlatformType m_type;
 	TextureHolder& m_textures;
 	std::vector<PlatformPart*> m_platform_parts;
-
-	void SetType(EPlatformType type);
 };
 

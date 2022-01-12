@@ -33,4 +33,5 @@ protected:
 private:
 	virtual void DrawCurrent(sf::RenderTarget&, sf::RenderStates states) const override;
 	sf::FloatRect GetBoundingRect() const override;
+	
 };

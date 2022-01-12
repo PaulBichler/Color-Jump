@@ -16,8 +16,8 @@ Character::Character(ECharacterType type, const TextureHolder& textures, const s
 	  m_grounded(true),
 	  m_current_platform(nullptr)
 {
-	std::cout << "Character created." << std::endl;
 
+	Utility::Debug("Character created.");
 	Utility::CentreOrigin(m_sprite);
 
 	std::unique_ptr<RayGround> ray(new RayGround(this));
@@ -63,6 +63,7 @@ void Character::SetGrounded(Platform* platform)
 
 void Character::SetFalling()
 {
+	Utility::Debug("Character set falling.");
 	m_grounded = false;
 	m_current_platform = nullptr;
 }

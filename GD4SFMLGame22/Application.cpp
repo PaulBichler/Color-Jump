@@ -21,13 +21,13 @@ Application::Application()
 
 	m_fonts.Load(Fonts::Main, "Media/Fonts/Sansation.ttf");
 	m_textures.Load(Textures::kTitleScreen, "Media/Textures/TitleScreen.png");
-	m_textures.Load(Textures::kButtonNormal, "Media/Textures/ButtonNormal.png");
+	m_textures.Load(Textures::kButtonNormal, "Media/Textures/Button.png");
 	m_textures.Load(Textures::kButtonSelected, "Media/Textures/ButtonSelected.png");
 	m_textures.Load(Textures::kButtonPressed, "Media/Textures/ButtonPressed.png");
 
 	m_statistics_text.setFont(m_fonts.Get(Fonts::Main));
 	m_statistics_text.setPosition(5.f, 5.f);
-	m_statistics_text.setCharacterSize(10u);
+	m_statistics_text.setCharacterSize(16u);
 
 	RegisterStates();
 	m_stack.PushState(StateID::kTitle);

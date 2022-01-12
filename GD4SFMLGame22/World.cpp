@@ -23,7 +23,7 @@ World::World(sf::RenderWindow& window, FontHolder& font, LevelManager& level_man
 {
 	LoadTextures();
 	BuildScene();
-	std::cout << m_camera.getSize().x << m_camera.getSize().y << std::endl;
+	Utility::Debug(std::to_string(m_camera.getSize().x) + " " + std::to_string(m_camera.getSize().y));
 	m_camera.setCenter(m_spawn_position);
 }
 
@@ -34,7 +34,6 @@ void World::Update(sf::Time dt)
 
 	//m_player_aircraft->SetVelocity(0.f, 0.f);
 	DestroyEntitiesOutsideView();
-	GuideMissiles();
 
 	//Forward commands to the scenegraph until the command queue is empty
 	while (!m_command_queue.IsEmpty())
@@ -45,8 +44,6 @@ void World::Update(sf::Time dt)
 	HandleCollisions();
 	//Remove all destroyed entities
 	m_scenegraph.RemoveWrecks();
-
-	SpawnEnemies();
 
 	//Apply movement
 	m_scenegraph.Update(dt, m_command_queue);
@@ -70,6 +67,7 @@ void World::LoadTextures()
 	m_textures.Load(Textures::kMissile, "Media/Textures/Missile.png");
 
 	m_textures.Load(Textures::kLevelTileSet, "Media/Textures/TileSet.png");
+	m_textures.Load(Textures::kImpactPlatform, "Media/Textures/ImpactPlatform.png");
 	m_textures.Load(Textures::kImpactRedPlatform, "Media/Textures/RedImpactPlatform.png");
 	m_textures.Load(Textures::kImpactBluePlatform, "Media/Textures/BlueImpactPlatform.png");
 }
@@ -125,90 +123,6 @@ sf::FloatRect World::GetBattlefieldBounds() const
 	return bounds;
 }
 
-void World::SpawnEnemies()
-{
-	//Spawn an enemy when they are relevant - they are relevant when they enter the battlefield bounds
-	while (!m_enemy_spawn_points.empty() && m_enemy_spawn_points.back().m_y > GetBattlefieldBounds().top)
-	{
-		SpawnPoint spawn = m_enemy_spawn_points.back();
-		std::unique_ptr<Aircraft> enemy(new Aircraft(spawn.m_type, m_textures, m_fonts));
-		enemy->setPosition(spawn.m_x, spawn.m_y);
-		enemy->setRotation(180.f);
-		m_scene_layers[static_cast<int>(Layers::kLevel)]->AttachChild(std::move(enemy));
-
-		m_enemy_spawn_points.pop_back();
-	}
-}
-
-void World::AddEnemy(AircraftType type, float relX, float relY)
-{
-	SpawnPoint spawn(type, m_spawn_position.x + relX, m_spawn_position.y - relY);
-	m_enemy_spawn_points.emplace_back(spawn);
-}
-
-void World::AddEnemies()
-{
-	//Add all enemies
-	AddEnemy(AircraftType::kRaptor, 0.f, 500.f);
-	AddEnemy(AircraftType::kRaptor, 0.f, 1000.f);
-	AddEnemy(AircraftType::kRaptor, 100.f, 1100.f);
-	AddEnemy(AircraftType::kRaptor, -100.f, 1100.f);
-	AddEnemy(AircraftType::kAvenger, -70.f, 1400.f);
-	AddEnemy(AircraftType::kAvenger, 70.f, 1400.f);
-	AddEnemy(AircraftType::kAvenger, 70.f, 1600.f);
-
-	//Sort according to y value so that lower enemies are checked first
-	std::sort(m_enemy_spawn_points.begin(), m_enemy_spawn_points.end(), [](SpawnPoint lhs, SpawnPoint rhs)
-	{
-		return lhs.m_y < rhs.m_y;
-	});
-}
-
-void World::GuideMissiles()
-{
-	// Setup command that stores all enemies in mActiveEnemies
-	Command enemyCollector;
-	enemyCollector.category = Category::kEnemyAircraft;
-	enemyCollector.action = DerivedAction<Aircraft>([this](Aircraft& enemy, sf::Time)
-	{
-		if (!enemy.IsDestroyed())
-			m_active_enemies.push_back(&enemy);
-	});
-
-	// Setup command that guides all missiles to the enemy which is currently closest to the player
-	Command missileGuider;
-	missileGuider.category = Category::kAlliedProjectile;
-	missileGuider.action = DerivedAction<Projectile>([this](Projectile& missile, sf::Time)
-	{
-		// Ignore unguided bullets
-		if (!missile.IsGuided())
-			return;
-
-		float minDistance = std::numeric_limits<float>::max();
-		Aircraft* closestEnemy = nullptr;
-
-		// Find closest enemy
-		for (Aircraft* enemy : m_active_enemies)
-		{
-			float enemyDistance = distance(missile, *enemy);
-
-			if (enemyDistance < minDistance)
-			{
-				closestEnemy = enemy;
-				minDistance = enemyDistance;
-			}
-		}
-
-		if (closestEnemy)
-			missile.GuideTowards(closestEnemy->GetWorldPosition());
-	});
-
-	// Push commands, reset active enemies
-	m_command_queue.Push(enemyCollector);
-	m_command_queue.Push(missileGuider);
-	m_active_enemies.clear();
-}
-
 bool MatchesCategories(SceneNode::Pair& collision, Category::Type type1, Category::Type type2)
 {
 	const unsigned int category1 = collision.first->GetCategory();
@@ -243,14 +157,19 @@ void World::PlayerGroundRayCast(const std::set<SceneNode::Pair>& pairs)
 		}
 	}
 
+	if (player_pair.first == nullptr || player_pair.second == nullptr)
+	{
+		return;
+	}
+
 	if (!collide)
 	{
-		if (player_pair.first != nullptr && player_pair.first->GetCategory() == Category::Type::kRay)
+		if (player_pair.first != nullptr && (player_pair.first->GetCategory() & Category::Type::kRay) != 0)
 		{
-			const auto& ray_ground = dynamic_cast<RayGround&>(*player_pair.first);
+			const auto& ray_ground = static_cast<RayGround&>(*player_pair.first);
 			ray_ground.SetFalling();
 		}
-		else if(player_pair.second != nullptr)
+		else if (player_pair.second != nullptr && (player_pair.second->GetCategory() & Category::Type::kRay) != 0)
 		{
 			const auto& ray_ground = static_cast<RayGround&>(*player_pair.second);
 			ray_ground.SetFalling();
@@ -282,16 +201,16 @@ void World::HandleCollisions()
 			auto& platform_part = static_cast<PlatformPart&>(*pair.second);
 			Platform* platform = platform_part.GetPlatform();
 
-			if(platform->DoesPlayerCollide(player.GetCharacterType()))
+			if (platform->DoesPlayerCollide(player.GetCharacterType()))
 			{
 				//Collision
-				player.SetGrounded(platform);	
+				player.SetGrounded(platform);
 			}
 
 			//Check Win Condition
-			if(!m_has_won && platform->GetPlatformType() == EPlatformType::kGoal)
+			if (!m_has_won && platform->GetPlatformType() == EPlatformType::kGoal)
 			{
-				if(m_level_info.player_1->IsOnPlatformOfType(EPlatformType::kGoal) &&
+				if (m_level_info.player_1->IsOnPlatformOfType(EPlatformType::kGoal) &&
 					m_level_info.player_2->IsOnPlatformOfType(EPlatformType::kGoal))
 				{
 					//Win

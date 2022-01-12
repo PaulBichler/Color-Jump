@@ -32,8 +32,8 @@ private:
 	TileFactory m_tile_factory;
 	std::vector<std::vector<int>> m_level_data_vector;
 
-	void CreatePlatform(EPlatformType type, ETileType tile_type, LevelInfo& level_info, int row, int col, SceneNode::Ptr& parent, sf::Vector2f spawn_pos);
-	void AddPlatformParts(Platform* platform, int row, int col, SceneNode::Ptr& parent, ETileType tile_type, sf::Vector2f spawn_pos);
+	void CreatePlatform(EPlatformType type, ETileType tile_type, LevelInfo& level_info, int row, int col, const SceneNode::Ptr& parent, sf::Vector2f spawn_pos);
+	void AddPlatformParts(Platform* platform, int row, int col, const SceneNode::Ptr& parent, ETileType tile_type, sf::Vector2f spawn_pos);
 
 };
 
