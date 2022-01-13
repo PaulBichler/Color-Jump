@@ -9,5 +9,7 @@ enum class EPlatformType
 	kHorizontalBlue,
 	kVerticalRed,
 	kVerticalBlue,
+	kHorizontalPulse,
+	kVerticalPulse,
 	kGoal
 };

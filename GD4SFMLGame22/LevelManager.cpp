@@ -15,6 +15,10 @@ LevelManager::LevelManager() : m_current_index(0)
 	m_levels.emplace_back("LevelData/LevelData_Level3_Platforms.csv", "LevelData/LevelData_Level3_Background.csv", sf::Vector2u(64, 64));
 	m_levels.emplace_back("LevelData/LevelData_Level4_Platforms.csv", "LevelData/LevelData_Level4_Background.csv", sf::Vector2u(64, 64));
 	m_levels.emplace_back("LevelData/LevelData_Level5_Platforms.csv", "LevelData/LevelData_Level5_Background.csv", sf::Vector2u(64, 64));
+	m_levels.emplace_back("LevelData/LevelData_Level6_Platforms.csv", "LevelData/LevelData_Level6_Background.csv", sf::Vector2u(64, 64));
+	m_levels.emplace_back("LevelData/LevelData_Level7_Platforms.csv", "LevelData/LevelData_Level7_Background.csv", sf::Vector2u(64, 64));
+	m_levels.emplace_back("LevelData/LevelData_Level8_Platforms.csv", "LevelData/LevelData_Level8_Background.csv", sf::Vector2u(64, 64));
+	m_levels.emplace_back("LevelData/LevelData_Level9_Platforms.csv", "LevelData/LevelData_Level9_Background.csv", sf::Vector2u(64, 64));
 }
 
 LevelManager::LevelData LevelManager::GetCurrentLevelData() const

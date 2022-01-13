@@ -36,6 +36,7 @@ World::World(sf::RenderTarget& output_target, FontHolder& font, SoundPlayer& sou
 void World::Update(sf::Time dt)
 {
 	UpdateSounds();
+	UpdatePlatforms(dt);
 
 	//Scroll the world
 	m_camera.move(0, m_scrollspeed * dt.asSeconds());
@@ -92,7 +93,7 @@ void World::LoadTextures()
 	m_textures.Load(Textures::kParticle, "Media/Textures/Particle.png");
 	m_textures.Load(Textures::kFinishLine, "Media/Textures/FinishLine.png");
 
-	m_textures.Load(Textures::kLevelTileSet, "Media/Textures/TileSet.png");
+	m_textures.Load(Textures::kLevelTileSet, "Media/Textures/spritesheet.png");
 	m_textures.Load(Textures::kHImpactRedPlatform, "Media/Textures/RedImpactPlatform.png");
 	m_textures.Load(Textures::kHImpactBluePlatform, "Media/Textures/BlueImpactPlatform.png");
 	m_textures.Load(Textures::kVImpactRedPlatform, "Media/Textures/VRedImpactPlatform.png");
@@ -283,4 +284,10 @@ void World::UpdateSounds() const
 
 	// Remove unused sounds
 	m_sounds.RemoveStoppedSounds();
+}
+
+void World::UpdatePlatforms(sf::Time dt) const
+{
+	for (const auto& platform : m_level_info.platforms)
+		platform->Update(dt);
 }

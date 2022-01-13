@@ -63,6 +63,18 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::str
 			{
 				CreatePlatform(EPlatformType::kVerticalImpact, tile_type, level_info, row, col, level_parent, spawn_pos);
 			}
+			else if(tile_type == kHorizontalPulsePlatform)
+			{
+				CreatePlatform(EPlatformType::kHorizontalPulse, tile_type, level_info, row, col, level_parent, spawn_pos);
+			}
+			else if(tile_type == kBluePlatform)
+			{
+				CreatePlatform(EPlatformType::kHorizontalBlue, tile_type, level_info, row, col, level_parent, spawn_pos);
+			}
+			else if(tile_type == kRedPlatform)
+			{
+				CreatePlatform(EPlatformType::kHorizontalRed, tile_type, level_info, row, col, level_parent, spawn_pos);
+			}
 			else if(tile_type == kFinish)
 			{
 				CreatePlatform(EPlatformType::kGoal, tile_type, level_info, row, col, level_parent, spawn_pos);
