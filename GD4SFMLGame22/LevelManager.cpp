@@ -9,9 +9,16 @@ LevelManager::LevelData::LevelData(std::string platform_layer_path, std::string 
 
 LevelManager::LevelManager() : m_current_index(0)
 {
-	//Holds level data file path
-	m_levels.emplace_back("LevelData/level_1_Platforms.csv", "LevelData/level_1_Background.csv", sf::Vector2u(64, 64));
-	m_levels.emplace_back("LevelData/level_2_Platforms.csv", "LevelData/level_1_Background.csv", sf::Vector2u(64, 64));
+	//Holds level data file paths
+	m_levels.emplace_back("LevelData/LevelData_Level1_Platforms.csv", "LevelData/LevelData_Level1_Background.csv", sf::Vector2u(64, 64));
+	m_levels.emplace_back("LevelData/LevelData_Level2_Platforms.csv", "LevelData/LevelData_Level2_Background.csv", sf::Vector2u(64, 64));
+	m_levels.emplace_back("LevelData/LevelData_Level3_Platforms.csv", "LevelData/LevelData_Level3_Background.csv", sf::Vector2u(64, 64));
+	m_levels.emplace_back("LevelData/LevelData_Level4_Platforms.csv", "LevelData/LevelData_Level4_Background.csv", sf::Vector2u(64, 64));
+	m_levels.emplace_back("LevelData/LevelData_Level5_Platforms.csv", "LevelData/LevelData_Level5_Background.csv", sf::Vector2u(64, 64));
+	m_levels.emplace_back("LevelData/LevelData_Level6_Platforms.csv", "LevelData/LevelData_Level6_Background.csv", sf::Vector2u(64, 64));
+	m_levels.emplace_back("LevelData/LevelData_Level7_Platforms.csv", "LevelData/LevelData_Level7_Background.csv", sf::Vector2u(64, 64));
+	m_levels.emplace_back("LevelData/LevelData_Level8_Platforms.csv", "LevelData/LevelData_Level8_Background.csv", sf::Vector2u(64, 64));
+	m_levels.emplace_back("LevelData/LevelData_Level9_Platforms.csv", "LevelData/LevelData_Level9_Background.csv", sf::Vector2u(64, 64));
 }
 
 LevelManager::LevelData LevelManager::GetCurrentLevelData() const

@@ -13,3 +13,30 @@ ETileType Tile::GetType() const
 {
 	return m_type;
 }
+
+void Tile::SetActiveCollider(bool active)
+{
+	m_has_collider = active;
+}
+
+unsigned Tile::GetCategory() const
+{
+	if(!m_has_collider)
+		return SpriteNode::GetCategory();
+
+	switch (m_type)
+	{
+	case kSpikes:
+		return Category::kEnemyTrap;
+	default:
+		return SpriteNode::GetCategory();
+	}
+}
+
+sf::FloatRect Tile::GetBoundingRect() const
+{
+	if(!m_has_collider)
+		return SpriteNode::GetBoundingRect();
+
+	return GetWorldTransform().transformRect(m_sprite.getGlobalBounds());
+}

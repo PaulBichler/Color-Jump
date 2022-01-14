@@ -19,13 +19,13 @@ LevelLoader::LevelLoader(LevelManager::LevelData& level_data, TextureHolder& tex
 LevelLoader::LevelInfo LevelLoader::LoadLevel()
 {
 	LevelInfo level_info;
-	level_info.background_parent = LoadLevelLayer(level_info, m_level_data.m_background_layer_path);
-	level_info.level_parent = LoadLevelLayer(level_info, m_level_data.m_platform_layer_path);
+	level_info.background_parent = LoadLevelLayer(level_info, m_level_data.m_background_layer_path, false);
+	level_info.level_parent = LoadLevelLayer(level_info, m_level_data.m_platform_layer_path, true);
 
 	return level_info;
 }
 
-SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::string& csv_path)
+SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::string& csv_path, const bool is_collider_layer)
 {
 	SceneNode::Ptr level_parent = std::make_unique<SceneNode>();
 	sf::Vector2f spawn_pos(0.f, 0.f);
@@ -41,13 +41,13 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::str
 
 			if(tile_type == kRedPlayer)
 			{
-				std::unique_ptr<Character> player_1(m_tile_factory.CreatePlayer(id, ECharacterType::kRed, spawn_pos));
+				std::unique_ptr<Character> player_1(m_tile_factory.CreatePlayer(id, tile_type, ECharacterType::kRed, spawn_pos));
 				level_info.player_1 = player_1.get();
 				level_parent->AttachChild(std::move(player_1));
 			}
 			else if(tile_type == kBluePlayer)
 			{
-				std::unique_ptr<Character> player_2(m_tile_factory.CreatePlayer(id, ECharacterType::kBlue, spawn_pos));
+				std::unique_ptr<Character> player_2(m_tile_factory.CreatePlayer(id, tile_type, ECharacterType::kBlue, spawn_pos));
 				level_info.player_2 = player_2.get();
 				level_parent->AttachChild(std::move(player_2));
 			}
@@ -55,9 +55,25 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::str
 			{
 				CreatePlatform(EPlatformType::kNormal, tile_type, level_info, row, col, level_parent, spawn_pos);
 			}
-			else if(tile_type == kImpactPlatform)
+			else if(tile_type == kHorizontalImpactPlatform)
 			{
-				CreatePlatform(EPlatformType::kImpact, tile_type, level_info, row, col, level_parent, spawn_pos);
+				CreatePlatform(EPlatformType::kHorizontalImpact, tile_type, level_info, row, col, level_parent, spawn_pos);
+			}
+			else if(tile_type == kVerticalImpactPlatform)
+			{
+				CreatePlatform(EPlatformType::kVerticalImpact, tile_type, level_info, row, col, level_parent, spawn_pos);
+			}
+			else if(tile_type == kHorizontalPulsePlatform)
+			{
+				CreatePlatform(EPlatformType::kHorizontalPulse, tile_type, level_info, row, col, level_parent, spawn_pos);
+			}
+			else if(tile_type == kBluePlatform)
+			{
+				CreatePlatform(EPlatformType::kHorizontalBlue, tile_type, level_info, row, col, level_parent, spawn_pos);
+			}
+			else if(tile_type == kRedPlatform)
+			{
+				CreatePlatform(EPlatformType::kHorizontalRed, tile_type, level_info, row, col, level_parent, spawn_pos);
 			}
 			else if(tile_type == kFinish)
 			{
@@ -65,7 +81,7 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::str
 			}
 			else if(tile_type != kNone)
 			{
-				SceneNode::Ptr tilePtr(m_tile_factory.CreateTile(id, spawn_pos, tile_type));
+				SceneNode::Ptr tilePtr(m_tile_factory.CreateTile(id, spawn_pos, tile_type, is_collider_layer));
 				if(tilePtr.get() != nullptr)
 					level_parent->AttachChild(std::move(tilePtr));
 			}
@@ -110,12 +126,6 @@ void LevelLoader::CreatePlatform(const EPlatformType type, const ETileType tile_
 {
 	std::unique_ptr<Platform> platform(new Platform(type, m_textures));
 	AddPlatformParts(platform.get(), row, col, parent, tile_type, spawn_pos);
-
-	if (tile_type == kImpactPlatform)
-	{
-		platform->SetType(EPlatformType::kImpact);
-	}
-
 	level_info.platforms.emplace_back(std::move(platform));
 }
 

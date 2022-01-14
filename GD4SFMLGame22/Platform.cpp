@@ -8,7 +8,9 @@
 
 Platform::Platform(const EPlatformType platform_type, TextureHolder& textures)
 	: m_type(platform_type),
-	  m_textures(textures)
+	  m_textures(textures),
+	  m_current_texture(nullptr),
+	  m_current_pulse_cooldown(2.f)
 {
 	SetType(platform_type);
 }
@@ -21,23 +23,34 @@ EPlatformType Platform::GetPlatformType() const
 void Platform::AddPlatformPart(PlatformPart* tile)
 {
 	m_platform_parts.emplace_back(tile);
+
+	if(m_is_pulse)
+		tile->SetSpriteTexture(*m_current_texture, sf::IntRect(0, 0, (*m_current_texture).getSize().x, (*m_current_texture).getSize().y));
 }
 
 bool Platform::DoesPlayerCollide(const ECharacterType character_type)
 {
 	switch (m_type)
 	{
-	case EPlatformType::kImpact:
+	case EPlatformType::kHorizontalImpact:
 		if (character_type == ECharacterType::kBlue)
-			SetType(EPlatformType::kBlue);
+			SetType(EPlatformType::kHorizontalBlue);
 		else
-			SetType(EPlatformType::kRed);
+			SetType(EPlatformType::kHorizontalRed);
 		break;
-	case EPlatformType::kBlue:
+	case EPlatformType::kVerticalImpact:
+		if (character_type == ECharacterType::kBlue)
+			SetType(EPlatformType::kVerticalBlue);
+		else
+			SetType(EPlatformType::kVerticalRed);
+		break;
+	case EPlatformType::kHorizontalBlue:
+	case EPlatformType::kVerticalBlue:
 		if (character_type != ECharacterType::kBlue)
 			return false;
 		break;
-	case EPlatformType::kRed:
+	case EPlatformType::kHorizontalRed:
+	case EPlatformType::kVerticalRed:
 		if (character_type != ECharacterType::kRed)
 			return false;
 		break;
@@ -54,26 +67,73 @@ void Platform::SetType(const EPlatformType type)
 
 	m_type = type;
 
-	for (const auto part : m_platform_parts)
+
+	switch (type)
 	{
-		switch (type)
+	case EPlatformType::kHorizontalBlue:
 		{
-		case EPlatformType::kBlue:
-			{
-				sf::Texture& blue_texture = m_textures.Get(Textures::kImpactBluePlatform);
-				part->SetSpriteTexture(blue_texture,
-				                       sf::IntRect(0, 0, blue_texture.getSize().x, blue_texture.getSize().y));
-			}
-			break;
-		case EPlatformType::kRed:
-			{
-				sf::Texture& red_texture = m_textures.Get(Textures::kImpactRedPlatform);
-				part->SetSpriteTexture(red_texture,
-				                       sf::IntRect(0, 0, red_texture.getSize().x, red_texture.getSize().y));
-			}
-			break;
-		case EPlatformType::kNormal:
-		case EPlatformType::kGoal:;
+			SetTextureOnParts(m_textures.Get(Textures::kHImpactBluePlatform));
 		}
+		break;
+	case EPlatformType::kHorizontalRed:
+		{
+			SetTextureOnParts(m_textures.Get(Textures::kHImpactRedPlatform));
+		}
+		break;
+	case EPlatformType::kVerticalBlue:
+		{
+			SetTextureOnParts(m_textures.Get(Textures::kVImpactBluePlatform));
+		}
+		break;
+	case EPlatformType::kVerticalRed:
+		{
+			SetTextureOnParts(m_textures.Get(Textures::kVImpactRedPlatform));
+		}
+		break;
+	case EPlatformType::kHorizontalPulse:
+		{
+			m_is_pulse = true;
+			SetType(EPlatformType::kHorizontalRed);
+		}
+		break;
+	case EPlatformType::kNormal:
+	case EPlatformType::kGoal:;
 	}
+}
+
+void Platform::Update(sf::Time dt)
+{
+	if(!m_is_pulse)
+		return;
+
+	m_current_pulse_cooldown -= dt.asSeconds();
+
+	if(m_current_pulse_cooldown <= 0)
+	{
+		switch (m_type)
+		{
+		case EPlatformType::kHorizontalBlue:
+			SetType(EPlatformType::kHorizontalRed);
+			break;
+		case EPlatformType::kHorizontalRed:
+			SetType(EPlatformType::kHorizontalBlue);
+			break;
+		case EPlatformType::kVerticalBlue:
+			SetType(EPlatformType::kVerticalRed);
+			break;
+		case EPlatformType::kVerticalRed:
+			SetType(EPlatformType::kVerticalBlue);
+			break;
+		}
+
+		m_current_pulse_cooldown = 2.f;
+	}
+}
+
+void Platform::SetTextureOnParts(sf::Texture& texture)
+{
+	m_current_texture = &texture;
+
+	for (const auto part : m_platform_parts)
+		part->SetSpriteTexture(texture, sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
 }

@@ -45,6 +45,7 @@ private:
 	void HandleCollisions();
 	void DestroyEntitiesOutsideView();
 	void UpdateSounds() const;
+	void UpdatePlatforms(sf::Time dt) const;
 
 	static void PlayerGroundRayCast(const std::set<SceneNode::Pair>& pairs);
 	void GetGroundRayCasts(std::set<SceneNode::Pair>& pairs, const SceneNode::Pair pair, const Category::Type category) const;
