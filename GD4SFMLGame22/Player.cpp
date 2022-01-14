@@ -1,18 +1,17 @@
 #include "Player.hpp"
-#include "Aircraft.hpp"
 
 #include "Character.hpp"
 
 
 struct CharacterMover
 {
-	CharacterMover(float vx, float vy) : velocity(vx, vy)
+	CharacterMover(const float vx, const float vy) : velocity(vx, vy)
 	{
 	}
 
 	void operator()(Character& character, sf::Time) const
 	{
-		character.Accelerate(velocity * character.GetMaxSpeed());
+		character.Accelerate(character.GetMaxSpeed() * velocity);
 	}
 
 	sf::Vector2f velocity;
@@ -67,7 +66,7 @@ void Player::HandleEvent(const sf::Event& event, CommandQueue& commands)
 {
 	if (event.type == sf::Event::KeyPressed)
 	{
-		auto found = m_key_binding.find(event.key.code);
+		const auto found = m_key_binding.find(event.key.code);
 		if (found != m_key_binding.end() && !IsRealtimeAction(found->second))
 		{
 			commands.Push(m_action_binding[found->second]);
@@ -75,19 +74,19 @@ void Player::HandleEvent(const sf::Event& event, CommandQueue& commands)
 	}
 }
 
-void Player::HandleRealtimeInput(CommandQueue& commands)
+void Player::HandleRealtimeInput(CommandQueue& commands) const
 {
-	//Check if any keybinding keys are pressed
-	for (auto pair : m_key_binding)
+	//Check if any keyBinding keys are pressed
+	for (auto& pair : m_key_binding)
 	{
 		if (sf::Keyboard::isKeyPressed(pair.first) && IsRealtimeAction(pair.second))
 		{
-			commands.Push(m_action_binding[pair.second]);
+			commands.Push(m_action_binding.at(pair.second));
 		}
 	}
 }
 
-void Player::AssignKey(PlayerAction action, sf::Keyboard::Key key)
+void Player::AssignKey(const PlayerAction action, const sf::Keyboard::Key key)
 {
 	//Remove all keys that are already bound to action
 	for (auto itr = m_key_binding.begin(); itr != m_key_binding.end();)
@@ -104,9 +103,9 @@ void Player::AssignKey(PlayerAction action, sf::Keyboard::Key key)
 	m_key_binding[key] = action;
 }
 
-sf::Keyboard::Key Player::GetAssignedKey(PlayerAction action) const
+sf::Keyboard::Key Player::GetAssignedKey(const PlayerAction action) const
 {
-	for (auto pair : m_key_binding)
+	for (const auto& pair : m_key_binding)
 	{
 		if (pair.second == action)
 		{
@@ -120,7 +119,7 @@ void Player::InitialiseActions()
 {
 }
 
-bool Player::IsRealtimeAction(PlayerAction action)
+bool Player::IsRealtimeAction(const PlayerAction action)
 {
 	switch (action)
 	{
@@ -129,7 +128,10 @@ bool Player::IsRealtimeAction(PlayerAction action)
 	case PlayerAction::kMoveLeftTwo:
 	case PlayerAction::kMoveRightTwo:
 		return true;
-	default:
+	case PlayerAction::kMoveUpOne:
+	case PlayerAction::kMoveUpTwo:
+	case PlayerAction::kActionCount:
 		return false;
 	}
+	return false;
 }

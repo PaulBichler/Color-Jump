@@ -9,14 +9,13 @@
 #include "Utility.hpp"
 
 
-Character::Character(ECharacterType type, const TextureHolder& textures, const sf::IntRect& texture_rect)
+Character::Character(const ECharacterType type, const TextureHolder& textures, const sf::IntRect& texture_rect)
 	: Entity(100),
 	  m_type(type),
 	  m_sprite(textures.Get(Textures::kLevelTileSet), texture_rect),
 	  m_grounded(true),
 	  m_current_platform(nullptr)
 {
-
 	Utility::Debug("Character created.");
 	Utility::CentreOrigin(m_sprite);
 
@@ -43,18 +42,20 @@ unsigned Character::GetCategory() const
 
 void Character::Jump()
 {
-	if (m_grounded == false)
+	if (m_canJump == false)
 	{
 		return;
 	}
 
+	m_canJump = false;
 	m_grounded = false;
 	m_current_platform = nullptr;
-	Accelerate(0, -600);
+	SetVelocity(0, -600);
 }
 
 void Character::SetGrounded(Platform* platform)
 {
+	m_canJump = true;
 	m_grounded = true;
 	m_current_platform = platform;
 	SetVelocity(m_velocity.x, 0);
@@ -78,15 +79,32 @@ Platform* Character::GetCurrentPlatform() const
 	return m_current_platform;
 }
 
-bool Character::IsOnPlatformOfType(EPlatformType platform_type) const
+bool Character::IsOnPlatformOfType(const EPlatformType platform_type) const
 {
-	if(m_current_platform == nullptr)
+	if (m_current_platform == nullptr)
 		return false;
 
 	return m_current_platform->GetPlatformType() == platform_type;
 }
 
-void Character::UpdateCurrent(sf::Time dt, CommandQueue& commands)
+void Character::StopMovement()
+{
+	SetVelocity(0, 9.81f);
+}
+
+void Character::MoveOutOfCollision(const sf::FloatRect& rect)
+{
+	const sf::Vector2f velocity = GetVelocity();
+	const sf::Vector2f normalVelocity = Utility::UnitVector(velocity);
+	SetVelocity(0, 0);
+
+	while (rect.intersects(GetBoundingRect()))
+	{
+		setPosition(getPosition() - normalVelocity);
+	}
+}
+
+void Character::UpdateCurrent(const sf::Time dt, CommandQueue& commands)
 {
 	Entity::UpdateCurrent(dt, commands);
 	Accelerate(-m_velocity.x * 0.5f, 0);
@@ -100,7 +118,7 @@ void Character::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 
 void Character::UpdateRay() const
 {
-	if(IsDestroyed())
+	if (IsDestroyed())
 		return;
 
 	m_ray->setPosition(0.f, 50.f);

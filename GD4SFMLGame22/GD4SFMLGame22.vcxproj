@@ -151,7 +151,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Aircraft.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="BloomEffect.cpp" />
     <ClCompile Include="Button.cpp" />
@@ -173,13 +172,11 @@
     <ClCompile Include="MusicPlayer.cpp" />
     <ClCompile Include="ParticleNode.cpp" />
     <ClCompile Include="PauseState.cpp" />
-    <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="Platform.cpp" />
     <ClCompile Include="PlatformPart.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="PostEffect.cpp" />
-    <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="RayGround.cpp" />
     <ClCompile Include="SceneNode.cpp" />
     <ClCompile Include="SettingsState.cpp" />
@@ -196,8 +193,6 @@
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Aircraft.hpp" />
-    <ClInclude Include="AircraftType.hpp" />
     <ClInclude Include="Application.hpp" />
     <ClInclude Include="BloomEffect.hpp" />
     <ClInclude Include="Button.hpp" />
@@ -228,7 +223,6 @@
     <ClInclude Include="ParticleNode.hpp" />
     <ClInclude Include="ParticleType.hpp" />
     <ClInclude Include="PauseState.hpp" />
-    <ClInclude Include="Pickup.hpp" />
     <ClInclude Include="PickupType.hpp" />
     <ClInclude Include="Platform.hpp" />
     <ClInclude Include="PlatformPart.hpp" />
@@ -236,7 +230,6 @@
     <ClInclude Include="PlayerAction.hpp" />
     <ClInclude Include="Character.hpp" />
     <ClInclude Include="PostEffect.hpp" />
-    <ClInclude Include="Projectile.hpp" />
     <ClInclude Include="ProjectileType.hpp" />
     <ClInclude Include="RayGround.hpp" />
     <ClInclude Include="ResourceHolder.hpp" />

@@ -8,20 +8,19 @@
 
 #include "Utility.hpp"
 
-SceneNode::SceneNode(Category::Type category):m_children(), m_parent(nullptr), m_default_category(category)
+SceneNode::SceneNode(const Category::Type category): m_children(), m_parent(nullptr), m_default_category(category)
 {
 }
 
 void SceneNode::AttachChild(Ptr child)
 {
 	child->m_parent = this;
-	//Todo - Why is emplace_back more efficient than push_back
 	m_children.emplace_back(std::move(child));
 }
 
 SceneNode::Ptr SceneNode::DetachChild(const SceneNode& node)
 {
-	auto found = std::find_if(m_children.begin(), m_children.end(), [&](Ptr& p) {return p.get() == &node; });
+	const auto found = std::find_if(m_children.begin(), m_children.end(), [&](const Ptr& p) { return p.get() == &node; });
 	assert(found != m_children.end());
 
 	Ptr result = std::move(*found);
@@ -30,7 +29,7 @@ SceneNode::Ptr SceneNode::DetachChild(const SceneNode& node)
 	return result;
 }
 
-void SceneNode::Update(sf::Time dt, CommandQueue& commands)
+void SceneNode::Update(const sf::Time dt, CommandQueue& commands)
 {
 	UpdateCurrent(dt, commands);
 	UpdateChildren(dt, commands);
@@ -44,7 +43,7 @@ sf::Vector2f SceneNode::GetWorldPosition() const
 sf::Transform SceneNode::GetWorldTransform() const
 {
 	sf::Transform transform = sf::Transform::Identity;
-	for(const SceneNode* node = this; node != nullptr; node = node->m_parent)
+	for (const SceneNode* node = this; node != nullptr; node = node->m_parent)
 	{
 		transform = node->getTransform() * transform;
 	}
@@ -56,9 +55,9 @@ void SceneNode::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 	//Do nothing by default
 }
 
-void SceneNode::UpdateChildren(sf::Time dt, CommandQueue& commands)
+void SceneNode::UpdateChildren(const sf::Time dt, CommandQueue& commands) const
 {
-	for(Ptr& child : m_children)
+	for (const Ptr& child : m_children)
 	{
 		child->Update(dt, commands);
 	}
@@ -72,7 +71,7 @@ void SceneNode::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	//Draw the node and children with changed transform
 	DrawCurrent(target, states);
 	DrawChildren(target, states);
-	sf::FloatRect rect = GetBoundingRect();
+	const sf::FloatRect rect = GetBoundingRect();
 	DrawBoundingRect(target, states, rect);
 }
 
@@ -81,7 +80,7 @@ void SceneNode::DrawCurrent(sf::RenderTarget& render_target, sf::RenderStates st
 	//Do nothing by default
 }
 
-void SceneNode::DrawChildren(sf::RenderTarget& target, sf::RenderStates states) const
+void SceneNode::DrawChildren(sf::RenderTarget& target, const sf::RenderStates states) const
 {
 	for (const Ptr& child : m_children)
 	{
@@ -89,16 +88,16 @@ void SceneNode::DrawChildren(sf::RenderTarget& target, sf::RenderStates states) 
 	}
 }
 
-void SceneNode::OnCommand(const Command& command, sf::Time dt)
+void SceneNode::OnCommand(const Command& command, const sf::Time dt)
 {
 	//Is this command for me?
-	if(command.category & GetCategory())
+	if (command.category & GetCategory())
 	{
 		command.action(*this, dt);
 	}
 
 	//Pass command on to children
-	for(Ptr& child : m_children)
+	for (const Ptr& child : m_children)
 	{
 		child->OnCommand(command, dt);
 	}
@@ -116,14 +115,14 @@ float distance(const SceneNode& lhs, const SceneNode& rhs)
 
 sf::FloatRect SceneNode::GetBoundingRect() const
 {
-	return sf::FloatRect();
+	return {};
 }
 
-void SceneNode::DrawBoundingRect(sf::RenderTarget& target, sf::RenderStates states, sf::FloatRect& rect) const
+void SceneNode::DrawBoundingRect(sf::RenderTarget& target, sf::RenderStates states, const sf::FloatRect& bounding_rect)
 {
 	sf::RectangleShape shape;
-	shape.setPosition(sf::Vector2f(rect.left, rect.top));
-	shape.setSize(sf::Vector2f(rect.width, rect.height));
+	shape.setPosition(sf::Vector2f(bounding_rect.left, bounding_rect.top));
+	shape.setSize(sf::Vector2f(bounding_rect.width, bounding_rect.height));
 	shape.setFillColor(sf::Color::Transparent);
 	shape.setOutlineColor(sf::Color::Green);
 	shape.setOutlineThickness(1.f);
@@ -135,22 +134,22 @@ bool Collision(const SceneNode& lhs, const SceneNode& rhs)
 	return lhs.GetBoundingRect().intersects(rhs.GetBoundingRect());
 }
 
-void SceneNode::CheckNodeCollision(SceneNode& node, std::set<Pair>& collision_pairs)
+void SceneNode::CheckNodeCollision(SceneNode& node, std::set<Pair>& collisionPairs)
 {
-	if(this != &node && Collision(*this, node) && !IsDestroyed() && !node.IsDestroyed())
+	if (this != &node && Collision(*this, node) && !IsDestroyed() && !node.IsDestroyed())
 	{
-		collision_pairs.insert(std::minmax(this, &node));
+		collisionPairs.insert(std::minmax(this, &node));
 	}
-	for(Ptr& child : m_children)
+	for (const Ptr& child : m_children)
 	{
-		child->CheckNodeCollision(node, collision_pairs);
+		child->CheckNodeCollision(node, collisionPairs);
 	}
 }
 
 void SceneNode::CheckSceneCollision(SceneNode& scene_graph, std::set<Pair>& collision_pairs)
 {
 	CheckNodeCollision(scene_graph, collision_pairs);
-	for(Ptr& child : scene_graph.m_children)
+	for (Ptr& child : scene_graph.m_children)
 	{
 		CheckSceneCollision(*child, collision_pairs);
 	}
@@ -169,7 +168,8 @@ bool SceneNode::IsMarkedForRemoval() const
 
 void SceneNode::RemoveWrecks()
 {
-	auto wreck_field_begin = std::remove_if(m_children.begin(), m_children.end(), std::mem_fn(&SceneNode::IsMarkedForRemoval));
+	const auto wreck_field_begin = std::remove_if(m_children.begin(), m_children.end(),
+	                                              std::mem_fn(&SceneNode::IsMarkedForRemoval));
 	m_children.erase(wreck_field_begin, m_children.end());
 	std::for_each(m_children.begin(), m_children.end(), std::mem_fn(&SceneNode::RemoveWrecks));
 }

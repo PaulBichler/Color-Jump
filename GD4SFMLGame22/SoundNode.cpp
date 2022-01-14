@@ -1,6 +1,4 @@
 #include "SoundNode.hpp"
-
-#include "SoundNode.hpp"
 #include "SoundPlayer.hpp"
 
 
@@ -9,7 +7,7 @@ SoundNode::SoundNode(SoundPlayer& player)
 {
 }
 
-void SoundNode::PlaySound(SoundEffect sound, sf::Vector2f position)
+void SoundNode::PlaySound(const SoundEffect sound, const sf::Vector2f position) const
 {
 	m_sounds.Play(sound, position);
 }

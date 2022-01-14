@@ -12,13 +12,13 @@ public:
 	void InitPlayerTwo();
 	Player();
 	void HandleEvent(const sf::Event& event, CommandQueue& commands);
-	void HandleRealtimeInput(CommandQueue& commands);
+	void HandleRealtimeInput(CommandQueue& commands) const;
 
 	void AssignKey(PlayerAction action, sf::Keyboard::Key key);
 	sf::Keyboard::Key GetAssignedKey(PlayerAction action) const;
 
 private:
-	void InitialiseActions();
+	static void InitialiseActions();
 	static bool IsRealtimeAction(PlayerAction action);
 
 private:

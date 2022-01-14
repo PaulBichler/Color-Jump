@@ -1,10 +1,12 @@
 #include "GameState.hpp"
 
+#include <SFML/Graphics/RenderWindow.hpp>
+
 #include "Player.hpp"
 
-GameState::GameState(StateStack& stack, Context context)
+GameState::GameState(StateStack& stack, const Context context)
 : State(stack, context)
-, m_world(*context.window, *context.fonts, *context.sounds, *context.level_manager)
+, m_world(*context.window, *context.sounds, *context.level_manager)
 , m_player(*context.player)
 {
 	m_world.SetLoseCallback([this]
@@ -16,6 +18,8 @@ GameState::GameState(StateStack& stack, Context context)
 	{
 		RequestStackPush(StateID::kLevelWin);	
 	});
+
+	context.music->Play(MusicThemes::kMissionTheme);
 }
 
 void GameState::Draw()
@@ -23,7 +27,7 @@ void GameState::Draw()
 	m_world.Draw();
 }
 
-bool GameState::Update(sf::Time dt)
+bool GameState::Update(const sf::Time dt)
 {
 	m_world.Update(dt);
 	CommandQueue& commands = m_world.getCommandQueue();

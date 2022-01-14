@@ -22,6 +22,7 @@ namespace GUI
 		typedef std::function<void()> Callback;
 
 	public:
+		void ChangeTextColor(ButtonType button);
 		explicit Button(State::Context context);
 		void SetCallback(Callback callback);
 		void SetText(const std::string& text);

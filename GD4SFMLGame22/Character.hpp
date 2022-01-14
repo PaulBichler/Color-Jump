@@ -15,10 +15,11 @@ private:
 	bool m_grounded;
 	Platform* m_current_platform;
 	RayGround* m_ray;
+	bool m_canJump;
 
 public:
 	Character(ECharacterType type, const TextureHolder& textures, const sf::IntRect& texture_rect);
-	float GetMaxSpeed();
+	static float GetMaxSpeed();
 	unsigned GetCategory() const override;
 	void Jump();
 	void SetGrounded(Platform* platform);
@@ -26,6 +27,8 @@ public:
 	ECharacterType GetCharacterType() const;
 	Platform* GetCurrentPlatform() const;
 	bool IsOnPlatformOfType(EPlatformType platform_type) const;
+	void StopMovement();
+	void MoveOutOfCollision(const sf::FloatRect& rect);
 protected:
 	void UpdateCurrent(sf::Time dt, CommandQueue& commands) override;
 	void UpdateRay() const;

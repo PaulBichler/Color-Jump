@@ -9,7 +9,7 @@ class SoundNode : public SceneNode
 {
 public:
 	explicit SoundNode(SoundPlayer& player);
-	void PlaySound(SoundEffect sound, sf::Vector2f position);
+	void PlaySound(SoundEffect sound, sf::Vector2f position) const;
 
 	virtual unsigned int GetCategory() const override;
 

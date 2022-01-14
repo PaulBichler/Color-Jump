@@ -10,16 +10,32 @@
 
 namespace GUI
 {
+	void Button::ChangeTextColor(const ButtonType button)
+	{
+		switch (button)
+		{
+		case ButtonType::Normal: 
+			m_text.setFillColor(sf::Color::White);
+			break;
+		case ButtonType::Selected: 
+			m_text.setFillColor(sf::Color::Blue);
+			break;
+		case ButtonType::Pressed: 
+			m_text.setFillColor(sf::Color::Yellow);
+			break;
+		case ButtonType::ButtonCount: break;
+		}
+	}
+
 	Button::Button(const State::Context context)
 		: m_sprite(context.textures->Get(Textures::kButtons))
-		, m_text("", context.fonts->Get(Fonts::Main), 16)
-		, m_is_toggle(false)
-		, m_sounds(*context.sounds)
+		  , m_text("", context.fonts->Get(Fonts::Main), 16)
+		  , m_is_toggle(false)
+		  , m_sounds(*context.sounds)
 	{
 		ChangeTexture(ButtonType::Normal);
 		const sf::FloatRect bounds = m_sprite.getLocalBounds();
 		m_text.setPosition(bounds.width / 2, bounds.height / 2);
-
 	}
 
 	void Button::SetCallback(Callback callback)
@@ -105,5 +121,6 @@ namespace GUI
 	{
 		const sf::IntRect textureRect(0, 50 * static_cast<int>(buttonType), 200, 50);
 		m_sprite.setTextureRect(textureRect);
+		ChangeTextColor(buttonType);
 	}
 }

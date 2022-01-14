@@ -25,7 +25,7 @@ public:
 
 private:
 	sf::Music m_music;
-	std::map<MusicThemes, std::string>	m_filenames;
+	std::map<MusicThemes, std::string>	m_fileNames;
 	float m_volume;
 };
 

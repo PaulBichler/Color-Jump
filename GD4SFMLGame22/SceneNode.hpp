@@ -37,14 +37,14 @@ public:
 
 private:
 	virtual void UpdateCurrent(sf::Time dt, CommandQueue& commands);
-	void UpdateChildren(sf::Time dt, CommandQueue& commands);
+	void UpdateChildren(sf::Time dt, CommandQueue& commands) const;
 
 	//Note draw is from sf::Drawable hence the name, lower case d
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	virtual void DrawCurrent(sf::RenderTarget& render_target, sf::RenderStates states) const;
 	void DrawChildren(sf::RenderTarget& target, sf::RenderStates states) const;
 
-	void DrawBoundingRect(sf::RenderTarget& target, sf::RenderStates states, sf::FloatRect& bounding_rect) const;
+	static void DrawBoundingRect(sf::RenderTarget& target, sf::RenderStates states, const sf::FloatRect& bounding_rect);
 
 	virtual bool IsDestroyed() const;
 	bool IsMarkedForRemoval() const;
