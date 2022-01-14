@@ -63,8 +63,6 @@ bool Platform::DoesPlayerCollide(const ECharacterType character_type)
 
 void Platform::SetType(const EPlatformType type)
 {
-	Utility::Debug("Type set.");
-
 	m_type = type;
 
 

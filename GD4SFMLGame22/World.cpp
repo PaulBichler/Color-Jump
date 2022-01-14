@@ -221,8 +221,16 @@ void World::PlayerGroundRayCast(const std::set<SceneNode::Pair>& pairs)
 		player_pair = pair;
 		if (MatchesCategories(pair, Category::Type::kRay, Category::Type::kPlatform))
 		{
-			collide = true;
-			break;
+			const auto& ray_ground = dynamic_cast<RayGround&>(*pair.first);
+			auto& platform_part = dynamic_cast<PlatformPart&>(*pair.second);
+			const Platform* platform = platform_part.GetPlatform();
+			const Character* player = ray_ground.m_character;
+
+			if (CheckPlatformUnderneath(player->GetCharacterType(), platform->GetPlatformType()))
+			{
+				collide = true;
+				break;
+			}
 		}
 	}
 
@@ -277,6 +285,11 @@ void World::HandleCollisions()
 				{
 					player.MoveOutOfCollision(platform_part.GetBoundingRect());
 					player.StopMovement();
+
+					if (platform->GetPlatformType() == EPlatformType::kVerticalImpact)
+					{
+						platform->DoesPlayerCollide(player.GetCharacterType());
+					}
 					return;
 				}
 				return;
@@ -343,4 +356,30 @@ void World::UpdatePlatforms(const sf::Time dt) const
 {
 	for (const auto& platform : m_level_info.platforms)
 		platform->Update(dt);
+}
+
+bool World::CheckPlatformUnderneath(const ECharacterType character, const EPlatformType platform)
+{
+	if (platform == EPlatformType::kGoal || platform == EPlatformType::kNormal)
+	{
+		return true;
+	}
+
+	if (character == ECharacterType::kRed)
+	{
+		if (platform == EPlatformType::kVerticalRed || platform == EPlatformType::kHorizontalRed)
+		{
+			return true;
+		}
+	}
+
+	if (character == ECharacterType::kBlue)
+	{
+		if (platform == EPlatformType::kVerticalBlue || platform == EPlatformType::kHorizontalBlue)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
