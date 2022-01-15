@@ -72,7 +72,7 @@ void SceneNode::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	DrawCurrent(target, states);
 	DrawChildren(target, states);
 	const sf::FloatRect rect = GetBoundingRect();
-	DrawBoundingRect(target, states, rect);
+	//DrawBoundingRect(target, states, rect);
 }
 
 void SceneNode::DrawCurrent(sf::RenderTarget& render_target, sf::RenderStates states) const
