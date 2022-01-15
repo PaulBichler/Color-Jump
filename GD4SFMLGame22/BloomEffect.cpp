@@ -26,7 +26,7 @@ void BloomEffect::Apply(const sf::RenderTexture& input, sf::RenderTarget& output
 	Add(input, m_firstpass_textures[1], output);
 }
 
-void BloomEffect::PrepareTextures(sf::Vector2u size)
+void BloomEffect::PrepareTextures(const sf::Vector2u size)
 {
 	if (m_brightness_texture.getSize() != size)
 	{
@@ -56,7 +56,7 @@ void BloomEffect::FilterBright(const sf::RenderTexture& input, sf::RenderTexture
 
 void BloomEffect::BlurMultipass(RenderTextureArray& renderTextures)
 {
-	sf::Vector2u textureSize = renderTextures[0].getSize();
+	const sf::Vector2u textureSize = renderTextures[0].getSize();
 
 	for (std::size_t count = 0; count < 2; ++count)
 	{
@@ -65,7 +65,7 @@ void BloomEffect::BlurMultipass(RenderTextureArray& renderTextures)
 	}
 }
 
-void BloomEffect::Blur(const sf::RenderTexture& input, sf::RenderTexture& output, sf::Vector2f offsetFactor)
+void BloomEffect::Blur(const sf::RenderTexture& input, sf::RenderTexture& output, const sf::Vector2f offsetFactor)
 {
 	sf::Shader& gaussianBlur = m_shaders.Get(ShaderTypes::kGaussianBlurPass);
 
@@ -85,11 +85,11 @@ void BloomEffect::Downsample(const sf::RenderTexture& input, sf::RenderTexture& 
 	output.display();
 }
 
-void BloomEffect::Add(const sf::RenderTexture& source, const sf::RenderTexture& bloom, sf::RenderTarget& output)
+void BloomEffect::Add(const sf::RenderTexture& source, const sf::RenderTexture& bloom, sf::RenderTarget& target)
 {
 	sf::Shader& adder = m_shaders.Get(ShaderTypes::kAddPass);
 
 	adder.setUniform("source", source.getTexture());
 	adder.setUniform("bloom", bloom.getTexture());
-	ApplyShader(adder, output);
+	ApplyShader(adder, target);
 }

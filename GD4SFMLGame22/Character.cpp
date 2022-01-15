@@ -77,7 +77,6 @@ void Character::SetGrounded(Platform* platform)
 
 void Character::SetFalling()
 {
-	Utility::Debug("Character set falling.");
 	m_grounded = false;
 	m_current_platform = nullptr;
 }
@@ -143,7 +142,7 @@ void Character::UpdateRay() const
 	m_ray->setPosition(0.f, 50.f);
 }
 
-void Character::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
+void Character::DrawCurrent(sf::RenderTarget& target, const sf::RenderStates states) const
 {
 	target.draw(m_sprite, states);
 

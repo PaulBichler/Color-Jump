@@ -42,6 +42,7 @@ private:
 	void UpdateSounds() const;
 	void UpdatePlatforms(sf::Time dt) const;
 
+	static bool CheckPlatformUnderneath(ECharacterType character, EPlatformType platform);
 	static void PlayerGroundRayCast(const std::set<SceneNode::Pair>& pairs);
 	void GetGroundRayCasts(std::set<SceneNode::Pair>& pairs, SceneNode::Pair pair, Category::Type category) const;
 
