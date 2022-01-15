@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics/Sprite.hpp>
 
+#include "Application.hpp"
 #include "ECharacterType.hpp"
 #include "Entity.hpp"
 #include "Platform.hpp"
@@ -16,9 +17,10 @@ private:
 	Platform* m_current_platform;
 	RayGround* m_ray;
 	bool m_canJump;
+	SoundPlayer& m_sounds;
 
 public:
-	Character(ECharacterType type, const TextureHolder& textures, const sf::IntRect& texture_rect);
+	Character(ECharacterType type, const TextureHolder& textures, const sf::IntRect& texture_rect, SoundPlayer& context);
 	static float GetMaxSpeed();
 	unsigned GetCategory() const override;
 	void Jump();

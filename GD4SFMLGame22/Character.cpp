@@ -9,12 +9,15 @@
 #include "Utility.hpp"
 
 
-Character::Character(const ECharacterType type, const TextureHolder& textures, const sf::IntRect& texture_rect)
+Character::Character(const ECharacterType type, const TextureHolder& textures, const sf::IntRect& texture_rect,
+	SoundPlayer& context)
 	: Entity(100),
 	  m_type(type),
 	  m_sprite(textures.Get(Textures::kLevelTileSet), texture_rect),
 	  m_grounded(true),
-	  m_current_platform(nullptr)
+	  m_current_platform(nullptr),
+	  m_canJump(true),
+	  m_sounds(context)
 {
 	Utility::CentreOrigin(m_sprite);
 
@@ -46,6 +49,7 @@ void Character::Jump()
 		return;
 	}
 
+	m_sounds.Play(SoundEffect::kJump);
 	m_canJump = false;
 	m_grounded = false;
 	m_current_platform = nullptr;
