@@ -55,7 +55,7 @@ void World::Draw()
 {
 	if (PostEffect::IsSupported())
 	{
-		m_scene_texture.clear();
+		m_scene_texture.clear(sf::Color(0, 37, 97));
 		m_scene_texture.setView(m_camera);
 		m_scene_texture.draw(m_sceneGraph);
 		m_scene_texture.display();
@@ -77,6 +77,7 @@ void World::LoadTextures()
 	m_textures.Load(Textures::kHImpactBluePlatform, "Media/Textures/BlueImpactPlatform.png");
 	m_textures.Load(Textures::kVImpactRedPlatform, "Media/Textures/VRedImpactPlatform.png");
 	m_textures.Load(Textures::kVImpactBluePlatform, "Media/Textures/VBlueImpactPlatform.png");
+	m_textures.Load(Textures::kJumpSmoke, "Media/Textures/Explosion.png");
 }
 
 void World::BuildScene()

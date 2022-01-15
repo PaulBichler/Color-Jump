@@ -8,5 +8,6 @@ enum class Textures
 	kHImpactRedPlatform,
 	kHImpactBluePlatform,
 	kVImpactRedPlatform,
-	kVImpactBluePlatform
+	kVImpactBluePlatform,
+	kJumpSmoke
 };

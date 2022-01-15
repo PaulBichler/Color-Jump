@@ -12,6 +12,6 @@ enum ETileType
 	kVerticalImpactPlatform = 7,
 	kHorizontalPulsePlatform = 16,
 	kVerticalPulsePlatform = -4,
-	kSpikes = 19,
+	kSpikes = 12,
 	kFinish = 18
 };

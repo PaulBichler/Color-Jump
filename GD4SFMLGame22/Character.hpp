@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics/Sprite.hpp>
 
+#include "Animation.hpp"
 #include "ECharacterType.hpp"
 #include "Entity.hpp"
 #include "Platform.hpp"
@@ -16,6 +17,8 @@ private:
 	Platform* m_current_platform;
 	RayGround* m_ray;
 	bool m_canJump;
+	bool m_show_jump_animation;
+	Animation m_jump_smoke_animation;
 
 public:
 	Character(ECharacterType type, const TextureHolder& textures, const sf::IntRect& texture_rect);

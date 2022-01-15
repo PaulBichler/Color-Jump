@@ -14,8 +14,17 @@ Character::Character(const ECharacterType type, const TextureHolder& textures, c
 	  m_type(type),
 	  m_sprite(textures.Get(Textures::kLevelTileSet), texture_rect),
 	  m_grounded(true),
-	  m_current_platform(nullptr)
+	  m_current_platform(nullptr),
+	  m_jump_smoke_animation(textures.Get(Textures::kJumpSmoke))
 {
+	m_jump_smoke_animation.SetFrameSize(sf::Vector2i(256, 256));
+	m_jump_smoke_animation.SetNumFrames(16);
+	m_jump_smoke_animation.SetDuration(sf::seconds(.5f));
+	m_jump_smoke_animation.setScale(.5f, .5f);
+
+	sf::FloatRect bounds = m_jump_smoke_animation.GetLocalBounds();
+	m_jump_smoke_animation.setOrigin(std::floor(bounds.left + bounds.width / 2.f), std::floor(bounds.top + 50.f));
+
 	Utility::Debug("Character created.");
 	Utility::CentreOrigin(m_sprite);
 
@@ -47,6 +56,9 @@ void Character::Jump()
 		return;
 	}
 
+	m_show_jump_animation = true;
+	m_jump_smoke_animation.Restart();
+
 	m_canJump = false;
 	m_grounded = false;
 	m_current_platform = nullptr;
@@ -55,6 +67,7 @@ void Character::Jump()
 
 void Character::SetGrounded(Platform* platform)
 {
+	m_show_jump_animation = false;
 	m_canJump = true;
 	m_grounded = true;
 	m_current_platform = platform;
@@ -114,6 +127,12 @@ void Character::UpdateCurrent(const sf::Time dt, CommandQueue& commands)
 	}
 
 	UpdateRay();
+
+	if(m_show_jump_animation) 
+	{
+		m_jump_smoke_animation.Update(dt);
+		m_show_jump_animation = !m_jump_smoke_animation.IsFinished();
+	}
 }
 
 void Character::UpdateRay() const
@@ -127,6 +146,9 @@ void Character::UpdateRay() const
 void Character::DrawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(m_sprite, states);
+
+	if(m_show_jump_animation) 
+		target.draw(m_jump_smoke_animation, states);
 }
 
 sf::FloatRect Character::GetBoundingRect() const
