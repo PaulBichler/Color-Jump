@@ -2,6 +2,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 
 #include "Animation.hpp"
+#include "Application.hpp"
 #include "ECharacterType.hpp"
 #include "Entity.hpp"
 #include "Platform.hpp"
@@ -19,9 +20,10 @@ private:
 	bool m_canJump;
 	bool m_show_jump_animation;
 	Animation m_jump_smoke_animation;
+	SoundPlayer& m_sounds;
 
 public:
-	Character(ECharacterType type, const TextureHolder& textures, const sf::IntRect& texture_rect);
+	Character(ECharacterType type, const TextureHolder& textures, const sf::IntRect& texture_rect, SoundPlayer& context);
 	static float GetMaxSpeed();
 	unsigned GetCategory() const override;
 	void Jump();

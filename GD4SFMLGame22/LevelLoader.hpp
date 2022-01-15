@@ -9,7 +9,7 @@
 class LevelLoader
 {
 public:
-	LevelLoader(LevelManager::LevelData& level_data, TextureHolder& textures);
+	LevelLoader(LevelManager::LevelData& level_data, TextureHolder& textures, SoundPlayer& sound_player);
 
 	struct LevelInfo
 	{
@@ -19,11 +19,11 @@ public:
 		SceneNode::Ptr background_parent;
 		std::vector<std::unique_ptr<Platform>> platforms;
 	};
-
+	
 	LevelInfo LoadLevel();
 
 private:
-	SceneNode::Ptr LoadLevelLayer(LevelInfo& level_info, const std::string& csv_path, bool is_collider_layer);
+	SceneNode::Ptr LoadLevelLayer(LevelInfo& level_info, const std::string& csv_path, const bool is_collider_layer);
 	std::vector<std::vector<int>> LevelDataToVector(const std::string& csv_path) const;
 
 private:

@@ -11,3 +11,6 @@ Team Members: Dylan Goncalves, Paul Bichler
   Creative Commons Attribution 4.0 International (CC BY 4.0) 
   https://creativecommons.org/licenses/by/4.0/
 - FallenLeaves : Music: https://www.chosic.com/free-music/all/
+
+### Sounds
+- Jump : mixkit-player-jumping-in-a-video-game-2043 | https://mixkit.co/free-sound-effects/jump/

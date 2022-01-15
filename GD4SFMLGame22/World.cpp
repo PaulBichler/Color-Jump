@@ -96,7 +96,7 @@ void World::BuildScene()
 	}
 
 	LevelManager::LevelData current_level_data = m_level_manager.GetCurrentLevelData();
-	LevelLoader level_loader(current_level_data, m_textures);
+	LevelLoader level_loader(current_level_data, m_textures, m_sounds);
 
 	m_level_info = level_loader.LoadLevel();
 	m_scene_layers[static_cast<int>(Layers::kBackground)]->AttachChild(std::move(m_level_info.background_parent));
