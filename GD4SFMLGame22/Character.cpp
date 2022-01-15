@@ -3,10 +3,16 @@
 #include <iostream>
 #include <SFML/Graphics/RenderTarget.hpp>
 
+#include "DataTables.hpp"
 #include "RayGround.hpp"
 #include "ResourceHolder.hpp"
 #include "TextNode.hpp"
 #include "Utility.hpp"
+
+namespace
+{
+	const CharacterData Table = InitializeCharacterData();
+}
 
 
 Character::Character(const ECharacterType type, const TextureHolder& textures, const sf::IntRect& texture_rect,
@@ -30,7 +36,7 @@ Character::Character(const ECharacterType type, const TextureHolder& textures, c
 
 float Character::GetMaxSpeed()
 {
-	return 200;
+	return Table.m_movementSpeed;
 }
 
 unsigned Character::GetCategory() const
@@ -53,7 +59,7 @@ void Character::Jump()
 	m_canJump = false;
 	m_grounded = false;
 	m_current_platform = nullptr;
-	SetVelocity(0, -600);
+	SetVelocity(0, Table.m_JumpForce);
 }
 
 void Character::SetGrounded(Platform* platform)
@@ -91,7 +97,7 @@ bool Character::IsOnPlatformOfType(const EPlatformType platform_type) const
 
 void Character::StopMovement()
 {
-	SetVelocity(0, 9.81f);
+	SetVelocity(0, Table.m_gravityForce);
 }
 
 void Character::MoveOutOfCollision(const sf::FloatRect& rect)
@@ -109,10 +115,10 @@ void Character::MoveOutOfCollision(const sf::FloatRect& rect)
 void Character::UpdateCurrent(const sf::Time dt, CommandQueue& commands)
 {
 	Entity::UpdateCurrent(dt, commands);
-	Accelerate(-m_velocity.x * 0.5f, 0);
+	Accelerate(-m_velocity.x * Table.m_dragMultiplier, 0);
 	if (!m_grounded)
 	{
-		Accelerate(0, 9.81f);
+		Accelerate(0, Table.m_gravityForce);
 	}
 
 	UpdateRay();
