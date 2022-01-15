@@ -21,8 +21,8 @@ sf::IntRect TileFactory::GetSubRect(int pos, ETileType tile_type, sf::Vector2f& 
 	switch (tile_type)
 	{
 	case kHorizontalImpactPlatform:
-	case kBluePlatform:
-	case kRedPlatform:
+	case kHorizontalBluePlatform:
+	case kHorizontalRedPlatform:
 		sub_rect.height = 23;
 		break;
 	case kVerticalImpactPlatform:

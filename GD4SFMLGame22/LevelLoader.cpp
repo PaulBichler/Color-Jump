@@ -60,29 +60,33 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::str
 			}
 			else if (tile_type == kHorizontalImpactPlatform)
 			{
-				CreatePlatform(EPlatformType::kHorizontalImpact, tile_type, level_info, row, col, level_parent,
-				               spawn_pos);
+				CreatePlatform(EPlatformType::kHorizontalImpact, tile_type, level_info, row, col, level_parent, spawn_pos);
 			}
 			else if (tile_type == kVerticalImpactPlatform)
 			{
-				CreatePlatform(EPlatformType::kVerticalImpact, tile_type, level_info, row, col, level_parent,
-				               spawn_pos);
+				CreatePlatform(EPlatformType::kVerticalImpact, tile_type, level_info, row, col, level_parent, spawn_pos);
 			}
 			else if (tile_type == kHorizontalPulsePlatform)
 			{
-				CreatePlatform(EPlatformType::kHorizontalPulse, tile_type, level_info, row, col, level_parent,
-				               spawn_pos);
+				CreatePlatform(EPlatformType::kHorizontalPulse, tile_type, level_info, row, col, level_parent, spawn_pos);
 			}
-			else if (tile_type == kBluePlatform)
+			else if(tile_type == kHorizontalBluePlatform)
 			{
-				CreatePlatform(EPlatformType::kHorizontalBlue, tile_type, level_info, row, col, level_parent,
-				               spawn_pos);
+				CreatePlatform(EPlatformType::kHorizontalBlue, tile_type, level_info, row, col, level_parent, spawn_pos);
 			}
-			else if (tile_type == kRedPlatform)
+			else if(tile_type == kHorizontalRedPlatform)
 			{
 				CreatePlatform(EPlatformType::kHorizontalRed, tile_type, level_info, row, col, level_parent, spawn_pos);
 			}
-			else if (tile_type == kFinish)
+			else if(tile_type == kVerticalBluePlatform)
+			{
+				CreatePlatform(EPlatformType::kVerticalBlue, tile_type, level_info, row, col, level_parent, spawn_pos);
+			}
+			else if(tile_type == kVerticalRedPlatform)
+			{
+				CreatePlatform(EPlatformType::kVerticalRed, tile_type, level_info, row, col, level_parent, spawn_pos);
+			}
+			else if(tile_type == kFinish)
 			{
 				CreatePlatform(EPlatformType::kGoal, tile_type, level_info, row, col, level_parent, spawn_pos);
 			}
@@ -92,7 +96,6 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(LevelInfo& level_info, const std::str
 				if (tilePtr.get() != nullptr)
 					level_parent->AttachChild(std::move(tilePtr));
 			}
-
 
 			spawn_pos.x += m_level_data.m_tile_size.x;
 		}

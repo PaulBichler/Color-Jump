@@ -1,6 +1,5 @@
 #include "Application.hpp"
 
-#include "GameOverState.hpp"
 #include "State.hpp"
 #include "StateID.hpp"
 #include "TitleState.hpp"

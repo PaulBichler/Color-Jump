@@ -102,9 +102,6 @@
     <ClCompile Include="TextNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameOverState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LevelLoader.cpp">
       <Filter>Source Files\Level</Filter>
     </ClCompile>
@@ -252,9 +249,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TextNode.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameOverState.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LevelLoader.hpp">
