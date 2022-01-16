@@ -6,7 +6,7 @@ Team Members: Dylan Goncalves, Paul Bichler
 ## About the Game
 
 Our CA1 submission game is inspired by the game "Date Night" by Brackeys (https://brackeysgames.itch.io/date-night).
-In this 2-player puzzle platformer game, player 1 controls a red character and player 2 a blue character. The goal of the game is for both players to reach the finish platform. The catch is that player 1 (the red character) can only collide with Red Plaforms and player 2 (the blue character) only with blue ones. The game also features Impact platforms that change the color to the color of the player colliding with it. Other elements like spikes and Pulse platforms offer a variety of additional challanges.
+In this 2-player puzzle platformer game, player 1 controls a red character and player 2 a blue character. The goal of the game is for both players to reach the finish platform. The catch is that player 1 (the red character) can only collide with Red Plaforms and player 2 (the blue character) only with blue ones. The game also features Impact platforms that change the color of the platform to the color of the player colliding with it. Other elements like spikes and Pulse platforms offer a variety of additional challanges.
 The game features a total of 9 levels with increasing difficulty.
 
 ## Assets
