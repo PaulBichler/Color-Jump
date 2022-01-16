@@ -18,6 +18,7 @@ LevelLoseState::LevelLoseState(StateStack& stack, Context context)
 	const sf::Font& font = context.fonts->Get(Fonts::Main);
 	const sf::Vector2f viewSize = context.window->getView().getSize();
 
+	//Create the Lose Level title text
 	m_lost_text.setFont(font);
 	m_lost_text.setString("You Lost!");
 	m_lost_text.setFillColor(sf::Color::Red);
@@ -25,6 +26,7 @@ LevelLoseState::LevelLoseState(StateStack& stack, Context context)
 	Utility::CentreOrigin(m_lost_text);
 	m_lost_text.setPosition(0.5f * viewSize.x, 0.4f * viewSize.y);
 
+	//Create the Restart button
 	const auto restart_button = std::make_shared<GUI::Button>(context);
 	restart_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 100);
 	restart_button->SetText("Restart");
@@ -35,6 +37,7 @@ LevelLoseState::LevelLoseState(StateStack& stack, Context context)
 		RequestStackPush(StateID::kGame); //Push Game State again to restart the level
 	});
 
+	//Create the Back to Main Menu button
 	const auto main_menu_button = std::make_shared<GUI::Button>(context);
 	main_menu_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 150);
 	main_menu_button->SetText("Back to Main Menu");

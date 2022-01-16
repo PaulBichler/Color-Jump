@@ -224,14 +224,12 @@
     <ClInclude Include="Particle.hpp" />
     <ClInclude Include="ParticleNode.hpp" />
     <ClInclude Include="ParticleType.hpp" />
-    <ClInclude Include="PickupType.hpp" />
     <ClInclude Include="Platform.hpp" />
     <ClInclude Include="PlatformPart.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="PlayerAction.hpp" />
     <ClInclude Include="Character.hpp" />
     <ClInclude Include="PostEffect.hpp" />
-    <ClInclude Include="ProjectileType.hpp" />
     <ClInclude Include="RayGround.hpp" />
     <ClInclude Include="ResourceHolder.hpp" />
     <ClInclude Include="ResourceIdentifiers.hpp" />

@@ -1,3 +1,5 @@
+//Written by Paul Bichler (D00242563)
+
 #include "LevelPauseState.hpp"
 #include "ResourceHolder.hpp"
 
@@ -8,6 +10,7 @@
 #include "Button.hpp"
 #include "Utility.hpp"
 
+//Written by Paul Bichler (D00242563)
 LevelPauseState::LevelPauseState(StateStack& stack, Context context)
 	: State(stack, context)
 {
@@ -56,6 +59,7 @@ LevelPauseState::LevelPauseState(StateStack& stack, Context context)
 	m_gui_container.Pack(main_menu_button);
 }
 
+//Written by Paul Bichler (D00242563)
 void LevelPauseState::Draw()
 {
 	sf::RenderWindow& window = *GetContext().window;
@@ -70,11 +74,13 @@ void LevelPauseState::Draw()
 	window.draw(m_gui_container);
 }
 
+//Written by Paul Bichler (D00242563)
 bool LevelPauseState::Update(sf::Time)
 {
 	return false;
 }
 
+//Written by Paul Bichler (D00242563)
 bool LevelPauseState::HandleEvent(const sf::Event& event)
 {
 	m_gui_container.HandleEvent(event);
