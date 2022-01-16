@@ -167,12 +167,12 @@
     <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="LevelLoseState.cpp" />
     <ClCompile Include="LevelManager.cpp" />
+    <ClCompile Include="LevelPauseState.cpp" />
     <ClCompile Include="LevelWinState.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MenuState.cpp" />
     <ClCompile Include="MusicPlayer.cpp" />
     <ClCompile Include="ParticleNode.cpp" />
-    <ClCompile Include="PauseState.cpp" />
     <ClCompile Include="Platform.cpp" />
     <ClCompile Include="PlatformPart.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -216,6 +216,7 @@
     <ClInclude Include="LevelLoader.hpp" />
     <ClInclude Include="LevelLoseState.hpp" />
     <ClInclude Include="LevelManager.hpp" />
+    <ClInclude Include="LevelPauseState.hpp" />
     <ClInclude Include="LevelWinState.hpp" />
     <ClInclude Include="MenuState.hpp" />
     <ClInclude Include="MusicPlayer.hpp" />
@@ -223,7 +224,6 @@
     <ClInclude Include="Particle.hpp" />
     <ClInclude Include="ParticleNode.hpp" />
     <ClInclude Include="ParticleType.hpp" />
-    <ClInclude Include="PauseState.hpp" />
     <ClInclude Include="PickupType.hpp" />
     <ClInclude Include="Platform.hpp" />
     <ClInclude Include="PlatformPart.hpp" />

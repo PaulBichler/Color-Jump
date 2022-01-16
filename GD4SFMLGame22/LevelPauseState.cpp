@@ -1,4 +1,4 @@
-#include "LevelWinState.hpp"
+#include "LevelPauseState.hpp"
 #include "ResourceHolder.hpp"
 
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -8,47 +8,40 @@
 #include "Button.hpp"
 #include "Utility.hpp"
 
-LevelWinState::LevelWinState(StateStack& stack, Context context)
+LevelPauseState::LevelPauseState(StateStack& stack, Context context)
 	: State(stack, context)
 {
 	const sf::Font& font = context.fonts->Get(Fonts::Main);
 	const sf::Vector2f viewSize = context.window->getView().getSize();
 
-	m_lost_text.setFont(font);
-	m_lost_text.setString("You Win!");
-	m_lost_text.setFillColor(sf::Color::Green);
-	m_lost_text.setCharacterSize(70);
-	Utility::CentreOrigin(m_lost_text);
-	m_lost_text.setPosition(0.5f * viewSize.x, 0.4f * viewSize.y);
+	//Game Paused Title Text
+	m_paused_text.setFont(font);
+	m_paused_text.setString("Game Paused!");
+	m_paused_text.setCharacterSize(70);
+	Utility::CentreOrigin(m_paused_text);
+	m_paused_text.setPosition(0.5f * viewSize.x, 0.4f * viewSize.y);
 
-	const auto next_level_button = std::make_shared<GUI::Button>(context);
-	next_level_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 100);
-	next_level_button->SetText("Next Level");
-	next_level_button->SetCallback([this]()
+	//Create Resume Button
+	const auto resume_button = std::make_shared<GUI::Button>(context);
+	resume_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 100);
+	resume_button->SetText("Resume");
+	resume_button->SetCallback([this]()
 	{
-		//Set the next level in the level manager
-		GetContext().level_manager->NextLevel();
-
-		RequestStackPop(); //Pop Level Lose State
-		RequestStackPop(); //Pop Game State
-		RequestStackPush(StateID::kGame); //Push Game State again to restart the level
+		RequestStackPop(); //Pop Level Pause State
 	});
 
-	next_level_button->SetDrawPredicate([this]
-	{
-		return GetContext().level_manager->DoesNextLevelExist();
-	});
-
+	//Create Restart Button
 	const auto restart_button = std::make_shared<GUI::Button>(context);
 	restart_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 150);
-	restart_button->SetText("Restart Level");
+	restart_button->SetText("Restart");
 	restart_button->SetCallback([this]()
 	{
-		RequestStackPop(); //Pop Level Win State
+		RequestStackPop(); //Pop Level Pause State
 		RequestStackPop(); //Pop Game State
 		RequestStackPush(StateID::kGame); //Push Game State again to restart the level
 	});
 
+	//Create Back to Main Menu Button
 	const auto main_menu_button = std::make_shared<GUI::Button>(context);
 	main_menu_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 200);
 	main_menu_button->SetText("Back to Main Menu");
@@ -58,12 +51,12 @@ LevelWinState::LevelWinState(StateStack& stack, Context context)
 		RequestStackPush(StateID::kMenu);
 	});
 
-	m_gui_container.Pack(next_level_button);
+	m_gui_container.Pack(resume_button);
 	m_gui_container.Pack(restart_button);
 	m_gui_container.Pack(main_menu_button);
 }
 
-void LevelWinState::Draw()
+void LevelPauseState::Draw()
 {
 	sf::RenderWindow& window = *GetContext().window;
 	window.setView(window.getDefaultView());
@@ -73,17 +66,27 @@ void LevelWinState::Draw()
 	backgroundShape.setSize(window.getView().getSize());
 
 	window.draw(backgroundShape);
-	window.draw(m_lost_text);
+	window.draw(m_paused_text);
 	window.draw(m_gui_container);
 }
 
-bool LevelWinState::Update(sf::Time)
+bool LevelPauseState::Update(sf::Time)
 {
 	return false;
 }
 
-bool LevelWinState::HandleEvent(const sf::Event& event)
+bool LevelPauseState::HandleEvent(const sf::Event& event)
 {
 	m_gui_container.HandleEvent(event);
+
+	if (event.type != sf::Event::KeyPressed)
+		return false;
+
+	if (event.key.code == sf::Keyboard::Escape)
+	{
+		// Escape pressed, remove itself to return to the game
+		RequestStackPop();
+	}
+
 	return false;
 }

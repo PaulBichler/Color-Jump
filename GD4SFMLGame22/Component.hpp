@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Transformable.hpp>
@@ -28,10 +29,13 @@ namespace GUI
 		virtual void Deactivate();
 
 		virtual void HandleEvent(const sf::Event& event) = 0;
+		void SetDrawPredicate(const std::function<bool()>& predicate);
+		bool CanBeDrawn() const;
 
 	private:
 		bool m_is_selected;
 		bool m_is_active;
+		std::function<bool()> m_draw_predicate;
 	};
 }
 
