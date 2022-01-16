@@ -1,3 +1,5 @@
+//Written by Paul Bichler (D00242563) and Dylan Goncalves Martins ()
+
 #include "World.hpp"
 
 #include <iostream>
@@ -15,24 +17,19 @@ World::World(sf::RenderTarget& output_target, SoundPlayer& sounds, LevelManager&
 	  , m_sounds(sounds)
 	  , m_scene_layers()
 	  , m_world_bounds(0.f, 0.f, m_camera.getSize().x, m_camera.getSize().y)
-	  , m_spawn_position(m_camera.getSize().x / 2.f, m_world_bounds.height - m_camera.getSize().y / 2.f)
-	  , m_scrollSpeed(0)
 	  , m_level_manager(level_manager)
 {
 	m_scene_texture.create(m_target.getSize().x, m_target.getSize().y);
 
 	LoadTextures();
 	BuildScene();
-	m_camera.setCenter(m_spawn_position);
+	m_camera.setCenter(m_camera.getSize().x / 2.f, m_world_bounds.height - m_camera.getSize().y / 2.f);
 }
 
 void World::Update(const sf::Time dt)
 {
 	UpdateSounds();
 	UpdatePlatforms(dt);
-
-	//Scroll the world
-	m_camera.move(0, m_scrollSpeed * dt.asSeconds());
 
 	DestroyEntitiesOutsideView();
 
@@ -43,9 +40,9 @@ void World::Update(const sf::Time dt)
 	}
 
 	HandleCollisions();
+
 	//Remove all destroyed entities
 	m_sceneGraph.RemoveWrecks();
-
 
 	//Apply movement
 	m_sceneGraph.Update(dt, m_command_queue);
@@ -80,6 +77,7 @@ void World::LoadTextures()
 	m_textures.Load(Textures::kJumpSmoke, "Media/Textures/Explosion.png");
 }
 
+//Written by Paul Bichler (D00242563)
 void World::BuildScene()
 {
 	//Initialize the different layers
@@ -98,6 +96,7 @@ void World::BuildScene()
 	LevelManager::LevelData current_level_data = m_level_manager.GetCurrentLevelData();
 	LevelLoader level_loader(current_level_data, m_textures, m_sounds);
 
+	//Load the level based on the level data in the level manager
 	m_level_info = level_loader.LoadLevel();
 	m_scene_layers[static_cast<int>(Layers::kBackground)]->AttachChild(std::move(m_level_info.background_parent));
 	m_scene_layers[static_cast<int>(Layers::kLevel)]->AttachChild(std::move(m_level_info.level_parent));
@@ -108,11 +107,17 @@ CommandQueue& World::getCommandQueue()
 	return m_command_queue;
 }
 
+//Written by Paul Bichler (D00242563)
+//Set the Lose Callback, which is invoked when a player dies.
+//This is used to tell the Game State to push the Level Lose State.
 void World::SetLoseCallback(const std::function<void()>& callback)
 {
 	m_lose_callback = callback;
 }
 
+//Written by Paul Bichler (D00242563)
+//Set the Win Callback, which is invoked when the level is completed.
+//This is used to tell the Game State to push the Level Win State.
 void World::SetWinCallback(const std::function<void()>& callback)
 {
 	m_win_callback = callback;
@@ -124,9 +129,10 @@ sf::FloatRect World::GetViewBounds() const
 	return view_bounds;
 }
 
+//Written by Paul Bichler (D00242563)
+//Returns camera bounds + a small area at the top to prevent players from dying when jumping out of the camera bounds.
 sf::FloatRect World::GetBattlefieldBounds() const
 {
-	//Return camera bounds + a small area at the top where enemies spawn offscreen
 	sf::FloatRect bounds = GetViewBounds();
 	bounds.top -= 300.f;
 	bounds.height += 300.f;
@@ -264,6 +270,7 @@ void World::GetGroundRayCasts(std::set<SceneNode::Pair>& pairs, const SceneNode:
 	}
 }
 
+//Written by Dylan Goncalves Martins (), modified by Paul Bichler (D00242563)
 void World::HandleCollisions()
 {
 	std::set<SceneNode::Pair> collision_pairs;
@@ -278,7 +285,6 @@ void World::HandleCollisions()
 			auto& player = dynamic_cast<Character&>(*pair.first);
 			auto& platform_part = dynamic_cast<PlatformPart&>(*pair.second);
 			Platform* platform = platform_part.GetPlatform();
-
 
 			if (IsPlayerBelowPlatform(player, platform_part))
 			{
@@ -315,8 +321,10 @@ void World::HandleCollisions()
 			}
 		}
 
+		//Check Lose Condition
 		if (MatchesCategories(pair, Category::Type::kPlayer, Category::Type::kEnemyTrap))
 		{
+			//Lose
 			m_lose_callback();
 		}
 
@@ -328,15 +336,17 @@ void World::HandleCollisions()
 	PlayerGroundRayCast(pairs_player_two);
 }
 
+//Written by Paul Bichler (D00242563)
 void World::DestroyEntitiesOutsideView()
 {
 	Command command;
 	command.category = Category::Type::kPlayerOne | Category::Type::kPlayerTwo;
 	command.action = DerivedAction<Entity>([this](Entity& e, sf::Time)
 	{
-		//Does the object intersect with the battlefield
+		//Does the object intersect with the battlefield (Lose Condition)
 		if (!GetBattlefieldBounds().intersects(e.GetBoundingRect()))
 		{
+			//Lose
 			e.Destroy();
 			m_lose_callback();
 		}
@@ -353,6 +363,8 @@ void World::UpdateSounds() const
 	m_sounds.RemoveStoppedSounds();
 }
 
+//Written by Paul Bichler (D00242563)
+//Updates the platforms (used by Pulse Platforms to change color every 2 seconds)
 void World::UpdatePlatforms(const sf::Time dt) const
 {
 	for (const auto& platform : m_level_info.platforms)

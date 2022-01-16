@@ -6,13 +6,8 @@
 #include <SFML/Graphics/View.hpp>
 #include "Utility.hpp"
 
-
-
 PauseState::PauseState(StateStack& stack, Context context)
 	: State(stack, context)
-	, m_background_sprite()
-	, m_paused_text()
-	, m_instruction_text()
 {
 	sf::Font& font = context.fonts->Get(Fonts::Main);
 	sf::Vector2f viewSize = context.window->getView().getSize();

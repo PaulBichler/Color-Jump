@@ -58,9 +58,6 @@ private:
 	CommandQueue m_command_queue;
 
 	sf::FloatRect m_world_bounds;
-	sf::Vector2f m_spawn_position;
-	float m_scrollSpeed;
-
 	BloomEffect m_bloom_effect;
 
 	LevelLoader::LevelInfo m_level_info;

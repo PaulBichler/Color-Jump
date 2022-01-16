@@ -1,3 +1,5 @@
+//Written by Dylan Goncalves Martins (), modified by Paul Bichler (D00242563)
+
 #include "Character.hpp"
 
 #include <iostream>

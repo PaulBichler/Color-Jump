@@ -1,3 +1,5 @@
+//Written by Paul Bichler (D00242563)
+
 #include "LevelLoseState.hpp"
 #include "ResourceHolder.hpp"
 
@@ -8,6 +10,8 @@
 #include "Button.hpp"
 #include "Utility.hpp"
 
+//Written by Paul Bichler (D00242563)
+//The Level Lose State is pushed when a player dies
 LevelLoseState::LevelLoseState(StateStack& stack, Context context)
 	: State(stack, context)
 {
@@ -44,6 +48,7 @@ LevelLoseState::LevelLoseState(StateStack& stack, Context context)
 	m_gui_container.Pack(main_menu_button);
 }
 
+//Written by Paul Bichler (D00242563)
 void LevelLoseState::Draw()
 {
 	sf::RenderWindow& window = *GetContext().window;
@@ -58,11 +63,13 @@ void LevelLoseState::Draw()
 	window.draw(m_gui_container);
 }
 
+//Written by Paul Bichler (D00242563)
 bool LevelLoseState::Update(sf::Time)
 {
 	return false;
 }
 
+//Written by Paul Bichler (D00242563)
 bool LevelLoseState::HandleEvent(const sf::Event& event)
 {
 	m_gui_container.HandleEvent(event);

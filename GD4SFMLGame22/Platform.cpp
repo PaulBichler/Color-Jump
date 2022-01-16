@@ -1,3 +1,5 @@
+//Written by Paul Bichler (D00242563)
+
 #include "Platform.hpp"
 
 #include <SFML/Graphics/Texture.hpp>
@@ -24,47 +26,55 @@ void Platform::AddPlatformPart(PlatformPart* tile)
 {
 	m_platform_parts.emplace_back(tile);
 
+	//In the tileset, the pulse platform uses a gray platform sprite, which has to be replaced here
 	if(m_is_pulse)
 		tile->SetSpriteTexture(*m_current_texture, sf::IntRect(0, 0, (*m_current_texture).getSize().x, (*m_current_texture).getSize().y));
 }
 
+//Written by Paul Bichler (D00242563)
+//This method is used to decide whether a player will collide with the platform.
+//It also decides how the platform reacts to the collision.
 bool Platform::DoesPlayerCollide(const ECharacterType character_type)
 {
 	switch (m_type)
 	{
+	//Impact Platforms change color to the color of the colliding player
 	case EPlatformType::kHorizontalImpact:
 		if (character_type == ECharacterType::kBlue)
 			SetType(EPlatformType::kHorizontalBlue);
 		else
 			SetType(EPlatformType::kHorizontalRed);
 		break;
+	//Impact Platforms change color to the color of the colliding player
 	case EPlatformType::kVerticalImpact:
 		if (character_type == ECharacterType::kBlue)
 			SetType(EPlatformType::kVerticalBlue);
 		else
 			SetType(EPlatformType::kVerticalRed);
 		break;
+	//Only the Blue Player can collide with the blue platforms
 	case EPlatformType::kHorizontalBlue:
 	case EPlatformType::kVerticalBlue:
 		if (character_type != ECharacterType::kBlue)
 			return false;
 		break;
+	//Only the Red Player can collide with the red platforms
 	case EPlatformType::kHorizontalRed:
 	case EPlatformType::kVerticalRed:
 		if (character_type != ECharacterType::kRed)
 			return false;
 		break;
-	case EPlatformType::kNormal:
-	case EPlatformType::kGoal:;
 	}
 
 	return true;
 }
 
+//Written by Paul Bichler (D00242563)
+//This method is used to set the platform type.
+//The platform changes sprites depending on the type.
 void Platform::SetType(const EPlatformType type)
 {
 	m_type = type;
-
 
 	switch (type)
 	{
@@ -94,11 +104,11 @@ void Platform::SetType(const EPlatformType type)
 			SetType(EPlatformType::kHorizontalRed);
 		}
 		break;
-	case EPlatformType::kNormal:
-	case EPlatformType::kGoal:;
 	}
 }
 
+//Written by Paul Bichler (D00242563)
+//Update method is used by Pulse platforms to change the color every 2 seconds.
 void Platform::Update(sf::Time dt)
 {
 	if(!m_is_pulse)
@@ -128,6 +138,8 @@ void Platform::Update(sf::Time dt)
 	}
 }
 
+//Written by Paul Bichler (D00242563)
+//This method is used to change the texture on all the platform parts with a specified texture
 void Platform::SetTextureOnParts(sf::Texture& texture)
 {
 	m_current_texture = &texture;

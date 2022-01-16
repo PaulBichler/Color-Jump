@@ -1,3 +1,5 @@
+//Written by Paul Bichler (D00242563)
+
 #include "LevelWinState.hpp"
 #include "ResourceHolder.hpp"
 
@@ -8,6 +10,8 @@
 #include "Button.hpp"
 #include "Utility.hpp"
 
+//Written by Paul Bichler (D00242563)
+//The Level Win State is pushed after a level is completed successfully
 LevelWinState::LevelWinState(StateStack& stack, const Context context)
 	: State(stack, context)
 {
@@ -62,6 +66,7 @@ LevelWinState::LevelWinState(StateStack& stack, const Context context)
 	m_gui_container.Pack(main_menu_button);
 }
 
+//Written by Paul Bichler (D00242563)
 void LevelWinState::Draw()
 {
 	sf::RenderWindow& window = *GetContext().window;
@@ -76,11 +81,13 @@ void LevelWinState::Draw()
 	window.draw(m_gui_container);
 }
 
+//Written by Paul Bichler (D00242563)
 bool LevelWinState::Update(sf::Time)
 {
 	return false;
 }
 
+//Written by Paul Bichler (D00242563)
 bool LevelWinState::HandleEvent(const sf::Event& event)
 {
 	m_gui_container.HandleEvent(event);

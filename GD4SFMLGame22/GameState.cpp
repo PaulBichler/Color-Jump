@@ -4,16 +4,19 @@
 
 #include "Player.hpp"
 
+//Written by Paul Bichler (D00242563)
 GameState::GameState(StateStack& stack, const Context context)
 : State(stack, context)
 , m_world(*context.window, *context.sounds, *context.level_manager)
 , m_player(*context.player)
 {
+	//Define what happens when the level is lost
 	m_world.SetLoseCallback([this]
 	{
 		RequestStackPush(StateID::kLevelLose);	
 	});
 
+	//Define what happens when the level is won
 	m_world.SetWinCallback([this]
 	{
 		RequestStackPush(StateID::kLevelWin);	
