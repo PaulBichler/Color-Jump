@@ -6,7 +6,11 @@ vec4 getColor(vec2 textureCoordinates, vec2 pos, vec2 pixelSize)
 	return texture2D(source, textureCoordinates + pos * pixelSize);
 }
 
-
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	Added a method to simplify things
+ *	only take blue and red colors to do bloom
+ */
 void main()
 {
 	vec2 pixelSize = vec2(1.0 / sourceSize.x, 1.0 / sourceSize.y);

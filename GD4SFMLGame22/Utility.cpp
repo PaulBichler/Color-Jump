@@ -163,6 +163,11 @@ float Utility::ToDegrees(float angle_in_radians)
 	return angle_in_radians * (180/M_PI);
 }
 
+
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	Simplified the debug message
+ */
 void Utility::Debug(const std::string& message)
 {
 	std::cout << message << std::endl;

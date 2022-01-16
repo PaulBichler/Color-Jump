@@ -6,7 +6,10 @@ vec4 getColor(float pos, float multiplyer, vec2 textureCoordinates)
 	return texture2D(source, textureCoordinates + pos * offsetFactor) * multiplyer;
 }
 
-
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	Added a method to simplify things
+ */
 void main()
 {
 	vec2 textureCoordinates = gl_TexCoord[0].xy;

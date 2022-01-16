@@ -1,8 +1,9 @@
-#include "Player.hpp"
+//Changed by Dylan Goncalves Martins (D00242562)
 
+#include "Player.hpp"
 #include "Character.hpp"
 
-
+//Movement is now for character
 struct CharacterMover
 {
 	CharacterMover(const float vx, const float vy) : velocity(vx, vy)
@@ -17,6 +18,10 @@ struct CharacterMover
 	sf::Vector2f velocity;
 };
 
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	Initialize player one keys 
+ */
 void Player::InitPlayerOne()
 {
 	m_action_binding[PlayerAction::kMoveLeftOne].action = DerivedAction<Character>(CharacterMover(-1, 0.f));
@@ -32,6 +37,11 @@ void Player::InitPlayerOne()
 	m_action_binding[PlayerAction::kMoveUpOne].category = Category::kPlayerOne;
 }
 
+
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	Initialize player two keys
+ */
 void Player::InitPlayerTwo()
 {
 	m_action_binding[PlayerAction::kMoveLeftTwo].action = DerivedAction<Character>(CharacterMover(-1, 0.f));
@@ -45,9 +55,12 @@ void Player::InitPlayerTwo()
 	m_action_binding[PlayerAction::kMoveUpTwo].category = Category::kPlayerTwo;
 }
 
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	Initialize both players keys
+ */
 Player::Player()
 {
-	//Set initial key bindings
 	m_key_binding[sf::Keyboard::A] = PlayerAction::kMoveLeftOne;
 	m_key_binding[sf::Keyboard::D] = PlayerAction::kMoveRightOne;
 	m_key_binding[sf::Keyboard::W] = PlayerAction::kMoveUpOne;

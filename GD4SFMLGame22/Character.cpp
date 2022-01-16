@@ -1,4 +1,4 @@
-//Written by Dylan Goncalves Martins (), modified by Paul Bichler (D00242563)
+//Written by Dylan Goncalves Martins (D00242562), modified by Paul Bichler (D00242563)
 
 #include "Character.hpp"
 
@@ -16,9 +16,13 @@ namespace
 	const CharacterData Table = InitializeCharacterData();
 }
 
-
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	Creates the character for the players
+ *	Also Creates a "Ray" and sets it as a child of the character
+ */
 Character::Character(const ECharacterType type, const TextureHolder& textures, const sf::IntRect& texture_rect,
-	SoundPlayer& context)
+                     SoundPlayer& context)
 	: Entity(100),
 	  m_type(type),
 	  m_sprite(textures.Get(Textures::kLevelTileSet), texture_rect),
@@ -51,6 +55,12 @@ float Character::GetMaxSpeed()
 	return Table.m_movementSpeed;
 }
 
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	Used for controls
+ *	PlayerOne -> red
+ *	PlayerTwo -> blue
+ */
 unsigned Character::GetCategory() const
 {
 	if (m_type == ECharacterType::kRed)
@@ -60,6 +70,11 @@ unsigned Character::GetCategory() const
 	return static_cast<int>(Category::kPlayerTwo);
 }
 
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	Jump action for the player
+ *	Check if player can jump is also done here
+ */
 void Character::Jump()
 {
 	if (m_canJump == false)
@@ -76,6 +91,11 @@ void Character::Jump()
 	SetVelocity(0, Table.m_JumpForce);
 }
 
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	This is called when the player lands on a platform
+ *	Removes y axis velocity and moves character slightly up
+ */
 void Character::SetGrounded(Platform* platform)
 {
 	m_show_jump_animation = false;
@@ -86,6 +106,10 @@ void Character::SetGrounded(Platform* platform)
 	setPosition(getPosition().x, getPosition().y - 2);
 }
 
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	This is called when the Ray has no platform with which he collides
+ */
 void Character::SetFalling()
 {
 	m_grounded = false;
@@ -110,11 +134,20 @@ bool Character::IsOnPlatformOfType(const EPlatformType platform_type) const
 	return m_current_platform->GetPlatformType() == platform_type;
 }
 
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	Removes velocity on x axis and sets y axis to gravity force
+ */
 void Character::StopMovement()
 {
 	SetVelocity(0, Table.m_gravityForce);
 }
 
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	On Collision with platform from sides or underneath
+ *	Moves the player back so he is not colliding anymore
+ */
 void Character::MoveOutOfCollision(const sf::FloatRect& rect)
 {
 	const sf::Vector2f velocity = GetVelocity();
@@ -145,6 +178,10 @@ void Character::UpdateCurrent(const sf::Time dt, CommandQueue& commands)
 	}
 }
 
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	Updates the ray position
+ */
 void Character::UpdateRay() const
 {
 	if (IsDestroyed())

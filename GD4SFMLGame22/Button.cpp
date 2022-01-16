@@ -10,6 +10,10 @@
 
 namespace GUI
 {
+	/*
+	 *	Dylan Goncalves Martins (D00242562)
+	 *	Button color now can changed
+	 */
 	void Button::ChangeTextColor(const ButtonType button)
 	{
 		switch (button)

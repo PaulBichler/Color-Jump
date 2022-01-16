@@ -14,6 +14,11 @@ std::vector<ParticleData> InitializeParticleData()
 	return data;
 }
 
+
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	Initialize the player data
+ */
 CharacterData InitializeCharacterData()
 {
 	CharacterData data;

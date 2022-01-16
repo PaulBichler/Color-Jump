@@ -1,4 +1,4 @@
-//Written by Paul Bichler (D00242563) and Dylan Goncalves Martins ()
+//Written by Paul Bichler (D00242563) and Dylan Goncalves Martins (D00242562)
 
 #include "World.hpp"
 
@@ -140,6 +140,10 @@ sf::FloatRect World::GetBattlefieldBounds() const
 	return bounds;
 }
 
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	This method checks if player is above the center of the platform
+ */
 bool World::IsPlayerBelowPlatform(const Character& player, const PlatformPart& platform_part)
 {
 	if (player.getPosition().y > platform_part.getPosition().y)
@@ -150,6 +154,10 @@ bool World::IsPlayerBelowPlatform(const Character& player, const PlatformPart& p
 	return false;
 }
 
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	Returns true if platform color matches character color
+ */
 bool World::CheckPlatform(const Platform* platform, const ECharacterType character)
 {
 	if (character == ECharacterType::kBlue)
@@ -172,6 +180,10 @@ bool World::CheckPlatform(const Platform* platform, const ECharacterType charact
 	return false;
 }
 
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	returns true if it is the appropriate platform
+ */
 bool World::IsPlayerAtHisPlatform(const Character& player, const Platform* platform)
 {
 	if (platform->GetPlatformType() == EPlatformType::kNormal || platform->GetPlatformType() == EPlatformType::kGoal)
@@ -218,6 +230,10 @@ bool MatchesCategories(SceneNode::Pair& collision, Category::Type type1, Categor
 	return false;
 }
 
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	Here is checked if one of the pairs is a ray and a platform
+ */
 void World::PlayerGroundRayCast(const std::set<SceneNode::Pair>& pairs)
 {
 	bool collide = false;
@@ -233,23 +249,29 @@ void World::PlayerGroundRayCast(const std::set<SceneNode::Pair>& pairs)
 			const Platform* platform = platform_part.GetPlatform();
 			const Character* player = ray_ground.m_character;
 
+			// Check if platform underneath is valid
 			if (CheckPlatformUnderneath(player->GetCharacterType(), platform->GetPlatformType()))
 			{
+				//collision found
 				collide = true;
 				break;
 			}
 		}
 	}
 
+	// can be null so it jumps out if it happens
 	if (player_pair.first == nullptr || player_pair.second == nullptr)
 	{
 		return;
 	}
 
+	// if there was no collision
 	if (!collide)
 	{
+		// check to see which object in pair is the ray 
 		if (player_pair.first != nullptr && (player_pair.first->GetCategory() & Category::Type::kRay) != 0)
 		{
+			//call set falling
 			const auto& ray_ground = dynamic_cast<RayGround&>(*player_pair.first);
 			ray_ground.SetFalling();
 		}
@@ -261,6 +283,10 @@ void World::PlayerGroundRayCast(const std::set<SceneNode::Pair>& pairs)
 	}
 }
 
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	Adds every collision from one specific ray to a set
+ */
 void World::GetGroundRayCasts(std::set<SceneNode::Pair>& pairs, const SceneNode::Pair pair,
                               const Category::Type category) const
 {
@@ -278,6 +304,7 @@ void World::HandleCollisions()
 
 	std::set<SceneNode::Pair> pairs_player_one;
 	std::set<SceneNode::Pair> pairs_player_two;
+	
 	for (SceneNode::Pair pair : collision_pairs)
 	{
 		if (MatchesCategories(pair, Category::Type::kPlayer, Category::Type::kPlatform))
@@ -286,20 +313,24 @@ void World::HandleCollisions()
 			auto& platform_part = dynamic_cast<PlatformPart&>(*pair.second);
 			Platform* platform = platform_part.GetPlatform();
 
+			//Checks if player collided from underneath the center of the platform
 			if (IsPlayerBelowPlatform(player, platform_part))
 			{
+				//Checks if platform is collidable with player
 				if (IsPlayerAtHisPlatform(player, platform))
 				{
+					// move player out of collision and stop his movement
 					player.MoveOutOfCollision(platform_part.GetBoundingRect());
 					player.StopMovement();
 
+					// Set color of vertical platform if there is a collision from the side/underneath 
 					if (platform->GetPlatformType() == EPlatformType::kVerticalImpact)
 					{
 						platform->DoesPlayerCollide(player.GetCharacterType());
 					}
-					return;
 				}
-				return;
+				// continue to next pair
+				continue;
 			}
 
 			if (platform->DoesPlayerCollide(player.GetCharacterType()))
@@ -328,10 +359,12 @@ void World::HandleCollisions()
 			m_lose_callback();
 		}
 
+		//Get All Ground Ray Casts for player one and two
 		GetGroundRayCasts(pairs_player_one, pair, Category::kRayOne);
 		GetGroundRayCasts(pairs_player_two, pair, Category::kRayTwo);
 	}
 
+	//Check Ground Ray Casts
 	PlayerGroundRayCast(pairs_player_one);
 	PlayerGroundRayCast(pairs_player_two);
 }
@@ -371,6 +404,10 @@ void World::UpdatePlatforms(const sf::Time dt) const
 		platform->Update(dt);
 }
 
+/*
+ *	Dylan Goncalves Martins (D00242562)
+ *	Looks at platform underneath
+ */
 bool World::CheckPlatformUnderneath(const ECharacterType character, const EPlatformType platform)
 {
 	if (platform == EPlatformType::kGoal || platform == EPlatformType::kNormal)
