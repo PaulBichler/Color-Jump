@@ -22,6 +22,7 @@ namespace Category
 		kRayOne = 1 << 14,
 		kRayTwo = 1 << 15,
 		kEnemyTrap = 1 << 16,
+		kNetwork = 1 << 17,
 
 		kAircraft = kPlayerAircraft | kAlliedAircraft | kEnemyAircraft,
 		kPlayer = kPlayerOne | kPlayerTwo,
