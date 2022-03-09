@@ -1,8 +1,8 @@
 #pragma once
 #include "State.hpp"
-#include "World.hpp"
 #include "Player.hpp"
 #include "GameServer.hpp"
+#include "MultiplayerWorld.hpp"
 #include "NetworkProtocol.hpp"
 
 class MultiplayerGameState : public State
@@ -24,7 +24,7 @@ private:
 	typedef std::unique_ptr<Player> PlayerPtr;
 
 private:
-	World m_world;
+	MultiplayerWorld m_world;
 	sf::RenderWindow& m_window;
 	TextureHolder& m_texture_holder;
 

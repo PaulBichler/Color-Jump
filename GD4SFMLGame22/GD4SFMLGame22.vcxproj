@@ -89,13 +89,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Dmar\Documents\GD4\Multiplayer\SFML-2.5.1\include;C:\Users\Dylan\Documents\GD4\SFML-2.5.1\include;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\include;C:\Users\loanej\dev\SFML-2.5.1\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>\\Mac\Home\Desktop\SFML-2.5.1\include;C:\Users\Dylan\Documents\GD4\SFML-2.5.1\include;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\include;C:\Users\loanej\dev\SFML-2.5.1\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Dmar\Documents\GD4\Multiplayer\SFML-2.5.1\lib;C:\Users\Dylan\Documents\GD4\SFML-2.5.1\lib;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\lib;C:\Users\loanej\dev\SFML-2.5.1\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;sfml-audio-d.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>\\Mac\Home\Desktop\SFML-2.5.1\lib;C:\Users\Dylan\Documents\GD4\SFML-2.5.1\lib;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\lib;C:\Users\loanej\dev\SFML-2.5.1\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;sfml-audio.lib;sfml-network.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -106,15 +106,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Dmar\Documents\GD4\Multiplayer\SFML-2.5.1\include;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\include;C:\Users\loanej\dev\SFML-2.5.1\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>\\Mac\Home\Desktop\SFML-2.5.1\include;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\include;C:\Users\loanej\dev\SFML-2.5.1\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Dmar\Documents\GD4\Multiplayer\SFML-2.5.1\lib;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\lib;C:\Users\loanej\dev\SFML-2.5.1\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;%(AdditionalDependencies);sfml-graphics.lib;sfml-window.lib;sfml-system.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>\\Mac\Home\Desktop\SFML-2.5.1\lib;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\lib;C:\Users\loanej\dev\SFML-2.5.1\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;sfml-audio.lib;sfml-network.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -123,13 +123,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Dmar\Documents\GD4\Multiplayer\SFML-2.5.1\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>\\Mac\Home\Desktop\SFML-2.5.1\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Dmar\Documents\GD4\Multiplayer\SFML-2.5.1\lib;C:\Users\Dylan\Documents\GD4\SFML-2.5.1\lib;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);sfml-graphics.lib;sfml-window.lib;sfml-system.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>\\Mac\Home\Desktop\SFML-2.5.1\lib;C:\Users\Dylan\Documents\GD4\SFML-2.5.1\lib;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;sfml-audio.lib;sfml-network.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -140,15 +140,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Dmar\Documents\GD4\Multiplayer\SFML-2.5.1\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>\\Mac\Home\Desktop\SFML-2.5.1\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Dmar\Documents\GD4\Multiplayer\SFML-2.5.1\lib;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\lib;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);sfml-graphics.lib;sfml-window.lib;sfml-system.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>\\Mac\Home\Desktop\SFML-2.5.1\lib;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\lib;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;sfml-audio.lib;sfml-network.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -173,6 +173,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MenuState.cpp" />
     <ClCompile Include="MultiplayerGameState.cpp" />
+    <ClCompile Include="MultiplayerWorld.cpp" />
     <ClCompile Include="MusicPlayer.cpp" />
     <ClCompile Include="NetworkNode.cpp" />
     <ClCompile Include="ParticleNode.cpp" />
@@ -184,6 +185,7 @@
     <ClCompile Include="RayGround.cpp" />
     <ClCompile Include="SceneNode.cpp" />
     <ClCompile Include="SettingsState.cpp" />
+    <ClCompile Include="SingleplayerWorld.cpp" />
     <ClCompile Include="SoundNode.cpp" />
     <ClCompile Include="SoundPlayer.cpp" />
     <ClCompile Include="SpriteNode.cpp" />
@@ -224,6 +226,7 @@
     <ClInclude Include="LevelWinState.hpp" />
     <ClInclude Include="MenuState.hpp" />
     <ClInclude Include="MultiplayerGameState.hpp" />
+    <ClInclude Include="MultiplayerWorld.hpp" />
     <ClInclude Include="MusicPlayer.hpp" />
     <ClInclude Include="MusicThemes.hpp" />
     <ClInclude Include="NetworkNode.hpp" />
@@ -243,6 +246,7 @@
     <ClInclude Include="SceneNode.hpp" />
     <ClInclude Include="SettingsState.hpp" />
     <ClInclude Include="Shaders.hpp" />
+    <ClInclude Include="SingleplayerWorld.hpp" />
     <ClInclude Include="SoundEffect.hpp" />
     <ClInclude Include="SoundNode.hpp" />
     <ClInclude Include="SoundPlayer.hpp" />

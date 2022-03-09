@@ -162,6 +162,12 @@
     <ClCompile Include="GameServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MultiplayerWorld.cpp">
+      <Filter>Source Files\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="SingleplayerWorld.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Textures.hpp">
@@ -342,6 +348,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameServer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiplayerWorld.hpp">
+      <Filter>Header Files\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="SingleplayerWorld.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
