@@ -4,8 +4,6 @@
 
 #include <SFML/Network/Packet.hpp>
 
-#include "Aircraft.hpp"
-#include "PickupType.hpp"
 #include "Utility.hpp"
 
 //It is essential to set the sockets to non-blocking - m_socket.setBlocking(false)
@@ -195,6 +193,7 @@ void GameServer::Tick()
 		}
 	}
 
+	/*
 	//Check if it is time to spawn enemies
 	if(Now() >= m_time_for_next_spawn + m_last_spawn_time)
 	{
@@ -233,6 +232,7 @@ void GameServer::Tick()
 			m_time_for_next_spawn = sf::milliseconds(2000 + Utility::RandomInt(6000));
 		}
 	}
+	*/
 }
 
 sf::Time GameServer::Now() const
@@ -374,6 +374,7 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 
 		//Enemy explodes, with a certain probability, drop a pickup
 		//To avoid multiple messages only listen to the first peer (host)
+		/*
 		if (action == GameActions::EnemyExplode && Utility::RandomInt(3) == 0 && &receiving_peer == m_peers[0].get())
 		{
 			sf::Packet packet;
@@ -384,6 +385,7 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 
 			SendToAll(packet);
 		}
+		*/
 	}
 	}
 

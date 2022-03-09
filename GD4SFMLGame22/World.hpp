@@ -21,33 +21,32 @@ class World : sf::NonCopyable
 {
 public:
 	World(sf::RenderTarget& output_target, SoundPlayer& sounds, LevelManager& level_manager);
-	void Update(sf::Time dt);
-	void Draw();
+	virtual void Update(sf::Time dt);
+	virtual void Draw();
 	CommandQueue& getCommandQueue();
-
-	void SetLoseCallback(const std::function<void()>& callback);
-	void SetWinCallback(const std::function<void()>& callback);
 
 private:
 	void LoadTextures();
 	void BuildScene();
 
+protected:
 	sf::FloatRect GetViewBounds() const;
-	sf::FloatRect GetBattlefieldBounds() const;
 	static bool IsPlayerBelowPlatform(const Character& player, const PlatformPart& platform_part);
 	static bool CheckPlatform(const Platform* platform, ECharacterType character);
 	static bool IsPlayerAtHisPlatform(const Character& player, const Platform* platform);
-	void HandleCollisions();
-	void DestroyEntitiesOutsideView();
 	void UpdateSounds() const;
 	void UpdatePlatforms(sf::Time dt) const;
-
 	static bool CheckPlatformUnderneath(ECharacterType character, EPlatformType platform);
 	static void PlayerGroundRayCast(const std::set<SceneNode::Pair>& pairs);
 	void GetGroundRayCasts(std::set<SceneNode::Pair>& pairs, SceneNode::Pair pair, Category::Type category) const;
+	static bool MatchesCategories(SceneNode::Pair& collision, Category::Type type1, Category::Type type2);
+
+	virtual void HandleCollisions() = 0;
+	virtual sf::FloatRect GetBattlefieldBounds() const = 0;
+	virtual void SetCamera() = 0;
 
 
-private:
+protected:
 	sf::RenderTarget& m_target;
 	sf::RenderTexture m_scene_texture;
 	sf::View m_camera;
@@ -62,7 +61,4 @@ private:
 
 	LevelLoader::LevelInfo m_level_info;
 	LevelManager& m_level_manager;
-	std::function<void()> m_lose_callback;
-	std::function<void()> m_win_callback;
-	bool m_has_won{};
 };
