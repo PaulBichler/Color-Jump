@@ -7,10 +7,21 @@ SingleplayerWorld::SingleplayerWorld(sf::RenderTarget& output_target, SoundPlaye
 {
 }
 
+LevelInfo& SingleplayerWorld::BuildLevel(LevelManager::LevelData current_level_data)
+{
+	//This method is called in the constructor of the base World class
+	SingleplayerLevelLoader level_loader(current_level_data, m_textures, m_sounds);
+	m_level_info = level_loader.LoadLevel();
+
+	return m_level_info;
+}
+
 void SingleplayerWorld::Update(sf::Time dt)
 {
 	DestroyEntitiesOutsideView();
 
+	UpdateSounds();
+	UpdatePlatforms(dt);
 	World::Update(dt);
 }
 
@@ -48,6 +59,23 @@ sf::FloatRect SingleplayerWorld::GetBattlefieldBounds() const
 	bounds.height += 300.f;
 
 	return bounds;
+}
+
+void SingleplayerWorld::UpdateSounds() const
+{
+	// Set listener's position to player position
+	m_sounds.SetListenerPosition(m_level_info.player_1->GetWorldPosition());
+
+	// Remove unused sounds
+	m_sounds.RemoveStoppedSounds();
+}
+
+//Written by Paul Bichler (D00242563)
+//Updates the platforms (used by Pulse Platforms to change color every 2 seconds)
+void SingleplayerWorld::UpdatePlatforms(const sf::Time dt) const
+{
+	for (const auto& platform : m_level_info.platforms)
+		platform->Update(dt);
 }
 
 //Written by Paul Bichler (D00242563)

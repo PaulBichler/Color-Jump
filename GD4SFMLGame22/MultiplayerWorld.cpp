@@ -5,6 +5,22 @@ MultiplayerWorld::MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer&
 {
 }
 
+void MultiplayerWorld::Update(sf::Time dt)
+{
+	World::Update(dt);
+}
+
+void MultiplayerWorld::Draw()
+{
+	World::Draw();
+}
+
+LevelInfo& MultiplayerWorld::BuildLevel(LevelManager::LevelData current_level_data)
+{
+	LevelInfo info;
+	return info;
+}
+
 void MultiplayerWorld::SetCamera()
 {
 }

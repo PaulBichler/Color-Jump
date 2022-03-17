@@ -22,6 +22,8 @@ GameState::GameState(StateStack& stack, const Context context)
 		RequestStackPush(StateID::kLevelWin);	
 	});
 
+	m_world.BuildWorld();
+
 	context.music->Play(MusicThemes::kMissionTheme);
 }
 
@@ -33,14 +35,14 @@ void GameState::Draw()
 bool GameState::Update(const sf::Time dt)
 {
 	m_world.Update(dt);
-	CommandQueue& commands = m_world.getCommandQueue();
+	CommandQueue& commands = m_world.GetCommandQueue();
 	m_player.HandleRealtimeInput(commands);
 	return true;
 }
 
 bool GameState::HandleEvent(const sf::Event& event)
 {
-	CommandQueue& commands = m_world.getCommandQueue();
+	CommandQueue& commands = m_world.GetCommandQueue();
 	m_player.HandleEvent(event, commands);
 
 	//Escape should bring up the Pause Menu

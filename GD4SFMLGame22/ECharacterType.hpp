@@ -2,5 +2,6 @@
 enum class ECharacterType
 {
 	kBlue,
-	kRed
+	kRed,
+	kGreen
 };

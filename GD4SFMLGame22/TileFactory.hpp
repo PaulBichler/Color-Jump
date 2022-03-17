@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Character.hpp"
+#include "ColorTile.hpp"
 #include "Platform.hpp"
 #include "Tile.hpp"
 
@@ -19,6 +20,7 @@ public:
 	TileFactory(TextureHolder& textures, sf::Vector2u tile_size, SoundPlayer& sound_player);
 	PlatformPart* CreatePlatformPart(ETileType tile_type, sf::Vector2f spawn_pos, Platform* parent) const;
 	Tile* CreateTile(ETileType tile_type, sf::Vector2f spawn_pos, bool has_collider) const;
+	ColorTile* CreateColorTile(ETileType tile_type, sf::Vector2f spawn_pos) const;
 	Character* CreatePlayer(ETileType tile_type, ECharacterType type, sf::Vector2f spawn_pos) const;
 };
 

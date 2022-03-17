@@ -89,6 +89,13 @@ Tile* TileFactory::CreateTile(const ETileType tile_type, sf::Vector2f spawn_pos,
 	return tile;
 }
 
+ColorTile* TileFactory::CreateColorTile(ETileType tile_type, sf::Vector2f spawn_pos) const
+{
+	ColorTile* color_tile = new ColorTile(m_textures, GetSubRect(tile_type, spawn_pos), tile_type);
+	color_tile->setPosition(spawn_pos);
+	return color_tile;
+}
+
 //Written by Paul Bichler (D00242563)
 Character* TileFactory::CreatePlayer(const ETileType tile_type, const ECharacterType type, sf::Vector2f spawn_pos) const
 {

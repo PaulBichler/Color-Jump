@@ -89,13 +89,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>\\Mac\Home\Desktop\SFML-2.5.1\include;C:\Users\Dylan\Documents\GD4\SFML-2.5.1\include;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\include;C:\Users\loanej\dev\SFML-2.5.1\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\OneDrive\OneDrive - Dundalk Institute of Technology\Y4_Semester1\MPDP\SFML-2.5.1\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>\\Mac\Home\Desktop\SFML-2.5.1\lib;C:\Users\Dylan\Documents\GD4\SFML-2.5.1\lib;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\lib;C:\Users\loanej\dev\SFML-2.5.1\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;sfml-audio.lib;sfml-network.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\OneDrive\OneDrive - Dundalk Institute of Technology\Y4_Semester1\MPDP\SFML-2.5.1\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-audio-d.lib;sfml-network-d.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -106,14 +106,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>\\Mac\Home\Desktop\SFML-2.5.1\include;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\include;C:\Users\loanej\dev\SFML-2.5.1\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\OneDrive\OneDrive - Dundalk Institute of Technology\Y4_Semester1\MPDP\SFML-2.5.1\include;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\include;C:\Users\loanej\dev\SFML-2.5.1\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>\\Mac\Home\Desktop\SFML-2.5.1\lib;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\lib;C:\Users\loanej\dev\SFML-2.5.1\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\OneDrive\OneDrive - Dundalk Institute of Technology\Y4_Semester1\MPDP\SFML-2.5.1\lib;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\lib;C:\Users\loanej\dev\SFML-2.5.1\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;sfml-audio.lib;sfml-network.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -123,12 +123,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>\\Mac\Home\Desktop\SFML-2.5.1\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\OneDrive\OneDrive - Dundalk Institute of Technology\Y4_Semester1\MPDP\SFML-2.5.1\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>\\Mac\Home\Desktop\SFML-2.5.1\lib;C:\Users\Dylan\Documents\GD4\SFML-2.5.1\lib;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\OneDrive\OneDrive - Dundalk Institute of Technology\Y4_Semester1\MPDP\SFML-2.5.1\lib;C:\Users\Dylan\Documents\GD4\SFML-2.5.1\lib;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;sfml-audio.lib;sfml-network.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -140,14 +140,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>\\Mac\Home\Desktop\SFML-2.5.1\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\OneDrive\OneDrive - Dundalk Institute of Technology\Y4_Semester1\MPDP\SFML-2.5.1\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>\\Mac\Home\Desktop\SFML-2.5.1\lib;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\lib;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\OneDrive\OneDrive - Dundalk Institute of Technology\Y4_Semester1\MPDP\SFML-2.5.1\lib;Z:\GoogleDrive\School\DKIT\Y4_Semester1\MPDP\SFML-2.5.1\lib;</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;sfml-audio.lib;sfml-network.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -156,6 +156,7 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="BloomEffect.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="ColorTile.cpp" />
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="CommandQueue.cpp" />
     <ClCompile Include="Component.cpp" />
@@ -185,6 +186,7 @@
     <ClCompile Include="RayGround.cpp" />
     <ClCompile Include="SceneNode.cpp" />
     <ClCompile Include="SettingsState.cpp" />
+    <ClCompile Include="SingleplayerLevelLoader.cpp" />
     <ClCompile Include="SingleplayerWorld.cpp" />
     <ClCompile Include="SoundNode.cpp" />
     <ClCompile Include="SoundPlayer.cpp" />
@@ -205,14 +207,17 @@
     <ClInclude Include="Button.hpp" />
     <ClInclude Include="ButtonType.hpp" />
     <ClInclude Include="Category.hpp" />
+    <ClInclude Include="ColorTile.hpp" />
     <ClInclude Include="Command.hpp" />
     <ClInclude Include="CommandQueue.hpp" />
     <ClInclude Include="Component.hpp" />
     <ClInclude Include="Container.hpp" />
     <ClInclude Include="DataTables.hpp" />
     <ClInclude Include="ECharacterType.hpp" />
+    <ClInclude Include="EGameMode.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="EPlatformType.hpp" />
+    <ClInclude Include="ETileColor.hpp" />
     <ClInclude Include="ETileType.hpp" />
     <ClInclude Include="Fonts.hpp" />
     <ClInclude Include="GameServer.hpp" />
@@ -246,6 +251,7 @@
     <ClInclude Include="SceneNode.hpp" />
     <ClInclude Include="SettingsState.hpp" />
     <ClInclude Include="Shaders.hpp" />
+    <ClInclude Include="SingleplayerLevelLoader.hpp" />
     <ClInclude Include="SingleplayerWorld.hpp" />
     <ClInclude Include="SoundEffect.hpp" />
     <ClInclude Include="SoundNode.hpp" />
