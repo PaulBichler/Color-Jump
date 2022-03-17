@@ -22,15 +22,12 @@ World::World(sf::RenderTarget& output_target, SoundPlayer& sounds, LevelManager&
 	m_scene_texture.create(m_target.getSize().x, m_target.getSize().y);
 
 	LoadTextures();
-	BuildScene();
+	InitializeSceneLayers();
 	m_camera.setCenter(m_camera.getSize().x / 2.f, m_world_bounds.height - m_camera.getSize().y / 2.f);
 }
 
 void World::Update(const sf::Time dt)
 {
-	UpdateSounds();
-	UpdatePlatforms(dt);
-
 	//Forward commands to the sceneGraph until the command queue is empty
 	while (!m_command_queue.IsEmpty())
 	{
@@ -75,8 +72,7 @@ void World::LoadTextures()
 	m_textures.Load(Textures::kJumpSmoke, "Media/Textures/Explosion.png");
 }
 
-//Written by Paul Bichler (D00242563)
-void World::BuildScene()
+void World::InitializeSceneLayers()
 {
 	//Initialize the different layers
 	for (std::size_t i = 0; i < static_cast<int>(Layers::kLayerCount); ++i)
@@ -90,17 +86,20 @@ void World::BuildScene()
 		m_scene_layers[i] = layer.get();
 		m_sceneGraph.AttachChild(std::move(layer));
 	}
-
-	LevelManager::LevelData current_level_data = m_level_manager.GetCurrentLevelData();
-	LevelLoader level_loader(current_level_data, m_textures, m_sounds);
-
-	//Load the level based on the level data in the level manager
-	m_level_info = level_loader.LoadLevel();
-	m_scene_layers[static_cast<int>(Layers::kBackground)]->AttachChild(std::move(m_level_info.background_parent));
-	m_scene_layers[static_cast<int>(Layers::kLevel)]->AttachChild(std::move(m_level_info.level_parent));
 }
 
-CommandQueue& World::getCommandQueue()
+//Written by Paul Bichler (D00242563)
+void World::BuildWorld()
+{
+	//Load the level based on the level data in the level manager 
+	LevelManager::LevelData current_level_data = m_level_manager.GetCurrentLevelData();
+	LevelInfo& level_info = BuildLevel(current_level_data);
+
+	m_scene_layers[static_cast<int>(Layers::kBackground)]->AttachChild(std::move(level_info.background_parent));
+	m_scene_layers[static_cast<int>(Layers::kLevel)]->AttachChild(std::move(level_info.level_parent));
+}
+
+CommandQueue& World::GetCommandQueue()
 {
 	return m_command_queue;
 }
@@ -265,23 +264,6 @@ void World::GetGroundRayCasts(std::set<SceneNode::Pair>& pairs, const SceneNode:
 	{
 		pairs.insert(std::minmax(pair.first, pair.second));
 	}
-}
-
-void World::UpdateSounds() const
-{
-	// Set listener's position to player position
-	m_sounds.SetListenerPosition(m_level_info.player_1->GetWorldPosition());
-
-	// Remove unused sounds
-	m_sounds.RemoveStoppedSounds();
-}
-
-//Written by Paul Bichler (D00242563)
-//Updates the platforms (used by Pulse Platforms to change color every 2 seconds)
-void World::UpdatePlatforms(const sf::Time dt) const
-{
-	for (const auto& platform : m_level_info.platforms)
-		platform->Update(dt);
 }
 
 /*

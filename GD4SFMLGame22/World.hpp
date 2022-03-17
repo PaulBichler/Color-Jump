@@ -21,21 +21,21 @@ class World : sf::NonCopyable
 {
 public:
 	World(sf::RenderTarget& output_target, SoundPlayer& sounds, LevelManager& level_manager);
+	void BuildWorld();
 	virtual void Update(sf::Time dt);
 	virtual void Draw();
-	CommandQueue& getCommandQueue();
+	CommandQueue& GetCommandQueue();
 
 private:
 	void LoadTextures();
-	void BuildScene();
+	void InitializeSceneLayers();
+	virtual LevelInfo& BuildLevel(LevelManager::LevelData current_level_data) = 0;
 
 protected:
 	sf::FloatRect GetViewBounds() const;
 	static bool IsPlayerBelowPlatform(const Character& player, const PlatformPart& platform_part);
 	static bool CheckPlatform(const Platform* platform, ECharacterType character);
 	static bool IsPlayerAtHisPlatform(const Character& player, const Platform* platform);
-	void UpdateSounds() const;
-	void UpdatePlatforms(sf::Time dt) const;
 	static bool CheckPlatformUnderneath(ECharacterType character, EPlatformType platform);
 	static void PlayerGroundRayCast(const std::set<SceneNode::Pair>& pairs);
 	void GetGroundRayCasts(std::set<SceneNode::Pair>& pairs, SceneNode::Pair pair, Category::Type category) const;
@@ -59,6 +59,5 @@ protected:
 	sf::FloatRect m_world_bounds;
 	BloomEffect m_bloom_effect;
 
-	LevelLoader::LevelInfo m_level_info;
 	LevelManager& m_level_manager;
 };
