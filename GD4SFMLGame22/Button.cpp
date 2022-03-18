@@ -32,10 +32,10 @@ namespace GUI
 	}
 
 	Button::Button(const State::Context context)
-		: m_sprite(context.textures->Get(Textures::kButtons))
-		  , m_text("", context.fonts->Get(Fonts::Main), 16)
+		: m_sprite(context.m_textures->Get(Textures::kButtons))
+		  , m_text("", context.m_fonts->Get(Fonts::Main), 16)
 		  , m_is_toggle(false)
-		  , m_sounds(*context.sounds)
+		  , m_sounds(*context.m_sounds)
 	{
 		ChangeTexture(ButtonType::Normal);
 		const sf::FloatRect bounds = m_sprite.getLocalBounds();

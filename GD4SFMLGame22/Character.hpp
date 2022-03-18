@@ -17,10 +17,11 @@ private:
 	bool m_grounded;
 	Platform* m_current_platform;
 	RayGround* m_ray;
-	bool m_canJump;
+	bool m_can_jump;
 	bool m_show_jump_animation;
 	Animation m_jump_smoke_animation;
 	SoundPlayer& m_sounds;
+	int m_identifier;
 
 public:
 	Character(ECharacterType type, const TextureHolder& textures, const sf::IntRect& texture_rect, SoundPlayer& context);
@@ -34,11 +35,14 @@ public:
 	bool IsOnPlatformOfType(EPlatformType platform_type) const;
 	void StopMovement();
 	void MoveOutOfCollision(const sf::FloatRect& rect);
+	void SetIdentifier(int identifier);
+	sf::Int32 GetIdentifier() const;
+	void SetHitPoints(sf::Int32 hit_points);
 protected:
 	void UpdateCurrent(sf::Time dt, CommandQueue& commands) override;
 	void UpdateRay() const;
 private:
-	virtual void DrawCurrent(sf::RenderTarget&, sf::RenderStates states) const override;
+	void DrawCurrent(sf::RenderTarget&, sf::RenderStates states) const override;
 	sf::FloatRect GetBoundingRect() const override;
 	
 };

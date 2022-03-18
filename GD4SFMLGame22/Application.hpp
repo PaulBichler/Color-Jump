@@ -11,6 +11,7 @@
 
 #include "LevelManager.hpp"
 
+
 class Application
 {
 public:
@@ -24,9 +25,10 @@ private:
 	void UpdateStatistics(sf::Time elapsed_time);
 	void RegisterStates();
 
-private:
 	sf::RenderWindow m_window;
-	Player m_player;
+
+	KeyBinding m_key_binding_1;
+	KeyBinding m_key_binding_2;
 
 	TextureHolder m_textures;
 	FontHolder m_fonts;
@@ -34,14 +36,13 @@ private:
 	MusicPlayer m_music;
 	SoundPlayer m_sounds;
 
+	LevelManager m_level_manager;
+
 	StateStack m_stack;
 
 	sf::Text m_statistics_text;
-	sf::Time m_statistics_updatetime;
+	sf::Time m_statistics_update_time;
 
-	std::size_t m_statistics_numframes;
-	static const sf::Time kTimePerFrame;
-
-	LevelManager m_level_manager;
+	std::size_t m_statistics_num_frames;
+	static const sf::Time time_per_frame;
 };
-

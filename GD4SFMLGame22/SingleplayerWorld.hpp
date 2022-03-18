@@ -2,10 +2,10 @@
 #include "SingleplayerLevelLoader.hpp"
 #include "World.hpp"
 
-class SingleplayerWorld : public World
+class SinglePlayerWorld : public World
 {
 public:
-	SingleplayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds, LevelManager& level_manager);
+	SinglePlayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds, LevelManager& level_manager);
 
 	void Update(sf::Time dt) override;
 	void Draw() override;

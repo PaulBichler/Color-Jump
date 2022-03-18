@@ -1,7 +1,7 @@
 #include "Entity.hpp"
 
 Entity::Entity(const int hitPoints)
-	: m_hitPoints(hitPoints)
+	: m_hit_points(hitPoints)
 {
 }
 
@@ -39,27 +39,27 @@ void Entity::UpdateCurrent(const sf::Time dt, CommandQueue& commands)
 
 int Entity::GetHitPoints() const
 {
-	return m_hitPoints;
+	return m_hit_points;
 }
 
 void Entity::Repair(const unsigned int points)
 {
 	assert(points > 0);
-	m_hitPoints += points;
+	m_hit_points += points;
 }
 
 void Entity::Damage(const unsigned int points)
 {
 	assert(points > 0);
-	m_hitPoints -= points;
+	m_hit_points -= points;
 }
 
 void Entity::Destroy()
 {
-	m_hitPoints = 0;
+	m_hit_points = 0;
 }
 
 bool Entity::IsDestroyed() const
 {
-	return m_hitPoints <= 0;
+	return m_hit_points <= 0;
 }

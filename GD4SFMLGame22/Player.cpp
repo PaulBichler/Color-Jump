@@ -1,7 +1,11 @@
 //Changed by Dylan Goncalves Martins (D00242562)
 
 #include "Player.hpp"
+
+#include <SFML/Network/Packet.hpp>
+
 #include "Character.hpp"
+#include "NetworkProtocol.hpp"
 
 //Movement is now for character
 struct CharacterMover
@@ -22,129 +26,146 @@ struct CharacterMover
  *	Dylan Goncalves Martins (D00242562)
  *	Initialize player one keys 
  */
-void Player::InitPlayerOne()
+void Player::InitPlayer()
 {
-	m_action_binding[PlayerAction::kMoveLeftOne].action = DerivedAction<Character>(CharacterMover(-1, 0.f));
-	m_action_binding[PlayerAction::kMoveLeftOne].category = Category::kPlayerOne;
-	m_action_binding[PlayerAction::kMoveRightOne].action = DerivedAction<Character>(CharacterMover(+1, 0.f));
-	m_action_binding[PlayerAction::kMoveRightOne].category = Category::kPlayerOne;
-	m_action_binding[PlayerAction::kMoveUpOne].category = Category::kPlayerOne;
-
-	m_action_binding[PlayerAction::kMoveUpOne].action = DerivedAction<Character>([](Character& a, sf::Time)
-	{
-		a.Jump();
-	});
-	m_action_binding[PlayerAction::kMoveUpOne].category = Category::kPlayerOne;
+	m_action_binding[PlayerAction::kMoveLeft].action = DerivedAction<Character>(
+		CharacterMover(-1, 0.f));
+	m_action_binding[PlayerAction::kMoveRight].action = DerivedAction<Character>(
+		CharacterMover(+1, 0.f));
+	m_action_binding[PlayerAction::kMoveUp].action = DerivedAction<Character>(
+		[](Character& a, sf::Time)
+		{
+			a.Jump();
+		});
 }
 
-
-/*
- *	Dylan Goncalves Martins (D00242562)
- *	Initialize player two keys
- */
-void Player::InitPlayerTwo()
+void Player::HandleRealtimeNetworkInput(CommandQueue& commands)
 {
-	m_action_binding[PlayerAction::kMoveLeftTwo].action = DerivedAction<Character>(CharacterMover(-1, 0.f));
-	m_action_binding[PlayerAction::kMoveLeftTwo].category = Category::kPlayerTwo;
-	m_action_binding[PlayerAction::kMoveRightTwo].action = DerivedAction<Character>(CharacterMover(+1, 0.f));
-	m_action_binding[PlayerAction::kMoveRightTwo].category = Category::kPlayerTwo;
-	m_action_binding[PlayerAction::kMoveUpTwo].action = DerivedAction<Character>([](Character& a, sf::Time)
+	if (m_socket && !IsLocal())
 	{
-		a.Jump();
-	});
-	m_action_binding[PlayerAction::kMoveUpTwo].category = Category::kPlayerTwo;
+		// Traverse all realtime input proxies. Because this is a networked game, the input isn't handled directly
+		for (auto& pair : m_action_proxies)
+		{
+			if (pair.second && IsRealtimeAction(pair.first))
+				commands.Push(m_action_binding[pair.first]);
+		}
+	}
+}
+
+void Player::HandleNetworkEvent(const PlayerAction action, CommandQueue& commands)
+{
+	commands.Push(m_action_binding[action]);
+}
+
+void Player::HandleNetworkRealtimeChange(const PlayerAction action, const bool action_enabled)
+{
+	m_action_proxies[action] = action_enabled;
+}
+
+void Player::SetMissionStatus(const MissionStatus status)
+{
+	m_current_mission_status = status;
+}
+
+MissionStatus Player::GetMissionStatus() const
+{
+	return m_current_mission_status;
+}
+
+void Player::DisableAllRealtimeActions() const
+{
+	for (const auto& action : m_action_proxies)
+	{
+		sf::Packet packet;
+		packet << static_cast<sf::Int32>(client::PacketType::kPlayerRealtimeChange);
+		packet << m_identifier;
+		packet << static_cast<sf::Int32>(action.first);
+		packet << false;
+		m_socket->send(packet);
+	}
+}
+
+bool Player::IsLocal() const
+{
+	// No key binding means this player is remote
+	return m_key_binding != nullptr;
 }
 
 /*
  *	Dylan Goncalves Martins (D00242562)
  *	Initialize both players keys
  */
-Player::Player()
+Player::Player(sf::TcpSocket* socket, const sf::Int32 identifier, const KeyBinding* binding)
+	: m_key_binding(binding)
+	  , m_identifier(identifier)
+	  , m_socket(socket)
+	  , m_current_mission_status(MissionStatus::kMissionRunning)
 {
-	m_key_binding[sf::Keyboard::A] = PlayerAction::kMoveLeftOne;
-	m_key_binding[sf::Keyboard::D] = PlayerAction::kMoveRightOne;
-	m_key_binding[sf::Keyboard::W] = PlayerAction::kMoveUpOne;
+	InitPlayer();
 
-	InitPlayerOne();
-
-	m_key_binding[sf::Keyboard::Left] = PlayerAction::kMoveLeftTwo;
-	m_key_binding[sf::Keyboard::Right] = PlayerAction::kMoveRightTwo;
-	m_key_binding[sf::Keyboard::Up] = PlayerAction::kMoveUpTwo;
-
-	InitPlayerTwo();
+	for (auto& pair : m_action_binding)
+		pair.second.category = Category::kPlayer;
 }
 
 
 void Player::HandleEvent(const sf::Event& event, CommandQueue& commands)
 {
+	// Event
 	if (event.type == sf::Event::KeyPressed)
 	{
-		const auto found = m_key_binding.find(event.key.code);
-		if (found != m_key_binding.end() && !IsRealtimeAction(found->second))
+		PlayerAction action;
+		if (m_key_binding && m_key_binding->CheckAction(event.key.code, action) && !
+			IsRealtimeAction(action))
 		{
-			commands.Push(m_action_binding[found->second]);
+			// Network connected -> send event over network
+			if (m_socket)
+			{
+				sf::Packet packet;
+				packet << static_cast<sf::Int32>(client::PacketType::kPlayerEvent);
+				packet << m_identifier;
+				packet << static_cast<sf::Int32>(action);
+				m_socket->send(packet);
+			}
+
+			// Network disconnected -> local event
+			else
+			{
+				commands.Push(m_action_binding[action]);
+			}
+		}
+	}
+
+	// Realtime change (network connected)
+	if ((event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased) && m_socket)
+	{
+		PlayerAction action;
+		if (m_key_binding && m_key_binding->CheckAction(event.key.code, action) &&
+			IsRealtimeAction(action))
+		{
+			// Send realtime change over network
+			sf::Packet packet;
+			packet << static_cast<sf::Int32>(client::PacketType::kPlayerRealtimeChange);
+			packet << m_identifier;
+			packet << static_cast<sf::Int32>(action);
+			packet << (event.type == sf::Event::KeyPressed);
+			m_socket->send(packet);
 		}
 	}
 }
 
-void Player::HandleRealtimeInput(CommandQueue& commands) const
+void Player::HandleRealtimeInput(CommandQueue& commands)
 {
-	//Check if any keyBinding keys are pressed
-	for (auto& pair : m_key_binding)
+	// Check if this is a networked game and local player or just a single player game
+	if (m_socket && IsLocal() || !m_socket)
 	{
-		if (sf::Keyboard::isKeyPressed(pair.first) && IsRealtimeAction(pair.second))
-		{
-			commands.Push(m_action_binding.at(pair.second));
-		}
+		// Lookup all actions and push corresponding commands to queue
+		const std::vector<PlayerAction> active_actions = m_key_binding->GetRealtimeActions();
+		for (PlayerAction action : active_actions)
+			commands.Push(m_action_binding[action]);
 	}
-}
-
-void Player::AssignKey(const PlayerAction action, const sf::Keyboard::Key key)
-{
-	//Remove all keys that are already bound to action
-	for (auto itr = m_key_binding.begin(); itr != m_key_binding.end();)
-	{
-		if (itr->second == action)
-		{
-			m_key_binding.erase(itr++);
-		}
-		else
-		{
-			++itr;
-		}
-	}
-	m_key_binding[key] = action;
 }
 
 sf::Keyboard::Key Player::GetAssignedKey(const PlayerAction action) const
 {
-	for (const auto& pair : m_key_binding)
-	{
-		if (pair.second == action)
-		{
-			return pair.first;
-		}
-	}
-	return sf::Keyboard::Unknown;
-}
-
-void Player::InitialiseActions()
-{
-}
-
-bool Player::IsRealtimeAction(const PlayerAction action)
-{
-	switch (action)
-	{
-	case PlayerAction::kMoveLeftOne:
-	case PlayerAction::kMoveRightOne:
-	case PlayerAction::kMoveLeftTwo:
-	case PlayerAction::kMoveRightTwo:
-		return true;
-	case PlayerAction::kMoveUpOne:
-	case PlayerAction::kMoveUpTwo:
-	case PlayerAction::kActionCount:
-		return false;
-	}
-	return false;
+	return m_key_binding->GetAssignedKey(action);
 }

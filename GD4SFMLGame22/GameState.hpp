@@ -1,5 +1,5 @@
 #pragma once
-#include "SingleplayerWorld.hpp"
+#include "SinglePlayerWorld.hpp"
 #include "State.hpp"
 #include "World.hpp"
 
@@ -12,7 +12,7 @@ public:
 	bool HandleEvent(const sf::Event& event) override;
 
 private:
-	SingleplayerWorld m_world;
-	Player& m_player;
+	SinglePlayerWorld m_world;
+	Player m_player;
 };
 

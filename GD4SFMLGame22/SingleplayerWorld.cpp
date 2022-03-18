@@ -1,13 +1,13 @@
-#include "SingleplayerWorld.hpp"
+#include "SinglePlayerWorld.hpp"
 
 #include "PlatformPart.hpp"
 
-SingleplayerWorld::SingleplayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds, LevelManager& level_manager)
+SinglePlayerWorld::SinglePlayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds, LevelManager& level_manager)
 	: World(output_target, sounds, level_manager)
 {
 }
 
-LevelInfo& SingleplayerWorld::BuildLevel(LevelManager::LevelData current_level_data)
+LevelInfo& SinglePlayerWorld::BuildLevel(LevelManager::LevelData current_level_data)
 {
 	//This method is called in the constructor of the base World class
 	SingleplayerLevelLoader level_loader(current_level_data, m_textures, m_sounds);
@@ -16,7 +16,7 @@ LevelInfo& SingleplayerWorld::BuildLevel(LevelManager::LevelData current_level_d
 	return m_level_info;
 }
 
-void SingleplayerWorld::Update(sf::Time dt)
+void SinglePlayerWorld::Update(sf::Time dt)
 {
 	DestroyEntitiesOutsideView();
 
@@ -25,7 +25,7 @@ void SingleplayerWorld::Update(sf::Time dt)
 	World::Update(dt);
 }
 
-void SingleplayerWorld::Draw()
+void SinglePlayerWorld::Draw()
 {
 	World::Draw();
 }
@@ -33,7 +33,7 @@ void SingleplayerWorld::Draw()
 //Written by Paul Bichler (D00242563)
 //Set the Lose Callback, which is invoked when a player dies.
 //This is used to tell the Game State to push the Level Lose State.
-void SingleplayerWorld::SetLoseCallback(const std::function<void()>& callback)
+void SinglePlayerWorld::SetLoseCallback(const std::function<void()>& callback)
 {
 	m_lose_callback = callback;
 }
@@ -41,18 +41,18 @@ void SingleplayerWorld::SetLoseCallback(const std::function<void()>& callback)
 //Written by Paul Bichler (D00242563)
 //Set the Win Callback, which is invoked when the level is completed.
 //This is used to tell the Game State to push the Level Win State.
-void SingleplayerWorld::SetWinCallback(const std::function<void()>& callback)
+void SinglePlayerWorld::SetWinCallback(const std::function<void()>& callback)
 {
 	m_win_callback = callback;
 }
 
-void SingleplayerWorld::SetCamera()
+void SinglePlayerWorld::SetCamera()
 {
 }
 
 //Written by Paul Bichler (D00242563)
 //Returns camera bounds + a small area at the top to prevent players from dying when jumping out of the camera bounds.
-sf::FloatRect SingleplayerWorld::GetBattlefieldBounds() const
+sf::FloatRect SinglePlayerWorld::GetBattlefieldBounds() const
 {
 	sf::FloatRect bounds = GetViewBounds();
 	bounds.top -= 300.f;
@@ -61,7 +61,7 @@ sf::FloatRect SingleplayerWorld::GetBattlefieldBounds() const
 	return bounds;
 }
 
-void SingleplayerWorld::UpdateSounds() const
+void SinglePlayerWorld::UpdateSounds() const
 {
 	// Set listener's position to player position
 	m_sounds.SetListenerPosition(m_level_info.player_1->GetWorldPosition());
@@ -72,14 +72,14 @@ void SingleplayerWorld::UpdateSounds() const
 
 //Written by Paul Bichler (D00242563)
 //Updates the platforms (used by Pulse Platforms to change color every 2 seconds)
-void SingleplayerWorld::UpdatePlatforms(const sf::Time dt) const
+void SinglePlayerWorld::UpdatePlatforms(const sf::Time dt) const
 {
 	for (const auto& platform : m_level_info.platforms)
 		platform->Update(dt);
 }
 
 //Written by Paul Bichler (D00242563)
-void SingleplayerWorld::DestroyEntitiesOutsideView()
+void SinglePlayerWorld::DestroyEntitiesOutsideView()
 {
 	Command command;
 	command.category = Category::Type::kPlayerOne | Category::Type::kPlayerTwo;
@@ -97,7 +97,7 @@ void SingleplayerWorld::DestroyEntitiesOutsideView()
 }
 
 //Written by Dylan Goncalves Martins (), modified by Paul Bichler (D00242563)
-void SingleplayerWorld::HandleCollisions()
+void SinglePlayerWorld::HandleCollisions()
 {
 	std::set<SceneNode::Pair> collision_pairs;
 	m_sceneGraph.CheckSceneCollision(m_sceneGraph, collision_pairs);

@@ -7,8 +7,8 @@
 //Written by Paul Bichler (D00242563)
 GameState::GameState(StateStack& stack, const Context context)
 : State(stack, context)
-, m_world(*context.window, *context.sounds, *context.level_manager)
-, m_player(*context.player)
+, m_world(*context.m_window, *context.m_sounds, *context.m_level_manager)
+, m_player(nullptr, 1, context.m_keys1)
 {
 	//Define what happens when the level is lost
 	m_world.SetLoseCallback([this]
@@ -24,7 +24,7 @@ GameState::GameState(StateStack& stack, const Context context)
 
 	m_world.BuildWorld();
 
-	context.music->Play(MusicThemes::kMissionTheme);
+	context.m_music->Play(MusicThemes::kMissionTheme);
 }
 
 void GameState::Draw()

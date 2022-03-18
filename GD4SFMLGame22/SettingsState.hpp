@@ -18,22 +18,21 @@ class SettingsState : public State
 public:
 	SettingsState(StateStack& stack, Context context);
 
-	virtual void Draw();
-	virtual bool Update(sf::Time dt);
-	virtual bool HandleEvent(const sf::Event& event);
+	void Draw() override;
+	bool Update(sf::Time dt) override;
+	bool HandleEvent(const sf::Event& event) override;
 
 
 private:
-	void UpdateLabels();
-	void AddButtonLabel(PlayerAction action, float y, const std::string& text, Context context);
-	void AddButtonLabel(PlayerAction action, float x, float y, const std::string& text, Context context);
+	void UpdateLabels() const;
+	void AddButtonLabel(std::size_t index, size_t x, size_t y,
+	                    const std::string& text, Context context);
 
 
 private:
 	sf::Sprite m_background_sprite;
 	GUI::Container m_gui_container;
-	std::array<GUI::Button::Ptr, static_cast<int>(PlayerAction::kActionCount)> m_binding_buttons;
-	std::array<GUI::Label::Ptr, static_cast<int>(PlayerAction::kActionCount)> 	m_binding_labels;
+	std::array<GUI::Button::Ptr, 2 * static_cast<int>(PlayerAction::kActionCount)>
+	m_binding_buttons;
+	std::array<GUI::Label::Ptr, 2 * static_cast<int>(PlayerAction::kActionCount)> m_binding_labels;
 };
-
-

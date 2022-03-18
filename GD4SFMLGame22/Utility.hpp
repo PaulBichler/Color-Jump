@@ -15,6 +15,7 @@ namespace sf
 class Utility
 {
 public:
+	static int RandomInt(int exclusiveMax);
 	static void CentreOrigin(sf::Sprite& sprite);
 	static void CentreOrigin(sf::Text& text);
 	static void CentreOrigin(Animation& animation);
