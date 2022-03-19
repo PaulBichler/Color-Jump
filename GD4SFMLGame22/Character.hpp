@@ -3,7 +3,7 @@
 
 #include "Animation.hpp"
 #include "Application.hpp"
-#include "ECharacterType.hpp"
+#include "EColorType.hpp"
 #include "Entity.hpp"
 #include "Platform.hpp"
 #include "RayGround.hpp"
@@ -12,7 +12,7 @@
 class Character : public Entity
 {
 private:
-	ECharacterType m_type;
+	EColorType m_type;
 	sf::Sprite m_sprite;
 	bool m_grounded;
 	Platform* m_current_platform;
@@ -24,13 +24,13 @@ private:
 	int m_identifier;
 
 public:
-	Character(ECharacterType type, const TextureHolder& textures, const sf::IntRect& texture_rect, SoundPlayer& context);
+	Character(EColorType type, const TextureHolder& textures, const sf::IntRect& texture_rect, SoundPlayer& context);
 	static float GetMaxSpeed();
 	unsigned GetCategory() const override;
 	void Jump();
 	void SetGrounded(Platform* platform);
 	void SetFalling();
-	ECharacterType GetCharacterType() const;
+	EColorType GetCharacterType() const;
 	Platform* GetCurrentPlatform() const;
 	bool IsOnPlatformOfType(EPlatformType platform_type) const;
 	void StopMovement();

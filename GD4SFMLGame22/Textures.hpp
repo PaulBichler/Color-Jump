@@ -5,9 +5,13 @@ enum class Textures
 	kButtons,
 	kParticle,
 	kLevelTileSet,
+	kHImpactBlankPlatform,
 	kHImpactRedPlatform,
 	kHImpactBluePlatform,
+	kHImpactGreenPlatform,
+	kVImpactBlankPlatform,
 	kVImpactRedPlatform,
 	kVImpactBluePlatform,
+	kVImpactGreenPlatform,
 	kJumpSmoke
 };

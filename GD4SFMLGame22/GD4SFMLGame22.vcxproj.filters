@@ -31,9 +31,6 @@
     <Filter Include="Source Files\GameStates">
       <UniqueIdentifier>{ea35aad1-cb37-4dc1-9e75-fd536e70fee6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Level\Worlds">
-      <UniqueIdentifier>{ec2cdcae-6042-4ac1-bf8d-78254f4c0331}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Level\Multiplayer">
       <UniqueIdentifier>{fcb5efdb-568c-4fc2-a804-5c0f36a88356}</UniqueIdentifier>
     </Filter>
@@ -42,6 +39,15 @@
     </Filter>
     <Filter Include="Header Files\Level\Singleplayer">
       <UniqueIdentifier>{8ea4dd43-6b36-488f-a9c1-3f01ab882d65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Level\Singleplayer">
+      <UniqueIdentifier>{95e54fbd-2d9c-4fab-b01b-8971622bdeff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Level\Base">
+      <UniqueIdentifier>{85924549-1114-429c-9f38-4b542b508548}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Level\Multiplayer">
+      <UniqueIdentifier>{ec2cdcae-6042-4ac1-bf8d-78254f4c0331}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -93,26 +99,8 @@
     <ClCompile Include="TextNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LevelLoader.cpp">
-      <Filter>Source Files\Level</Filter>
-    </ClCompile>
-    <ClCompile Include="TileFactory.cpp">
-      <Filter>Source Files\Level</Filter>
-    </ClCompile>
-    <ClCompile Include="LevelManager.cpp">
-      <Filter>Source Files\Level</Filter>
-    </ClCompile>
-    <ClCompile Include="Tile.cpp">
-      <Filter>Source Files\Level</Filter>
-    </ClCompile>
     <ClCompile Include="Character.cpp">
       <Filter>Source Files\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform.cpp">
-      <Filter>Source Files\Level</Filter>
-    </ClCompile>
-    <ClCompile Include="PlatformPart.cpp">
-      <Filter>Source Files\Level</Filter>
     </ClCompile>
     <ClCompile Include="LevelLoseState.cpp">
       <Filter>Source Files\GameStates</Filter>
@@ -162,29 +150,50 @@
     <ClCompile Include="RayGround.cpp">
       <Filter>Source Files\Player</Filter>
     </ClCompile>
-    <ClCompile Include="MultiplayerGameState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="World.cpp">
-      <Filter>Source Files\Level\Worlds</Filter>
-    </ClCompile>
-    <ClCompile Include="SinglePlayerWorld.cpp">
-      <Filter>Source Files\Level\Worlds</Filter>
-    </ClCompile>
     <ClCompile Include="MultiplayerWorld.cpp">
-      <Filter>Source Files\Level\Worlds</Filter>
-    </ClCompile>
-    <ClCompile Include="ColorTile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SingleplayerLevelLoader.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Level\Multiplayer</Filter>
     </ClCompile>
     <ClCompile Include="KeyBinding.cpp">
       <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SinglePlayerWorld.cpp">
+      <Filter>Source Files\Level\Singleplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>Source Files\Level\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelLoader.cpp">
+      <Filter>Source Files\Level\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform.cpp">
+      <Filter>Source Files\Level\Singleplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformPart.cpp">
+      <Filter>Source Files\Level\Singleplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelManager.cpp">
+      <Filter>Source Files\Level\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Tile.cpp">
+      <Filter>Source Files\Level\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="TileFactory.cpp">
+      <Filter>Source Files\Level\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiplayerLevelLoader.cpp">
+      <Filter>Source Files\Level\Multiplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="SingleplayerLevelLoader.cpp">
+      <Filter>Source Files\Level\Singleplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorTile.cpp">
+      <Filter>Source Files\Level\Multiplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiplayerGameState.cpp">
+      <Filter>Source Files\GameStates</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -257,7 +266,7 @@
     <ClInclude Include="TextNode.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ECharacterType.hpp">
+    <ClInclude Include="EColorType.hpp">
       <Filter>Header Files\Player</Filter>
     </ClInclude>
     <ClInclude Include="Character.hpp">
@@ -332,9 +341,6 @@
     <ClInclude Include="NetworkProtocol.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MultiplayerGameState.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameServer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -374,17 +380,20 @@
     <ClInclude Include="TileFactory.hpp">
       <Filter>Header Files\Level\Base</Filter>
     </ClInclude>
-    <ClInclude Include="ETileColor.hpp">
-      <Filter>Header Files\Level\Multiplayer</Filter>
-    </ClInclude>
     <ClInclude Include="EGameMode.hpp">
       <Filter>Header Files\Level\Base</Filter>
     </ClInclude>
     <ClInclude Include="SingleplayerLevelLoader.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Level\Singleplayer</Filter>
     </ClInclude>
     <ClInclude Include="KeyBinding.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiplayerLevelLoader.hpp">
+      <Filter>Header Files\Level\Multiplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiplayerGameState.hpp">
+      <Filter>Header Files\GameStates</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

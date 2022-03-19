@@ -1,5 +1,5 @@
 #pragma once
-#include "ECharacterType.hpp"
+#include "EColorType.hpp"
 #include "EPlatformType.hpp"
 #include "Tile.hpp"
 
@@ -11,7 +11,7 @@ public:
 	Platform(EPlatformType platform_type, TextureHolder& textures);
 	EPlatformType GetPlatformType() const;
 	void AddPlatformPart(PlatformPart* tile);
-	virtual bool DoesPlayerCollide(ECharacterType character_type);
+	virtual bool DoesPlayerCollide(EColorType color_type);
 	void SetType(EPlatformType type);
 
 	void Update(sf::Time dt);

@@ -85,6 +85,10 @@ MultiplayerGameState::MultiplayerGameState(StateStack& stack, const Context cont
 
 	m_socket.setBlocking(false);
 
+	//Build the scene
+	context.m_level_manager->SetIsMultiplayer(true);
+	m_world.BuildWorld(context.m_level_manager->GetCurrentLevelData());
+
 	//Play game theme
 	context.m_music->Play(MusicThemes::kMissionTheme);
 }

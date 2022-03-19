@@ -22,7 +22,9 @@ GameState::GameState(StateStack& stack, const Context context)
 		RequestStackPush(StateID::kLevelWin);	
 	});
 
-	m_world.BuildWorld();
+	//Build the scene
+	context.m_level_manager->SetIsMultiplayer(false);
+	m_world.BuildWorld(context.m_level_manager->GetCurrentLevelData());
 
 	context.m_music->Play(MusicThemes::kMissionTheme);
 }

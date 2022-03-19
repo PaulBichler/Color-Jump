@@ -20,9 +20,13 @@ public:
 	LevelData GetCurrentLevelData() const;
 	void NextLevel();
 	bool DoesNextLevelExist() const;
+	void SetIsMultiplayer(bool is_multiplayer);
 
 private:
-	std::vector<LevelData> m_levels;
-	int m_current_index;
+	std::vector<LevelData> m_coop_levels;
+	std::vector<LevelData> m_multiplayer_levels;
+	int m_current_coop_index;
+	int m_current_multiplayer_index;
+	bool m_is_multiplayer{};
 };
 

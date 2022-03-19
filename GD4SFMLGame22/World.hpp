@@ -21,7 +21,7 @@ class World : sf::NonCopyable
 {
 public:
 	World(sf::RenderTarget& output_target, SoundPlayer& sounds, LevelManager& level_manager);
-	void BuildWorld();
+	void BuildWorld(LevelManager::LevelData current_level_data);
 	virtual void Update(sf::Time dt);
 	virtual void Draw();
 	CommandQueue& GetCommandQueue();
@@ -34,9 +34,9 @@ private:
 protected:
 	sf::FloatRect GetViewBounds() const;
 	static bool IsPlayerBelowPlatform(const Character& player, const PlatformPart& platform_part);
-	static bool CheckPlatform(const Platform* platform, ECharacterType character);
+	static bool CheckPlatform(const Platform* platform, EColorType character);
 	static bool IsPlayerAtHisPlatform(const Character& player, const Platform* platform);
-	static bool CheckPlatformUnderneath(ECharacterType character, EPlatformType platform);
+	static bool CheckPlatformUnderneath(EColorType character, EPlatformType platform);
 	static void PlayerGroundRayCast(const std::set<SceneNode::Pair>& pairs);
 	void GetGroundRayCasts(std::set<SceneNode::Pair>& pairs, SceneNode::Pair pair, Category::Type category) const;
 	static bool MatchesCategories(SceneNode::Pair& collision, Category::Type type1, Category::Type type2);
@@ -58,6 +58,4 @@ protected:
 
 	sf::FloatRect m_world_bounds;
 	BloomEffect m_bloom_effect;
-
-	LevelManager& m_level_manager;
 };

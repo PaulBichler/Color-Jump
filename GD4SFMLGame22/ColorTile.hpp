@@ -1,14 +1,22 @@
 #pragma once
+#include "EColorType.hpp"
 #include "Tile.hpp"
-#include "ETileColor.hpp"
 
 class ColorTile : public Tile
 {
 private:
-	ETileColor m_color;
+	EColorType m_color;
+	TextureHolder& m_textures;
+
+	void SetColor(EColorType color);
+	void ReplaceTexture(const sf::Texture& texture);
 
 public:
-	ColorTile(const TextureHolder& textures, sf::IntRect sub_rect, ETileType tile_type);
-	ETileColor GetColor() const;
+	ColorTile(TextureHolder& textures, sf::IntRect sub_rect, ETileType tile_type, EColorType color_type);
+	bool HandleCollision(EColorType color);
+	EColorType GetColor() const;
+
+private:
+	bool m_is_vertical;
 };
 

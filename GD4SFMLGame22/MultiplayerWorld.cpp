@@ -1,5 +1,7 @@
 #include "MultiplayerWorld.hpp"
 
+#include "MultiplayerLevelLoader.hpp"
+
 MultiplayerWorld::MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds, LevelManager& level_manager)
 	: World(output_target, sounds, level_manager)
 {
@@ -19,7 +21,7 @@ Character* MultiplayerWorld::AddCharacter(const sf::Int32 identifier, const sf::
 {
 	const sf::IntRect rect(position.x, position.y, 15, 15);
 	std::unique_ptr<Character> player(
-		new Character(ECharacterType::kRed, m_textures, rect, m_sounds));
+		new Character(EColorType::kRed, m_textures, rect, m_sounds));
 	player->setPosition(m_camera.getCenter());
 	player->SetIdentifier(identifier);
 
@@ -52,8 +54,11 @@ void MultiplayerWorld::RemoveCharacter(const sf::Int32 identifier)
 
 LevelInfo& MultiplayerWorld::BuildLevel(LevelManager::LevelData current_level_data)
 {
-	LevelInfo info;
-	return info;
+	//This method is called in the constructor of the base World class
+	MultiplayerLevelLoader level_loader(current_level_data, m_textures, m_sounds);
+	m_level_info = level_loader.LoadLevel();
+
+	return m_level_info;
 }
 
 void MultiplayerWorld::SetCamera()

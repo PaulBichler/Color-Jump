@@ -17,6 +17,7 @@ template<class T>
 class LevelLoader
 {
 public:
+	virtual ~LevelLoader() = default;
 	LevelLoader(LevelManager::LevelData& level_data, TextureHolder& textures, SoundPlayer& sound_player);
 
 	virtual T LoadLevel() = 0;

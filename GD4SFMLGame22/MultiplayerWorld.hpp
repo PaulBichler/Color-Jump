@@ -1,4 +1,5 @@
 #pragma once
+#include "MultiplayerLevelLoader.hpp"
 #include "World.hpp"
 
 class MultiplayerWorld : public World
@@ -20,4 +21,7 @@ protected:
 	void HandleCollisions() override;
 	sf::FloatRect GetBattlefieldBounds() const override;
 	std::vector<Character*> m_players;
+
+private:
+	MLevelInfo m_level_info;
 };

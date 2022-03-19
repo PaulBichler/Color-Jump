@@ -21,8 +21,7 @@ namespace
  *	Creates the character for the players
  *	Also Creates a "Ray" and sets it as a child of the character
  */
-Character::Character(const ECharacterType type, const TextureHolder& textures,
-                     const sf::IntRect& texture_rect,
+Character::Character(const EColorType type, const TextureHolder& textures, const sf::IntRect& texture_rect,
                      SoundPlayer& context)
 	: Entity(100),
 	  m_type(type),
@@ -65,7 +64,7 @@ float Character::GetMaxSpeed()
  */
 unsigned Character::GetCategory() const
 {
-	if (m_type == ECharacterType::kRed)
+	if (m_type == EColorType::kRed)
 	{
 		return static_cast<int>(Category::kPlayerOne);
 	}
@@ -118,7 +117,7 @@ void Character::SetFalling()
 	m_current_platform = nullptr;
 }
 
-ECharacterType Character::GetCharacterType() const
+EColorType Character::GetCharacterType() const
 {
 	return m_type;
 }

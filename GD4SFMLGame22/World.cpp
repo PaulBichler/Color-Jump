@@ -3,6 +3,7 @@
 #include "World.hpp"
 
 #include <iostream>
+#include <utility>
 
 #include "ParticleNode.hpp"
 #include "PostEffect.hpp"
@@ -17,7 +18,6 @@ World::World(sf::RenderTarget& output_target, SoundPlayer& sounds, LevelManager&
 	  , m_sounds(sounds)
 	  , m_scene_layers()
 	  , m_world_bounds(0.f, 0.f, m_camera.getSize().x, m_camera.getSize().y)
-	  , m_level_manager(level_manager)
 {
 	m_scene_texture.create(m_target.getSize().x, m_target.getSize().y);
 
@@ -62,13 +62,18 @@ void World::Draw()
 
 void World::LoadTextures()
 {
-	m_textures.Load(Textures::kParticle, "Media/Textures/Particle.png");
-
 	m_textures.Load(Textures::kLevelTileSet, "Media/Textures/spritesheet.png");
+	m_textures.Load(Textures::kHImpactBlankPlatform, "Media/Textures/BlankPlatform.png");
 	m_textures.Load(Textures::kHImpactRedPlatform, "Media/Textures/RedImpactPlatform.png");
 	m_textures.Load(Textures::kHImpactBluePlatform, "Media/Textures/BlueImpactPlatform.png");
+	m_textures.Load(Textures::kHImpactGreenPlatform, "Media/Textures/GreenPlatform.png");
+
+	m_textures.Load(Textures::kVImpactBlankPlatform, "Media/Textures/VBlankPlatform.png");
 	m_textures.Load(Textures::kVImpactRedPlatform, "Media/Textures/VRedImpactPlatform.png");
 	m_textures.Load(Textures::kVImpactBluePlatform, "Media/Textures/VBlueImpactPlatform.png");
+	m_textures.Load(Textures::kVImpactGreenPlatform, "Media/Textures/VGreenPlatform.png");
+
+	m_textures.Load(Textures::kParticle, "Media/Textures/Particle.png");
 	m_textures.Load(Textures::kJumpSmoke, "Media/Textures/Explosion.png");
 }
 
@@ -89,11 +94,10 @@ void World::InitializeSceneLayers()
 }
 
 //Written by Paul Bichler (D00242563)
-void World::BuildWorld()
+void World::BuildWorld(LevelManager::LevelData current_level_data)
 {
 	//Load the level based on the level data in the level manager 
-	LevelManager::LevelData current_level_data = m_level_manager.GetCurrentLevelData();
-	LevelInfo& level_info = BuildLevel(current_level_data);
+	LevelInfo& level_info = BuildLevel(std::move(current_level_data));
 
 	m_scene_layers[static_cast<int>(Layers::kBackground)]->AttachChild(std::move(level_info.background_parent));
 	m_scene_layers[static_cast<int>(Layers::kLevel)]->AttachChild(std::move(level_info.level_parent));
@@ -128,9 +132,9 @@ bool World::IsPlayerBelowPlatform(const Character& player, const PlatformPart& p
  *	Dylan Goncalves Martins (D00242562)
  *	Returns true if platform color matches character color
  */
-bool World::CheckPlatform(const Platform* platform, const ECharacterType character)
+bool World::CheckPlatform(const Platform* platform, const EColorType character)
 {
-	if (character == ECharacterType::kBlue)
+	if (character == EColorType::kBlue)
 	{
 		if (platform->GetPlatformType() == EPlatformType::kHorizontalBlue || platform->GetPlatformType() ==
 			EPlatformType::kVerticalBlue)
@@ -138,7 +142,7 @@ bool World::CheckPlatform(const Platform* platform, const ECharacterType charact
 			return true;
 		}
 	}
-	else if (character == ECharacterType::kRed)
+	else if (character == EColorType::kRed)
 	{
 		if (platform->GetPlatformType() == EPlatformType::kHorizontalRed || platform->GetPlatformType() ==
 			EPlatformType::kVerticalRed)
@@ -168,14 +172,14 @@ bool World::IsPlayerAtHisPlatform(const Character& player, const Platform* platf
 	}
 
 
-	if (player.GetCharacterType() == ECharacterType::kBlue)
+	if (player.GetCharacterType() == EColorType::kBlue)
 	{
-		return CheckPlatform(platform, ECharacterType::kBlue);
+		return CheckPlatform(platform, EColorType::kBlue);
 	}
 
-	if (player.GetCharacterType() == ECharacterType::kRed)
+	if (player.GetCharacterType() == EColorType::kRed)
 	{
-		return CheckPlatform(platform, ECharacterType::kRed);
+		return CheckPlatform(platform, EColorType::kRed);
 	}
 
 	return false;
@@ -270,14 +274,14 @@ void World::GetGroundRayCasts(std::set<SceneNode::Pair>& pairs, const SceneNode:
  *	Dylan Goncalves Martins (D00242562)
  *	Looks at platform underneath
  */
-bool World::CheckPlatformUnderneath(const ECharacterType character, const EPlatformType platform)
+bool World::CheckPlatformUnderneath(const EColorType character, const EPlatformType platform)
 {
 	if (platform == EPlatformType::kGoal || platform == EPlatformType::kNormal)
 	{
 		return true;
 	}
 
-	if (character == ECharacterType::kRed)
+	if (character == EColorType::kRed)
 	{
 		if (platform == EPlatformType::kVerticalRed || platform == EPlatformType::kHorizontalRed)
 		{
@@ -285,7 +289,7 @@ bool World::CheckPlatformUnderneath(const ECharacterType character, const EPlatf
 		}
 	}
 
-	if (character == ECharacterType::kBlue)
+	if (character == EColorType::kBlue)
 	{
 		if (platform == EPlatformType::kVerticalBlue || platform == EPlatformType::kHorizontalBlue)
 		{
