@@ -162,9 +162,6 @@
     <ClCompile Include="RayGround.cpp">
       <Filter>Source Files\Player</Filter>
     </ClCompile>
-    <ClCompile Include="NetworkNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MultiplayerGameState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -174,7 +171,7 @@
     <ClCompile Include="World.cpp">
       <Filter>Source Files\Level\Worlds</Filter>
     </ClCompile>
-    <ClCompile Include="SingleplayerWorld.cpp">
+    <ClCompile Include="SinglePlayerWorld.cpp">
       <Filter>Source Files\Level\Worlds</Filter>
     </ClCompile>
     <ClCompile Include="MultiplayerWorld.cpp">
@@ -185,6 +182,9 @@
     </ClCompile>
     <ClCompile Include="SingleplayerLevelLoader.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyBinding.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -329,9 +329,6 @@
     <ClInclude Include="RayGround.hpp">
       <Filter>Header Files\Player</Filter>
     </ClInclude>
-    <ClInclude Include="NetworkNode.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="NetworkProtocol.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -341,7 +338,7 @@
     <ClInclude Include="GameServer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SingleplayerWorld.hpp">
+    <ClInclude Include="SinglePlayerWorld.hpp">
       <Filter>Header Files\Level\Singleplayer</Filter>
     </ClInclude>
     <ClInclude Include="ColorTile.hpp">
@@ -384,6 +381,9 @@
       <Filter>Header Files\Level\Base</Filter>
     </ClInclude>
     <ClInclude Include="SingleplayerLevelLoader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyBinding.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

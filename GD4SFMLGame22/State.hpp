@@ -7,6 +7,7 @@
 
 #include <memory>
 
+#include "KeyBinding.hpp"
 #include "LevelManager.hpp"
 #include "MusicPlayer.hpp"
 #include "SoundPlayer.hpp"
@@ -26,14 +27,15 @@ public:
 
 	struct Context
 	{
-		Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, Player& player, MusicPlayer& music, SoundPlayer& sounds, LevelManager& level_manager);
-		sf::RenderWindow* window;
-		TextureHolder* textures;
-		FontHolder* fonts;
-		Player* player;
-		MusicPlayer* music;
-		SoundPlayer* sounds;
-		LevelManager* level_manager;
+		Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, MusicPlayer& music, SoundPlayer& sounds, LevelManager& level_manager, KeyBinding& keys1, KeyBinding& keys2);
+		sf::RenderWindow* m_window;
+		TextureHolder* m_textures;
+		FontHolder* m_fonts;
+		MusicPlayer* m_music;
+		SoundPlayer* m_sounds;
+		LevelManager* m_level_manager;
+		KeyBinding* m_keys1;
+		KeyBinding* m_keys2;
 	};
 
 public:
@@ -44,9 +46,9 @@ public:
 	virtual bool HandleEvent(const sf::Event& event) = 0;
 
 protected:
-	void RequestStackPush(StateID state_id);
-	void RequestStackPop();
-	void RequestStackClear();
+	void RequestStackPush(StateID state_id) const;
+	void RequestStackPop() const;
+	void RequestStackClear() const;
 
 	Context GetContext() const;
 

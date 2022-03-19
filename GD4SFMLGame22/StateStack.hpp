@@ -31,6 +31,8 @@ public:
 	explicit StateStack(State::Context context);
 	template <typename T>
 	void RegisterState(StateID state_id);
+	template <class T, class Param1>
+	void RegisterState(StateID state_id, Param1 arg1);
 	void Update(sf::Time dt);
 	void Draw();
 	void HandleEvent(const sf::Event& event);
@@ -42,15 +44,15 @@ public:
 	bool IsEmpty() const;
 
 private:
-	State::Ptr CreateState(StateID stateID);
+	State::Ptr CreateState(StateID state_id);
 	void ApplyPendingChanges();
 
 private:
 	struct PendingChange
 	{
-		explicit PendingChange(Action action, StateID stateID = StateID::kNone);
-		Action action;
-		StateID state_id;
+		explicit PendingChange(Action action, StateID state_id = StateID::kNone);
+		Action m_action;
+		StateID m_state_id;
 	};
 
 private:
@@ -61,14 +63,19 @@ private:
 };
 
 template <typename T>
-void StateStack::RegisterState(StateID state_id)
+void StateStack::RegisterState(const StateID state_id)
 {
-	m_state_factory[state_id] = [this]()
+	m_state_factory[state_id] = [this]
 	{
 		return State::Ptr(new T(*this, m_context));
 	};
 }
 
-
-
-
+template <typename T, typename Param1>
+void StateStack::RegisterState(const StateID state_id, Param1 arg1)
+{
+	m_state_factory[state_id] = [this, arg1]
+	{
+		return State::Ptr(new T(*this, m_context, arg1));
+	};
+}

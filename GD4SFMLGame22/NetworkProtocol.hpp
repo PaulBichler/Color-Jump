@@ -3,61 +3,31 @@
 
 const unsigned short SERVER_PORT = 50000;
 
-namespace Server
+namespace server
 {
 	//These are packets that come from the Server
 	enum class PacketType
 	{
-		BroadcastMessage,
-		InitialState,
-		PlayerEvent,
-		PlayerRealtimeChange,
-		PlayerConnect,
-		PlayerDisconnect,
-		AcceptCoopPartner,
-		SpawnEnemy,
-		SpawnPickup,
-		SpawnSelf,
-		UpdateClientState,
-		MissionSuccess
+		kBroadcastMessage,
+		kInitialState,
+		kPlayerEvent,
+		kPlayerRealtimeChange,
+		kPlayerConnect,
+		kPlayerDisconnect,
+		kSpawnSelf,
+		kUpdateClientState,
+		kMissionSuccess
 	};
 }
 
-namespace Client
+namespace client
 {
 	//Messages sent from the Client
 	enum class PacketType
 	{
-		PlayerEvent,
-		PlayerRealtimeChange,
-		RequestCoopPartner,
-		PositionUpdate,
-		GameEvent,
-		Quit
+		kPlayerEvent,
+		kPlayerRealtimeChange,
+		kPositionUpdate,
+		kQuit
 	};
 }
-
-namespace GameActions
-{
-	enum Type
-	{
-		EnemyExplode
-	};
-
-	struct Action
-	{
-		Action()
-		{
-			
-		}
-
-		Action(Type type, sf::Vector2f position):type(type), position(position)
-		{
-			
-		}
-
-		Type type;
-		sf::Vector2f position;
-	};
-}
-

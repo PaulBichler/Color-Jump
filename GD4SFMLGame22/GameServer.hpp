@@ -15,9 +15,9 @@ class GameServer
 public:
 	explicit GameServer(sf::Vector2f battlefield_size);
 	~GameServer();
-	void NotifyPlayerSpawn(sf::Int32 aircraft_identifier);
-	void NotifyPlayerRealtimeChange(sf::Int32 aircraft_identifier, sf::Int32 action, bool action_enabled);
-	void NotifyPlayerEvent(sf::Int32 aircraft_identifier, sf::Int32 action);
+	void NotifyPlayerSpawn(sf::Int32 identifier);
+	void NotifyPlayerRealtimeChange(sf::Int32 identifier, sf::Int32 action, bool action_enabled) const;
+	void NotifyPlayerEvent(sf::Int32 identifier, sf::Int32 action) const;
 
 private:
 	struct RemotePeer
@@ -25,20 +25,19 @@ private:
 		RemotePeer();
 		sf::TcpSocket m_socket;
 		sf::Time m_last_packet_time;
-		std::vector<sf::Int32> m_aircraft_identifiers;
+		std::vector<sf::Int32> m_identifiers;
 		bool m_ready;
 		bool m_timed_out;
 	};
 
-	struct AircraftInfo
+	struct PlayerInfo
 	{
 		sf::Vector2f m_position;
-		sf::Int32 m_hitpoints;
-		sf::Int32 m_missile_ammo;
+		sf::Int32 m_hit_points;
 		std::map<sf::Int32, bool> m_realtime_actions;
 	};
 
-	typedef std::unique_ptr<RemotePeer> PeerPtr;
+	typedef std::unique_ptr<RemotePeer> peer_ptr;
 
 private:
 	void SetListening(bool enable);
@@ -53,10 +52,9 @@ private:
 	void HandleDisconnections();
 
 	void InformWorldState(sf::TcpSocket& socket);
-	void BroadcastMessage(const std::string& message);
-	void SendToAll(sf::Packet& packet);
-	void UpdateClientState();
-
+	void BroadcastMessage(const std::string& message) const;
+	void SendToAll(sf::Packet& packet) const;
+	void UpdateClientState() const;
 private:
 	sf::Thread m_thread;
 	sf::Clock m_clock;
@@ -69,16 +67,16 @@ private:
 
 	float m_world_height;
 	sf::FloatRect m_battlefield_rect;
-	float m_battlefield_scrollspeed;
 
-	std::size_t m_aircraft_count;
-	std::map<sf::Int32, AircraftInfo> m_aircraft_info;
+	std::size_t m_player_count;
+	std::map<sf::Int32, PlayerInfo> m_player_info;
 
-	std::vector<PeerPtr> m_peers;
-	sf::Int32 m_aircraft_identifier_counter;
+	std::vector<peer_ptr> m_peers;
+	sf::Int32 m_identifier_counter;
 	bool m_waiting_thread_end;
 
-	sf::Time m_last_spawn_time;
-	sf::Time m_time_for_next_spawn;
+	
 };
+
+
 

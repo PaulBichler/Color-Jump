@@ -11,8 +11,8 @@
 LevelWinState::LevelWinState(StateStack& stack, Context context)
 	: State(stack, context)
 {
-	const sf::Font& font = context.fonts->Get(Fonts::Main);
-	const sf::Vector2f viewSize = context.window->getView().getSize();
+	const sf::Font& font = context.m_fonts->Get(Fonts::Main);
+	const sf::Vector2f viewSize = context.m_window->getView().getSize();
 
 	//Create the Win Title Text
 	m_lost_text.setFont(font);
@@ -29,7 +29,7 @@ LevelWinState::LevelWinState(StateStack& stack, Context context)
 	next_level_button->SetCallback([this]()
 	{
 		//Set the next level in the level manager
-		GetContext().level_manager->NextLevel();
+		GetContext().m_level_manager->NextLevel();
 
 		RequestStackPop(); //Pop Level Lose State
 		RequestStackPop(); //Pop Game State
@@ -39,7 +39,7 @@ LevelWinState::LevelWinState(StateStack& stack, Context context)
 	//The next level button should not be drawn when no last level exists
 	next_level_button->SetDrawPredicate([this]
 	{
-		return GetContext().level_manager->DoesNextLevelExist();
+		return GetContext().m_level_manager->DoesNextLevelExist();
 	});
 
 	//Create the Restart button
@@ -70,7 +70,7 @@ LevelWinState::LevelWinState(StateStack& stack, Context context)
 
 void LevelWinState::Draw()
 {
-	sf::RenderWindow& window = *GetContext().window;
+	sf::RenderWindow& window = *GetContext().m_window;
 	window.setView(window.getDefaultView());
 
 	sf::RectangleShape backgroundShape;

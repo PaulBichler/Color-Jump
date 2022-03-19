@@ -21,14 +21,15 @@ namespace
  *	Creates the character for the players
  *	Also Creates a "Ray" and sets it as a child of the character
  */
-Character::Character(const ECharacterType type, const TextureHolder& textures, const sf::IntRect& texture_rect,
+Character::Character(const ECharacterType type, const TextureHolder& textures,
+                     const sf::IntRect& texture_rect,
                      SoundPlayer& context)
 	: Entity(100),
 	  m_type(type),
 	  m_sprite(textures.Get(Textures::kLevelTileSet), texture_rect),
 	  m_grounded(true),
 	  m_current_platform(nullptr),
-	  m_canJump(true),
+	  m_can_jump(true),
 	  m_jump_smoke_animation(textures.Get(Textures::kJumpSmoke)),
 	  m_sounds(context)
 {
@@ -38,7 +39,8 @@ Character::Character(const ECharacterType type, const TextureHolder& textures, c
 	m_jump_smoke_animation.setScale(.5f, .5f);
 
 	sf::FloatRect bounds = m_jump_smoke_animation.GetLocalBounds();
-	m_jump_smoke_animation.setOrigin(std::floor(bounds.left + bounds.width / 2.f), std::floor(bounds.top + 50.f));
+	m_jump_smoke_animation.setOrigin(std::floor(bounds.left + bounds.width / 2.f),
+	                                 std::floor(bounds.top + 50.f));
 
 	Utility::Debug("Character created.");
 	Utility::CentreOrigin(m_sprite);
@@ -77,7 +79,7 @@ unsigned Character::GetCategory() const
  */
 void Character::Jump()
 {
-	if (m_canJump == false)
+	if (m_can_jump == false)
 	{
 		return;
 	}
@@ -85,7 +87,7 @@ void Character::Jump()
 	m_show_jump_animation = true;
 	m_jump_smoke_animation.Restart();
 	m_sounds.Play(SoundEffect::kJump);
-	m_canJump = false;
+	m_can_jump = false;
 	m_grounded = false;
 	m_current_platform = nullptr;
 	SetVelocity(0, Table.m_JumpForce);
@@ -99,7 +101,7 @@ void Character::Jump()
 void Character::SetGrounded(Platform* platform)
 {
 	m_show_jump_animation = false;
-	m_canJump = true;
+	m_can_jump = true;
 	m_grounded = true;
 	m_current_platform = platform;
 	SetVelocity(m_velocity.x, 0);
@@ -160,6 +162,21 @@ void Character::MoveOutOfCollision(const sf::FloatRect& rect)
 	}
 }
 
+void Character::SetIdentifier(const int identifier)
+{
+	m_identifier = identifier;
+}
+
+sf::Int32 Character::GetIdentifier() const
+{
+	return m_identifier;
+}
+
+void Character::SetHitPoints(const sf::Int32 hit_points)
+{
+	m_hit_points = hit_points;
+}
+
 void Character::UpdateCurrent(const sf::Time dt, CommandQueue& commands)
 {
 	Entity::UpdateCurrent(dt, commands);
@@ -171,7 +188,7 @@ void Character::UpdateCurrent(const sf::Time dt, CommandQueue& commands)
 
 	UpdateRay();
 
-	if(m_show_jump_animation) 
+	if (m_show_jump_animation)
 	{
 		m_jump_smoke_animation.Update(dt);
 		m_show_jump_animation = !m_jump_smoke_animation.IsFinished();
@@ -194,7 +211,7 @@ void Character::DrawCurrent(sf::RenderTarget& target, const sf::RenderStates sta
 {
 	target.draw(m_sprite, states);
 
-	if(m_show_jump_animation) 
+	if (m_show_jump_animation)
 		target.draw(m_jump_smoke_animation, states);
 }
 

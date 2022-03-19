@@ -10,16 +10,16 @@ TitleState::TitleState(StateStack& stack, const Context context)
 , m_show_text(true)
 , m_text_effect_time(sf::Time::Zero)
 {
-	m_background_sprite.setTexture(context.textures->Get(Textures::kTitleScreen));
-	m_text.setFont(context.fonts->Get(Fonts::Main));
+	m_background_sprite.setTexture(context.m_textures->Get(Textures::kTitleScreen));
+	m_text.setFont(context.m_fonts->Get(Fonts::Main));
 	m_text.setString("Press any key to continue");
 	Utility::CentreOrigin(m_text);
-	m_text.setPosition(context.window->getView().getSize() / 2.f);
+	m_text.setPosition(context.m_window->getView().getSize() / 2.f);
 }
 
 void TitleState::Draw()
 {
-	sf::RenderWindow& window = *GetContext().window;
+	sf::RenderWindow& window = *GetContext().m_window;
 	window.draw(m_background_sprite);
 
 	if(m_show_text)

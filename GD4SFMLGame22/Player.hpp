@@ -2,27 +2,51 @@
 #include "Command.hpp"
 #include <SFML/Window/Event.hpp>
 #include <map>
+#include <SFML/Network/TcpSocket.hpp>
+
 #include "CommandQueue.hpp"
+#include "KeyBinding.hpp"
 #include "PlayerAction.hpp"
+
+enum class MissionStatus;
 
 class Player
 {
 public:
-	void InitPlayerOne();
-	void InitPlayerTwo();
-	Player();
-	void HandleEvent(const sf::Event& event, CommandQueue& commands);
-	void HandleRealtimeInput(CommandQueue& commands) const;
 
-	void AssignKey(PlayerAction action, sf::Keyboard::Key key);
+	Player(sf::TcpSocket* socket, sf::Int32 identifier, const KeyBinding* binding);
+	void HandleEvent(const sf::Event& event, CommandQueue& commands);
+	void HandleRealtimeInput(CommandQueue& commands);
+	void HandleRealtimeNetworkInput(CommandQueue& commands);
+
+	//React to events or realtime state changes recevied over the network
+	void HandleNetworkEvent(PlayerAction action, CommandQueue& commands);
+	void HandleNetworkRealtimeChange(PlayerAction action, bool action_enabled);
+
+
+	void SetMissionStatus(MissionStatus status);
+	MissionStatus GetMissionStatus() const;
+
+	void DisableAllRealtimeActions() const;
+	bool IsLocal() const;
+	
 	sf::Keyboard::Key GetAssignedKey(PlayerAction action) const;
 
 private:
-	static void InitialiseActions();
-	static bool IsRealtimeAction(PlayerAction action);
+	void InitPlayer();
 
-private:
-	std::map<sf::Keyboard::Key, PlayerAction> m_key_binding;
 	std::map<PlayerAction, Command> m_action_binding;
+	const KeyBinding* m_key_binding;
+	std::map<PlayerAction, bool> m_action_proxies;
+	int m_identifier;
+	sf::TcpSocket* m_socket;
+	MissionStatus m_current_mission_status;
 };
 
+#pragma once
+enum class MissionStatus
+{
+	kMissionRunning,
+	kMissionSuccess,
+	kMissionFailure
+};

@@ -9,15 +9,22 @@ class MultiplayerGameState : public State
 {
 public:
 	MultiplayerGameState(StateStack& stack, Context context, bool is_host);
-	virtual void Draw();
-	virtual bool Update(sf::Time dt);
-	virtual bool HandleEvent(const sf::Event& event);
+	void Draw() override;
+	bool Update(sf::Time dt) override;
+	bool HandleEvent(const sf::Event& event) override;
 	virtual void OnActivate();
 	void OnDestroy();
 	void DisableAllRealtimeActions();
 
 private:
 	void UpdateBroadcastMessage(sf::Time elapsed_time);
+	void HandleClientUpdate(sf::Packet& packet);
+	void HandleSelfSpawn(sf::Packet& packet);
+	void HandleBroadcast(sf::Packet& packet);
+	void HandlePlayerConnect(sf::Packet& packet);
+	void HandlePlayerDisconnect(sf::Packet& packet);
+	void HandleInitialState(sf::Packet& packet);
+	void HandleRealtimeChange(sf::Packet& packet);
 	void HandlePacket(sf::Int32 packet_type, sf::Packet& packet);
 
 private:

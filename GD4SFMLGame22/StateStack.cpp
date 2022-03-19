@@ -70,10 +70,10 @@ void StateStack::ApplyPendingChanges()
 {
 	for(PendingChange change : m_pending_list)
 	{
-		switch (change.action)
+		switch (change.m_action)
 		{
 			case Action::Push:
-				m_stack.emplace_back(CreateState(change.state_id));
+				m_stack.emplace_back(CreateState(change.m_state_id));
 				break;
 			case Action::Pop:
 				m_stack.pop_back();
@@ -86,8 +86,8 @@ void StateStack::ApplyPendingChanges()
 	m_pending_list.clear();
 }
 
-StateStack::PendingChange::PendingChange(Action action, StateID stateID)
-: action(action)
-, state_id(stateID)
+StateStack::PendingChange::PendingChange(Action action, StateID state_id)
+: m_action(action)
+, m_state_id(state_id)
 {
 }
