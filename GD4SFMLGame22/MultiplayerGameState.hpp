@@ -25,6 +25,7 @@ private:
 	void HandlePlayerDisconnect(sf::Packet& packet);
 	void HandleInitialState(sf::Packet& packet);
 	void HandleRealtimeChange(sf::Packet& packet);
+	void HandlePlayerEvent(sf::Packet& packet);
 	void HandlePacket(sf::Int32 packet_type, sf::Packet& packet);
 
 private:

@@ -1,4 +1,5 @@
 #pragma once
+#include "EColorType.hpp"
 #include "ETileType.hpp"
 #include "ResourceIdentifiers.hpp"
 #include "SpriteNode.hpp"
@@ -12,6 +13,7 @@ public:
 	void SetActiveCollider(bool active);
 	unsigned GetCategory() const override;
 	sf::FloatRect GetBoundingRect() const override;
+	virtual bool HandleCollision(EColorType color);
 
 protected:
 	ETileType m_type;

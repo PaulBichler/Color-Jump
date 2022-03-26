@@ -2,6 +2,7 @@
 
 #include "Tile.hpp"
 
+#include "EPlatformType.hpp"
 #include "ResourceHolder.hpp"
 #include "ResourceIdentifiers.hpp"
 
@@ -9,7 +10,7 @@
 //The Tile class is the base class of all tiles in the level
 Tile::Tile(const TextureHolder& textures, const sf::IntRect sub_rect, const ETileType type)
 	: SpriteNode(textures.Get(Textures::kLevelTileSet), sub_rect),
-	m_type(type)
+	  m_type(type)
 {
 }
 
@@ -31,23 +32,44 @@ void Tile::SetActiveCollider(bool active)
 unsigned Tile::GetCategory() const
 {
 	//Return the default category for non-collider tiles
-	if(!m_has_collider)
-		return SpriteNode::GetCategory();
+	if (!m_has_collider)
+		return Category::kPlatform;
 
 	switch (m_type)
 	{
 	case kSpikes:
 		return Category::kEnemyTrap;
 	default:
-		return SpriteNode::GetCategory();
+		return Category::kPlatform;
 	}
 }
 
 //Written by Paul Bichler (D00242563)
 sf::FloatRect Tile::GetBoundingRect() const
 {
-	if(!m_has_collider)
+	if (!m_has_collider)
 		return SpriteNode::GetBoundingRect();
 
 	return GetWorldTransform().transformRect(m_sprite.getGlobalBounds());
+}
+
+bool Tile::HandleCollision(const EColorType color)
+{
+	switch (m_type)
+	{
+	case kHorizontalBluePlatformPart:
+	case kVerticalBluePlatformPart:
+		if (color != EColorType::kBlue)
+			return false;
+		break;
+	case kHorizontalRedPlatformPart:
+	case kVerticalRedPlatformPart:
+		if (color != EColorType::kRed)
+			return false;
+		break;
+	default:
+		break;
+	}
+
+	return true;
 }

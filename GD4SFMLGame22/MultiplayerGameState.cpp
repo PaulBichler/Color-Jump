@@ -32,7 +32,7 @@ sf::IpAddress GetAddressFromFile()
 MultiplayerGameState::MultiplayerGameState(StateStack& stack, const Context context,
                                            const bool is_host)
 	: State(stack, context)
-	  , m_world(*context.m_window, *context.m_sounds, *context.m_level_manager)
+	  , m_world(*context.m_window, *context.m_sounds)
 	  , m_window(*context.m_window)
 	  , m_texture_holder(*context.m_textures)
 	  , m_connected(false)
@@ -174,6 +174,25 @@ bool MultiplayerGameState::Update(const sf::Time dt)
 		}
 
 
+		if (m_tick_clock.getElapsedTime() > sf::seconds(1.f / 20.f))
+		{
+			sf::Packet position_packet;
+			position_packet << static_cast<sf::Int32>(client::PacketType::kPositionUpdate);
+			position_packet << static_cast<sf::Int32>(m_local_player_identifiers.size());
+
+			for (const sf::Int32 identifier : m_local_player_identifiers)
+			{
+				if (const Character* character = m_world.GetCharacter(identifier))
+				{
+					position_packet << identifier << character->getPosition().x << character->
+						getPosition().y << character->GetVelocity().x << character->GetVelocity().y
+						<< character->GetHitPoints();
+				}
+			}
+			m_socket.send(position_packet);
+			m_tick_clock.restart();
+		}
+
 		m_time_since_last_packet += dt;
 	}
 
@@ -298,7 +317,7 @@ void MultiplayerGameState::HandleClientUpdate(sf::Packet& packet)
 		if (character && !is_local_player)
 		{
 			sf::Vector2f interpolated_position = character->getPosition() + (
-				position - character->getPosition()) * 0.1f;
+				position - character->getPosition()) * 0.01f;
 			character->setPosition(interpolated_position);
 			character->SetHitPoints(hit_points);
 		}
@@ -308,10 +327,9 @@ void MultiplayerGameState::HandleClientUpdate(sf::Packet& packet)
 void MultiplayerGameState::HandleSelfSpawn(sf::Packet& packet)
 {
 	sf::Int32 identifier;
-	sf::Vector2f position;
-	packet >> identifier >> position.x >> position.y;
+	packet >> identifier;
 
-	m_world.AddCharacter(identifier, position);
+	m_world.AddCharacter(identifier);
 
 	m_players[identifier].reset(
 		new Player(&m_socket, identifier, GetContext().m_keys1));
@@ -338,11 +356,11 @@ void MultiplayerGameState::HandleBroadcast(sf::Packet& packet)
 void MultiplayerGameState::HandlePlayerConnect(sf::Packet& packet)
 {
 	sf::Int32 identifier;
-	sf::Vector2f position;
-	packet >> identifier >> position.x >> position.y;
+	packet >> identifier;
 
-	Character* aircraft = m_world.AddCharacter(identifier, position);
-	aircraft->setPosition(position);
+	// Utility::Debug(std::to_string(identifier));
+
+	m_world.AddCharacter(identifier);
 	m_players[identifier].reset(new Player(&m_socket, identifier, nullptr));
 }
 
@@ -365,7 +383,7 @@ void MultiplayerGameState::HandleInitialState(sf::Packet& packet)
 		sf::Vector2f position;
 		packet >> identifier >> position.x >> position.y >> hit_points;
 
-		Character* character = m_world.AddCharacter(identifier, position);
+		Character* character = m_world.AddCharacter(identifier);
 		character->setPosition(position);
 		character->SetHitPoints(hit_points);
 
@@ -385,6 +403,20 @@ void MultiplayerGameState::HandleRealtimeChange(sf::Packet& packet)
 	{
 		itr->second->HandleNetworkRealtimeChange(static_cast<PlayerAction>(action),
 		                                         action_enabled);
+	}
+}
+
+void MultiplayerGameState::HandlePlayerEvent(sf::Packet& packet)
+{
+	sf::Int32 identifier;
+	sf::Int32 action;
+	packet >> identifier >> action;
+
+	const auto itr = m_players.find(identifier);
+	if (itr != m_players.end())
+	{
+		itr->second->HandleNetworkEvent(static_cast<PlayerAction>(action),
+		                                m_world.GetCommandQueue());
 	}
 }
 
@@ -418,6 +450,8 @@ void MultiplayerGameState::HandlePacket(sf::Int32 packet_type, sf::Packet& packe
 		HandleClientUpdate(packet);
 		break;
 	case server::PacketType::kPlayerEvent:
+		HandlePlayerEvent(packet);
+		break;
 	default:
 		break;
 	}

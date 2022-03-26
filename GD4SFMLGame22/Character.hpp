@@ -38,6 +38,7 @@ public:
 	void SetIdentifier(int identifier);
 	sf::Int32 GetIdentifier() const;
 	void SetHitPoints(sf::Int32 hit_points);
+	void SetGrounded();
 protected:
 	void UpdateCurrent(sf::Time dt, CommandQueue& commands) override;
 	void UpdateRay() const;

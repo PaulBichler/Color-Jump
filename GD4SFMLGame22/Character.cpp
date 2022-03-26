@@ -26,7 +26,7 @@ Character::Character(const EColorType type, const TextureHolder& textures, const
 	: Entity(100),
 	  m_type(type),
 	  m_sprite(textures.Get(Textures::kLevelTileSet), texture_rect),
-	  m_grounded(true),
+	  m_grounded(false),
 	  m_current_platform(nullptr),
 	  m_can_jump(true),
 	  m_jump_smoke_animation(textures.Get(Textures::kJumpSmoke)),
@@ -78,6 +78,8 @@ unsigned Character::GetCategory() const
  */
 void Character::Jump()
 {
+	Utility::Debug("Jump requested");
+
 	if (m_can_jump == false)
 	{
 		return;
@@ -152,12 +154,12 @@ void Character::StopMovement()
 void Character::MoveOutOfCollision(const sf::FloatRect& rect)
 {
 	const sf::Vector2f velocity = GetVelocity();
-	const sf::Vector2f normalVelocity = Utility::UnitVector(velocity);
+	const sf::Vector2f normal_velocity = Utility::UnitVector(velocity);
 	SetVelocity(0, 0);
 
 	while (rect.intersects(GetBoundingRect()))
 	{
-		setPosition(getPosition() - normalVelocity);
+		setPosition(getPosition() - normal_velocity);
 	}
 }
 
@@ -174,6 +176,15 @@ sf::Int32 Character::GetIdentifier() const
 void Character::SetHitPoints(const sf::Int32 hit_points)
 {
 	m_hit_points = hit_points;
+}
+
+void Character::SetGrounded()
+{
+	m_show_jump_animation = false;
+	m_can_jump = true;
+	m_grounded = true;
+	SetVelocity(m_velocity.x, 0);
+	setPosition(getPosition().x, getPosition().y - 2);
 }
 
 void Character::UpdateCurrent(const sf::Time dt, CommandQueue& commands)

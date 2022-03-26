@@ -12,7 +12,7 @@
 #include "PlatformPart.hpp"
 
 
-World::World(sf::RenderTarget& output_target, SoundPlayer& sounds, LevelManager& level_manager)
+World::World(sf::RenderTarget& output_target, SoundPlayer& sounds)
 	: m_target(output_target)
 	  , m_camera(output_target.getDefaultView())
 	  , m_sounds(sounds)
@@ -23,7 +23,8 @@ World::World(sf::RenderTarget& output_target, SoundPlayer& sounds, LevelManager&
 
 	LoadTextures();
 	InitializeSceneLayers();
-	m_camera.setCenter(m_camera.getSize().x / 2.f, m_world_bounds.height - m_camera.getSize().y / 2.f);
+	m_camera.setCenter(m_camera.getSize().x / 2.f,
+	                   m_world_bounds.height - m_camera.getSize().y / 2.f);
 }
 
 void World::Update(const sf::Time dt)
@@ -99,8 +100,10 @@ void World::BuildWorld(LevelManager::LevelData current_level_data)
 	//Load the level based on the level data in the level manager 
 	LevelInfo& level_info = BuildLevel(std::move(current_level_data));
 
-	m_scene_layers[static_cast<int>(Layers::kBackground)]->AttachChild(std::move(level_info.background_parent));
-	m_scene_layers[static_cast<int>(Layers::kLevel)]->AttachChild(std::move(level_info.level_parent));
+	m_scene_layers[static_cast<int>(Layers::kBackground)]->AttachChild(
+		std::move(level_info.background_parent));
+	m_scene_layers[static_cast<int>(Layers::kLevel)]->AttachChild(
+		std::move(level_info.level_parent));
 }
 
 CommandQueue& World::GetCommandQueue()
@@ -110,7 +113,8 @@ CommandQueue& World::GetCommandQueue()
 
 sf::FloatRect World::GetViewBounds() const
 {
-	const auto view_bounds = sf::FloatRect(m_camera.getCenter() - m_camera.getSize() / 2.f, m_camera.getSize());
+	const auto view_bounds = sf::FloatRect(m_camera.getCenter() - m_camera.getSize() / 2.f,
+	                                       m_camera.getSize());
 	return view_bounds;
 }
 
@@ -136,7 +140,8 @@ bool World::CheckPlatform(const Platform* platform, const EColorType character)
 {
 	if (character == EColorType::kBlue)
 	{
-		if (platform->GetPlatformType() == EPlatformType::kHorizontalBlue || platform->GetPlatformType() ==
+		if (platform->GetPlatformType() == EPlatformType::kHorizontalBlue || platform->
+			GetPlatformType() ==
 			EPlatformType::kVerticalBlue)
 		{
 			return true;
@@ -144,7 +149,8 @@ bool World::CheckPlatform(const Platform* platform, const EColorType character)
 	}
 	else if (character == EColorType::kRed)
 	{
-		if (platform->GetPlatformType() == EPlatformType::kHorizontalRed || platform->GetPlatformType() ==
+		if (platform->GetPlatformType() == EPlatformType::kHorizontalRed || platform->
+			GetPlatformType() ==
 			EPlatformType::kVerticalRed)
 		{
 			return true;
@@ -160,7 +166,8 @@ bool World::CheckPlatform(const Platform* platform, const EColorType character)
  */
 bool World::IsPlayerAtHisPlatform(const Character& player, const Platform* platform)
 {
-	if (platform->GetPlatformType() == EPlatformType::kNormal || platform->GetPlatformType() == EPlatformType::kGoal)
+	if (platform->GetPlatformType() == EPlatformType::kNormal || platform->GetPlatformType() ==
+		EPlatformType::kGoal)
 	{
 		return true;
 	}
@@ -185,7 +192,8 @@ bool World::IsPlayerAtHisPlatform(const Character& player, const Platform* platf
 	return false;
 }
 
-bool World::MatchesCategories(SceneNode::Pair& collision, Category::Type type1, Category::Type type2)
+bool World::MatchesCategories(SceneNode::Pair& collision, Category::Type type1,
+                              Category::Type type2)
 {
 	const unsigned int category1 = collision.first->GetCategory();
 	const unsigned int category2 = collision.second->GetCategory();
@@ -218,18 +226,19 @@ void World::PlayerGroundRayCast(const std::set<SceneNode::Pair>& pairs)
 		player_pair = pair;
 		if (MatchesCategories(pair, Category::Type::kRay, Category::Type::kPlatform))
 		{
-			const auto& ray_ground = dynamic_cast<RayGround&>(*pair.first);
-			auto& platform_part = dynamic_cast<PlatformPart&>(*pair.second);
-			const Platform* platform = platform_part.GetPlatform();
-			const Character* player = ray_ground.m_character;
+			Utility::Debug("Hit");
+			//const auto& ray_ground = dynamic_cast<RayGround&>(*pair.first);
+			// auto& platform_part = dynamic_cast<PlatformPart&>(*pair.second);
+			// const Platform* platform = platform_part.GetPlatform();
+			// const Character* player = ray_ground.m_character;
 
 			// Check if platform underneath is valid
-			if (CheckPlatformUnderneath(player->GetCharacterType(), platform->GetPlatformType()))
-			{
-				//collision found
-				collide = true;
-				break;
-			}
+			// if (CheckPlatformUnderneath(player->GetCharacterType(), platform->GetPlatformType()))
+			// {
+			//collision found
+			collide = true;
+			break;
+			// }
 		}
 	}
 
@@ -243,13 +252,15 @@ void World::PlayerGroundRayCast(const std::set<SceneNode::Pair>& pairs)
 	if (!collide)
 	{
 		// check to see which object in pair is the ray 
-		if (player_pair.first != nullptr && (player_pair.first->GetCategory() & Category::Type::kRay) != 0)
+		if (player_pair.first != nullptr && (player_pair.first->GetCategory() &
+			Category::Type::kRay) != 0)
 		{
 			//call set falling
 			const auto& ray_ground = dynamic_cast<RayGround&>(*player_pair.first);
 			ray_ground.SetFalling();
 		}
-		else if (player_pair.second != nullptr && (player_pair.second->GetCategory() & Category::Type::kRay) != 0)
+		else if (player_pair.second != nullptr && (player_pair.second->GetCategory() &
+			Category::Type::kRay) != 0)
 		{
 			const auto& ray_ground = dynamic_cast<RayGround&>(*player_pair.second);
 			ray_ground.SetFalling();

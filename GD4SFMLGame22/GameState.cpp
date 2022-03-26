@@ -7,7 +7,7 @@
 //Written by Paul Bichler (D00242563)
 GameState::GameState(StateStack& stack, const Context context)
 : State(stack, context)
-, m_world(*context.m_window, *context.m_sounds, *context.m_level_manager)
+, m_world(*context.m_window, *context.m_sounds)
 , m_player(nullptr, 1, context.m_keys1)
 {
 	//Define what happens when the level is lost

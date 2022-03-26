@@ -13,8 +13,9 @@ private:
 
 public:
 	ColorTile(TextureHolder& textures, sf::IntRect sub_rect, ETileType tile_type, EColorType color_type);
-	bool HandleCollision(EColorType color);
+	bool HandleCollision(EColorType color) override;
 	EColorType GetColor() const;
+	unsigned GetCategory() const override;
 
 private:
 	bool m_is_vertical;

@@ -12,7 +12,7 @@
 //Written by Paul Bichler (D00242563)
 //Gets the sub rect of the tile type based on X and Y coordinates of the type value.
 //The method also adjusts the sub rect to adjust the collider.
-sf::IntRect TileFactory::GetSubRect(ETileType tile_type, sf::Vector2f& spawn_pos) const
+sf::IntRect TileFactory::GetSubRect(const ETileType tile_type, sf::Vector2f& spawn_pos) const
 {
 	//The same could be achieved by looping, this is however much simpler.
 	//Got the answer from here: https://stackoverflow.com/questions/52825969/getting-x-and-y-coordinates-from-tile-id
@@ -58,20 +58,22 @@ sf::IntRect TileFactory::GetSubRect(ETileType tile_type, sf::Vector2f& spawn_pos
 }
 
 //Written by Paul Bichler (D00242563)
-TileFactory::TileFactory(TextureHolder& textures, const sf::Vector2u tile_size, SoundPlayer& sound_player)
+TileFactory::TileFactory(TextureHolder& textures, const sf::Vector2u tile_size,
+                         SoundPlayer& sound_player)
 	: m_textures(textures),
 	  m_tile_size(tile_size),
-	  m_soundPlayer(sound_player)
+	  m_sound_player(sound_player)
 {
 	m_tile_map_columns = textures.Get(Textures::kLevelTileSet).getSize().x / tile_size.x;
 }
 
 //Written by Paul Bichler (D00242563)
-PlatformPart* TileFactory::CreatePlatformPart(const ETileType tile_type, sf::Vector2f spawn_pos, Platform* parent) const
+PlatformPart* TileFactory::CreatePlatformPart(const ETileType tile_type, sf::Vector2f spawn_pos,
+                                              Platform* parent) const
 {
 	const sf::IntRect sub_rect = GetSubRect(tile_type, spawn_pos);
 
-	PlatformPart* platform_part = new PlatformPart(m_textures, sub_rect, parent, tile_type);
+	auto platform_part = new PlatformPart(m_textures, sub_rect, parent, tile_type);
 	platform_part->setPosition(spawn_pos);
 	parent->AddPlatformPart(platform_part);
 
@@ -79,27 +81,33 @@ PlatformPart* TileFactory::CreatePlatformPart(const ETileType tile_type, sf::Vec
 }
 
 //Written by Paul Bichler (D00242563)
-Tile* TileFactory::CreateTile(const ETileType tile_type, sf::Vector2f spawn_pos, const bool has_collider) const
+Tile* TileFactory::CreateTile(const ETileType tile_type, sf::Vector2f spawn_pos,
+                              const bool has_collider) const
 {
 	const sf::IntRect sub_rect = GetSubRect(tile_type, spawn_pos);
-	Tile* tile = new Tile(m_textures, sub_rect, tile_type);
+	auto tile = new Tile(m_textures, sub_rect, tile_type);
 	tile->SetActiveCollider(has_collider);
 	tile->setPosition(spawn_pos);
 
 	return tile;
 }
 
-ColorTile* TileFactory::CreateColorTile(ETileType tile_type, EColorType color_type, sf::Vector2f spawn_pos) const
+ColorTile* TileFactory::CreateColorTile(const ETileType tile_type, const EColorType color_type,
+                                        sf::Vector2f spawn_pos) const
 {
-	ColorTile* color_tile = new ColorTile(m_textures, GetSubRect(tile_type, spawn_pos), tile_type, color_type);
+	const auto color_tile = new ColorTile(m_textures, GetSubRect(tile_type, spawn_pos), tile_type,
+	                                      color_type);
 	color_tile->setPosition(spawn_pos);
 	return color_tile;
 }
 
 //Written by Paul Bichler (D00242563)
-Character* TileFactory::CreatePlayer(const ETileType tile_type, const EColorType type, sf::Vector2f spawn_pos) const
+Character* TileFactory::CreatePlayer(const ETileType tile_type, const EColorType type,
+                                     sf::Vector2f spawn_pos) const
 {
-	Character* character = new Character(type, m_textures, GetSubRect(tile_type, spawn_pos), m_soundPlayer);
+	auto character = new Character(type, m_textures,
+	                               GetSubRect(tile_type, spawn_pos),
+	                               m_sound_player);
 	character->setPosition(spawn_pos);
 	return character;
 }

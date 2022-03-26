@@ -2,8 +2,8 @@
 
 #include "PlatformPart.hpp"
 
-SinglePlayerWorld::SinglePlayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds, LevelManager& level_manager)
-	: World(output_target, sounds, level_manager)
+SinglePlayerWorld::SinglePlayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds)
+	: World(output_target, sounds)
 {
 }
 

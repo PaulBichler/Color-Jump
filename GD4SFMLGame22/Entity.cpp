@@ -1,7 +1,9 @@
 #include "Entity.hpp"
 
-Entity::Entity(const int hitPoints)
-	: m_hit_points(hitPoints)
+#include "Utility.hpp"
+
+Entity::Entity(const int hit_points)
+	: m_hit_points(hit_points)
 {
 }
 
@@ -44,13 +46,11 @@ int Entity::GetHitPoints() const
 
 void Entity::Repair(const unsigned int points)
 {
-	assert(points > 0);
 	m_hit_points += points;
 }
 
 void Entity::Damage(const unsigned int points)
 {
-	assert(points > 0);
 	m_hit_points -= points;
 }
 

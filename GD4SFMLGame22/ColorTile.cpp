@@ -46,6 +46,11 @@ EColorType ColorTile::GetColor() const
 	return m_color;
 }
 
+unsigned ColorTile::GetCategory() const
+{
+	return Category::kPlatform;
+}
+
 //Written by Paul Bichler (D00242563)
 //This method is used to decide whether a player will collide with the platform.
 //It also decides how the platform reacts to the collision.

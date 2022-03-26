@@ -20,7 +20,7 @@
 class World : sf::NonCopyable
 {
 public:
-	World(sf::RenderTarget& output_target, SoundPlayer& sounds, LevelManager& level_manager);
+	World(sf::RenderTarget& output_target, SoundPlayer& sounds);
 	void BuildWorld(LevelManager::LevelData current_level_data);
 	virtual void Update(sf::Time dt);
 	virtual void Draw();

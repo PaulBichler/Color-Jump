@@ -17,7 +17,7 @@ GameServer::RemotePeer::RemotePeer() : m_ready(false), m_timed_out(false)
 GameServer::GameServer(const sf::Vector2f battlefield_size)
 	: m_thread(&GameServer::ExecutionThread, this)
 	  , m_listening_state(false)
-	  , m_client_timeout(sf::seconds(1.f))
+	  , m_client_timeout(sf::seconds(60.f))
 	  , m_max_connected_players(15)
 	  , m_connected_players(0)
 	  , m_world_height(5000.f)
@@ -46,8 +46,8 @@ void GameServer::NotifyPlayerSpawn(const sf::Int32 identifier)
 	sf::Packet packet;
 	//First thing for every packet is what type of packet it is
 	packet << static_cast<sf::Int32>(server::PacketType::kPlayerConnect);
-	packet << identifier << m_player_info[identifier].m_position.x <<
-		m_player_info[identifier].m_position.y;
+	packet << identifier;
+
 	for (std::size_t i = 0; i < m_connected_players; ++i)
 	{
 		if (m_peers[i]->m_ready)
@@ -58,7 +58,6 @@ void GameServer::NotifyPlayerSpawn(const sf::Int32 identifier)
 }
 
 //This is the same as PlayerEvent, but for real-time actions. This means that we are changing an ongoing state to either true or false, so we add a Boolean value to the parameters
-
 void GameServer::NotifyPlayerRealtimeChange(const sf::Int32 identifier, const sf::Int32 action,
                                             const bool action_enabled) const
 {
@@ -242,7 +241,9 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 				sf::Int32 identifier;
 				sf::Int32 hit_points;
 				sf::Vector2f position;
-				packet >> identifier >> position.x >> position.y >> hit_points;
+				sf::Vector2f velocity;
+				packet >> identifier >> position.x >> position.y >> velocity.x >> velocity.y >>
+					hit_points;
 				m_player_info[identifier].m_position = position;
 				m_player_info[identifier].m_hit_points = hit_points;
 			}
@@ -270,11 +271,8 @@ void GameServer::HandleIncomingConnections()
 		sf::Packet packet;
 		packet << static_cast<sf::Int32>(server::PacketType::kSpawnSelf);
 		packet << m_identifier_counter;
-		packet << m_player_info[m_identifier_counter].m_position.x;
-		packet << m_player_info[m_identifier_counter].m_position.y;
 
-		m_peers[m_connected_players]->m_identifiers.emplace_back(
-			m_identifier_counter);
+		m_peers[m_connected_players]->m_identifiers.emplace_back(m_identifier_counter);
 
 		BroadcastMessage("New player");
 		InformWorldState(m_peers[m_connected_players]->m_socket);
@@ -308,8 +306,7 @@ void GameServer::HandleDisconnections()
 			for (sf::Int32 identifier : (*itr)->m_identifiers)
 			{
 				SendToAll(
-					sf::Packet() << static_cast<sf::Int32>(server::PacketType::kPlayerDisconnect)
-					<<
+					sf::Packet() << static_cast<sf::Int32>(server::PacketType::kPlayerDisconnect) <<
 					identifier);
 				m_player_info.erase(identifier);
 			}
