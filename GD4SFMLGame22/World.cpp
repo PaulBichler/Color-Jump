@@ -132,6 +132,16 @@ bool World::IsPlayerBelowPlatform(const Character& player, const PlatformPart& p
 	return false;
 }
 
+bool World::IsPlayerBelowTile(const Character& player, const Tile& tile)
+{
+	if (player.getPosition().y > tile.getPosition().y)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 /*
  *	Dylan Goncalves Martins (D00242562)
  *	Returns true if platform color matches character color
@@ -152,6 +162,28 @@ bool World::CheckPlatform(const Platform* platform, const EColorType character)
 		if (platform->GetPlatformType() == EPlatformType::kHorizontalRed || platform->
 			GetPlatformType() ==
 			EPlatformType::kVerticalRed)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool World::CheckTile(const Tile& tile, const EColorType character)
+{
+	if (character == EColorType::kBlue)
+	{
+		if (tile.GetType() == kHorizontalBluePlatformPart || tile.GetType() ==
+			kVerticalBluePlatformPart)
+		{
+			return true;
+		}
+	}
+	else if (character == EColorType::kRed)
+	{
+		if (tile.GetType() == kHorizontalRedPlatformPart || tile.GetType() ==
+			kVerticalRedPlatformPart)
 		{
 			return true;
 		}
@@ -192,6 +224,33 @@ bool World::IsPlayerAtHisPlatform(const Character& player, const Platform* platf
 	return false;
 }
 
+bool World::IsPlayerAtHisTile(const Character& player, const Tile& tile)
+{
+	if (tile.GetType() == kHorizontalPlatformPart || tile.GetType() == kFinishPlatformPart)
+	{
+		return true;
+	}
+
+	if (tile.GetType() == kHorizontalImpactPlatformPart || tile.GetType() ==
+		kVerticalImpactPlatformPart)
+	{
+		return true;
+	}
+
+
+	if (player.GetCharacterType() == EColorType::kBlue)
+	{
+		return CheckTile(tile, EColorType::kBlue);
+	}
+
+	if (player.GetCharacterType() == EColorType::kRed)
+	{
+		return CheckTile(tile, EColorType::kRed);
+	}
+
+	return false;
+}
+
 bool World::MatchesCategories(SceneNode::Pair& collision, Category::Type type1,
                               Category::Type type2)
 {
@@ -226,19 +285,17 @@ void World::PlayerGroundRayCast(const std::set<SceneNode::Pair>& pairs)
 		player_pair = pair;
 		if (MatchesCategories(pair, Category::Type::kRay, Category::Type::kPlatform))
 		{
-			Utility::Debug("Hit");
-			//const auto& ray_ground = dynamic_cast<RayGround&>(*pair.first);
-			// auto& platform_part = dynamic_cast<PlatformPart&>(*pair.second);
-			// const Platform* platform = platform_part.GetPlatform();
-			// const Character* player = ray_ground.m_character;
+			const auto& ray_ground = dynamic_cast<RayGround&>(*pair.first);
+			auto& tile = dynamic_cast<Tile&>(*pair.second);
+			const Character* player = ray_ground.m_character;
 
 			// Check if platform underneath is valid
-			// if (CheckPlatformUnderneath(player->GetCharacterType(), platform->GetPlatformType()))
-			// {
-			//collision found
-			collide = true;
-			break;
-			// }
+			if (CheckTileUnderneath(player->GetCharacterType(), tile.GetType()))
+			{
+				//collision found
+				collide = true;
+				break;
+			}
 		}
 	}
 
@@ -303,6 +360,33 @@ bool World::CheckPlatformUnderneath(const EColorType character, const EPlatformT
 	if (character == EColorType::kBlue)
 	{
 		if (platform == EPlatformType::kVerticalBlue || platform == EPlatformType::kHorizontalBlue)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+bool World::CheckTileUnderneath(const EColorType character, const ETileType tile)
+{
+	if (tile == kFinishPlatformPart || tile == kHorizontalPlatformPart)
+	{
+		return true;
+	}
+
+	if (character == EColorType::kRed)
+	{
+		if (tile == kVerticalRedPlatformPart || tile == kHorizontalRedPlatformPart)
+		{
+			return true;
+		}
+	}
+
+	if (character == EColorType::kBlue)
+	{
+		if (tile == kVerticalBluePlatformPart || tile == kHorizontalBluePlatformPart)
 		{
 			return true;
 		}

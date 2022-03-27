@@ -95,6 +95,26 @@ void MultiplayerWorld::HandleCollisions()
 			auto& tile = dynamic_cast<Tile&>(*pair.second);
 
 
+			//Checks if player collided from underneath the center of the platform
+			if (IsPlayerBelowTile(player, tile))
+			{
+				//Checks if platform is collidable with player
+				if (IsPlayerAtHisTile(player, tile))
+				{
+					// move player out of collision and stop his movement
+					player.MoveOutOfCollision(tile.GetBoundingRect());
+					player.StopMovement();
+
+					// Set color of vertical platform if there is a collision from the side/underneath 
+					if (tile.GetType() == kVerticalImpactPlatformPart)
+					{
+						tile.HandleCollision(player.GetCharacterType());
+					}
+				}
+				// continue to next pair
+				continue;
+			}
+
 			//Ground players
 			if (tile.HandleCollision(player.GetCharacterType()))
 			{

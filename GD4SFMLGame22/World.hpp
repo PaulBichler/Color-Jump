@@ -34,9 +34,13 @@ private:
 protected:
 	sf::FloatRect GetViewBounds() const;
 	static bool IsPlayerBelowPlatform(const Character& player, const PlatformPart& platform_part);
+	static bool IsPlayerBelowTile(const Character& player, const Tile& tile);
 	static bool CheckPlatform(const Platform* platform, EColorType character);
+	static bool CheckTile(const Tile& tile, const EColorType character);
 	static bool IsPlayerAtHisPlatform(const Character& player, const Platform* platform);
+	static bool IsPlayerAtHisTile(const Character& player, const Tile& tile);
 	static bool CheckPlatformUnderneath(EColorType character, EPlatformType platform);
+	static bool CheckTileUnderneath(EColorType character, ETileType tile);
 	static void PlayerGroundRayCast(const std::set<SceneNode::Pair>& pairs);
 	void GetGroundRayCasts(std::set<SceneNode::Pair>& pairs, SceneNode::Pair pair, Category::Type category) const;
 	static bool MatchesCategories(SceneNode::Pair& collision, Category::Type type1, Category::Type type2);
