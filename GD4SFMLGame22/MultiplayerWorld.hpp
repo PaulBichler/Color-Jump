@@ -9,7 +9,9 @@ public:
 
 	void Update(sf::Time dt) override;
 	void Draw() override;
-	Character* AddCharacter(const sf::Int32 identifier);
+	Character* AddCharacterWithColor(const sf::Int32 identifier, const EColorType color, const sf::IntRect rect, const sf::Vector2f
+	                                 spawn_pos);
+	Character* AddCharacter(sf::Int32 identifier);
 	Character* GetCharacter(sf::Int32 identifier) const;
 	void RemoveCharacter(sf::Int32 identifier);
 

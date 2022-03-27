@@ -18,16 +18,30 @@ void MultiplayerWorld::Draw()
 	World::Draw();
 }
 
-Character* MultiplayerWorld::AddCharacter(const sf::Int32 identifier)
+Character* MultiplayerWorld::AddCharacterWithColor(const sf::Int32 identifier,
+                                                   const EColorType color, const sf::IntRect rect,
+                                                   const sf::Vector2f spawn_pos)
 {
 	std::unique_ptr<Character> player(
-		new Character(EColorType::kRed, m_textures, m_level_info.m_red_player_rect, m_sounds));
-	player->setPosition(m_level_info.m_red_player_spawn_pos);
+		new Character(color, m_textures, rect, m_sounds));
+	player->setPosition(spawn_pos);
 	player->SetIdentifier(identifier);
 
 	m_players.emplace_back(player.get());
-	m_scene_layers[static_cast<int>(Layers::kUpperAir)]->AttachChild(std::move(player));
+	m_scene_layers[static_cast<int>(Layers::kCharacters)]->AttachChild(std::move(player));
 	return m_players.back();
+}
+
+Character* MultiplayerWorld::AddCharacter(const sf::Int32 identifier)
+{
+	if (identifier % 2 == 0)
+	{
+		return AddCharacterWithColor(identifier, EColorType::kRed, m_level_info.m_red_player_rect,
+		                             m_level_info.m_red_player_spawn_pos);
+	}
+
+	return AddCharacterWithColor(identifier, EColorType::kBlue, m_level_info.m_blue_player_rect,
+	                             m_level_info.m_blue_player_spawn_pos);
 }
 
 Character* MultiplayerWorld::GetCharacter(const sf::Int32 identifier) const
