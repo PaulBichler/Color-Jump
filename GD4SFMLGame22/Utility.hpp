@@ -15,11 +15,11 @@ namespace sf
 class Utility
 {
 public:
-	static int RandomInt(int exclusiveMax);
+	static int RandomInt(int exclusive_max);
 	static void CentreOrigin(sf::Sprite& sprite);
 	static void CentreOrigin(sf::Text& text);
 	static void CentreOrigin(Animation& animation);
-	static std::string toString(sf::Keyboard::Key key);
+	static std::string ToString(sf::Keyboard::Key key);
 	static double ToRadians(int degrees);
 	static sf::Vector2f UnitVector(sf::Vector2f vector);
 	static float Length(sf::Vector2f vector);

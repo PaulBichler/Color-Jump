@@ -16,6 +16,32 @@ LevelInfo& SinglePlayerWorld::BuildLevel(LevelManager::LevelData current_level_d
 	return m_level_info;
 }
 
+Character* SinglePlayerWorld::AddCharacterWithColor(const sf::Int32 identifier,
+                                                    const EColorType color, const sf::IntRect rect,
+                                                    const sf::Vector2f spawn_pos)
+{
+	std::unique_ptr<Character> player(
+		new Character(color, m_textures, rect, m_sounds));
+	player->setPosition(spawn_pos);
+	player->SetIdentifier(identifier);
+
+	m_players.emplace_back(player.get());
+	m_scene_layers[static_cast<int>(Layers::kCharacters)]->AttachChild(std::move(player));
+	return m_players.back();
+}
+
+Character* SinglePlayerWorld::AddCharacter(const sf::Int32 identifier)
+{
+	if (identifier % 2 == 0)
+	{
+		return AddCharacterWithColor(identifier, EColorType::kRed, m_level_info.m_red_player_rect,
+		                             m_level_info.m_red_player_spawn_pos);
+	}
+
+	return AddCharacterWithColor(identifier, EColorType::kBlue, m_level_info.m_blue_player_rect,
+	                             m_level_info.m_blue_player_spawn_pos);
+}
+
 void SinglePlayerWorld::Update(sf::Time dt)
 {
 	DestroyEntitiesOutsideView();
@@ -63,11 +89,14 @@ sf::FloatRect SinglePlayerWorld::GetBattlefieldBounds() const
 
 void SinglePlayerWorld::UpdateSounds() const
 {
-	// Set listener's position to player position
-	m_sounds.SetListenerPosition(m_level_info.player_1->GetWorldPosition());
+	if (!m_players.empty())
+	{
+		// Set listener's position to player position
+		m_sounds.SetListenerPosition(m_players[0]->GetWorldPosition());
 
-	// Remove unused sounds
-	m_sounds.RemoveStoppedSounds();
+		// Remove unused sounds
+		m_sounds.RemoveStoppedSounds();
+	}
 }
 
 //Written by Paul Bichler (D00242563)
@@ -84,15 +113,15 @@ void SinglePlayerWorld::DestroyEntitiesOutsideView()
 	Command command;
 	command.category = Category::Type::kPlayerOne | Category::Type::kPlayerTwo;
 	command.action = DerivedAction<Entity>([this](Entity& e, sf::Time)
+	{
+		//Does the object intersect with the battlefield (Lose Condition)
+		if (!GetBattlefieldBounds().intersects(e.GetBoundingRect()))
 		{
-			//Does the object intersect with the battlefield (Lose Condition)
-			if (!GetBattlefieldBounds().intersects(e.GetBoundingRect()))
-			{
-				//Lose
-				e.Destroy();
-				m_lose_callback();
-			}
-		});
+			//Lose
+			e.Destroy();
+			m_lose_callback();
+		}
+	});
 	m_command_queue.Push(command);
 }
 
@@ -142,8 +171,8 @@ void SinglePlayerWorld::HandleCollisions()
 			//Check Win Condition
 			if (!m_has_won && platform->GetPlatformType() == EPlatformType::kGoal)
 			{
-				if (m_level_info.player_1->IsOnPlatformOfType(EPlatformType::kGoal) &&
-					m_level_info.player_2->IsOnPlatformOfType(EPlatformType::kGoal))
+				if (m_players[0]->IsOnPlatformOfType(EPlatformType::kGoal) &&
+					m_players[1]->IsOnPlatformOfType(EPlatformType::kGoal))
 				{
 					//Win
 					m_win_callback();
@@ -168,4 +197,3 @@ void SinglePlayerWorld::HandleCollisions()
 	PlayerGroundRayCast(pairs_player_one);
 	PlayerGroundRayCast(pairs_player_two);
 }
-

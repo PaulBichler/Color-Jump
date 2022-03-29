@@ -125,7 +125,7 @@ bool MultiplayerGameState::Update(const sf::Time dt)
 	{
 		m_world.Update(dt);
 
-		//Only handle the realtime input if the window has focus and the game is unpaused
+		//Only handle the realtime input if the window has focus and the game is un paused
 		if (m_active_state && m_has_focus)
 		{
 			CommandQueue& commands = m_world.GetCommandQueue();
@@ -185,8 +185,7 @@ bool MultiplayerGameState::Update(const sf::Time dt)
 				if (const Character* character = m_world.GetCharacter(identifier))
 				{
 					position_packet << identifier << character->getPosition().x << character->
-						getPosition().y << character->GetVelocity().x << character->GetVelocity().y
-						<< character->GetHitPoints();
+						getPosition().y;
 				}
 			}
 			m_socket.send(position_packet);
@@ -305,8 +304,7 @@ void MultiplayerGameState::HandleClientUpdate(sf::Packet& packet)
 	{
 		sf::Vector2f position;
 		sf::Int32 identifier;
-		sf::Int32 hit_points;
-		packet >> identifier >> position.x >> position.y >> hit_points;
+		packet >> identifier >> position.x >> position.y;
 
 		Character* character = m_world.GetCharacter(identifier);
 		const bool is_local_player = std::find(m_local_player_identifiers.begin(),
@@ -317,9 +315,8 @@ void MultiplayerGameState::HandleClientUpdate(sf::Packet& packet)
 		if (character && !is_local_player)
 		{
 			sf::Vector2f interpolated_position = character->getPosition() + (
-				position - character->getPosition()) * 0.01f;
+				position - character->getPosition()) * 0.1f;
 			character->setPosition(interpolated_position);
-			character->SetHitPoints(hit_points);
 		}
 	}
 }
@@ -330,10 +327,7 @@ void MultiplayerGameState::HandleSelfSpawn(sf::Packet& packet)
 	packet >> identifier;
 
 	m_world.AddCharacter(identifier);
-
-	m_players[identifier].reset(
-		new Player(&m_socket, identifier, GetContext().m_keys1));
-
+	m_players[identifier].reset(new Player(&m_socket, identifier, GetContext().m_keys1));
 	m_local_player_identifiers.push_back(identifier);
 	m_game_started = true;
 }
@@ -379,13 +373,11 @@ void MultiplayerGameState::HandleInitialState(sf::Packet& packet)
 	for (sf::Int32 i = 0; i < player_count; ++i)
 	{
 		sf::Int32 identifier;
-		sf::Int32 hit_points;
 		sf::Vector2f position;
-		packet >> identifier >> position.x >> position.y >> hit_points;
+		packet >> identifier >> position.x >> position.y;
 
 		Character* character = m_world.AddCharacter(identifier);
 		character->setPosition(position);
-		character->SetHitPoints(hit_points);
 
 		m_players[identifier].reset(new Player(&m_socket, identifier, nullptr));
 	}

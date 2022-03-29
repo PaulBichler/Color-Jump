@@ -51,6 +51,7 @@ protected:
 	void RequestStackClear() const;
 
 	Context GetContext() const;
+	
 
 private:
 	StateStack* m_stack;

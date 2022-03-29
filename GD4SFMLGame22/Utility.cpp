@@ -16,174 +16,174 @@ namespace
 {
 	std::default_random_engine CreateRandomEngine()
 	{
-		auto seed = static_cast<unsigned long>(std::time(nullptr));
+		const auto seed = static_cast<unsigned long>(std::time(nullptr));
 		return std::default_random_engine(seed);
 	}
 
-	auto RandomEngine = CreateRandomEngine();
+	auto random_engine = CreateRandomEngine();
 }
 
-int Utility::RandomInt(int exclusiveMax)
+int Utility::RandomInt(const int exclusive_max)
 {
-	std::uniform_int_distribution<> distr(0, exclusiveMax - 1);
-	return distr(RandomEngine);
+	const std::uniform_int_distribution<> dist(0, exclusive_max - 1);
+	return dist(random_engine);
 }
 
-
-//TODO should we just implement for base class - sf::Transformable?
 void Utility::CentreOrigin(sf::Sprite& sprite)
 {
-	sf::FloatRect bounds = sprite.getLocalBounds();
+	const sf::FloatRect bounds = sprite.getLocalBounds();
 	sprite.setOrigin(std::floor(bounds.left + bounds.width / 2.f),
 	                 std::floor(bounds.top + bounds.height / 2.f));
 }
 
 void Utility::CentreOrigin(sf::Text& text)
 {
-	sf::FloatRect bounds = text.getLocalBounds();
+	const sf::FloatRect bounds = text.getLocalBounds();
 	text.setOrigin(std::floor(bounds.left + bounds.width / 2.f),
 	               std::floor(bounds.top + bounds.height / 2.f));
 }
 
 void Utility::CentreOrigin(Animation& animation)
 {
-	sf::FloatRect bounds = animation.GetLocalBounds();
+	const sf::FloatRect bounds = animation.GetLocalBounds();
 	animation.setOrigin(std::floor(bounds.left + bounds.width / 2.f),
 	                    std::floor(bounds.top + bounds.height / 2.f));
 }
 
-std::string Utility::toString(sf::Keyboard::Key key)
+std::string Utility::ToString(const sf::Keyboard::Key key)
 {
-#define KEYTOSTRING_CASE(KEY) case sf::Keyboard::KEY: return #KEY;
+#define KEY_TO_STRING_CASE(KEY) case sf::Keyboard::KEY: return #KEY;
 
 	switch (key)
 	{
-	KEYTOSTRING_CASE(Unknown)
-	KEYTOSTRING_CASE(A)
-	KEYTOSTRING_CASE(B)
-	KEYTOSTRING_CASE(C)
-	KEYTOSTRING_CASE(D)
-	KEYTOSTRING_CASE(E)
-	KEYTOSTRING_CASE(F)
-	KEYTOSTRING_CASE(G)
-	KEYTOSTRING_CASE(H)
-	KEYTOSTRING_CASE(I)
-	KEYTOSTRING_CASE(J)
-	KEYTOSTRING_CASE(K)
-	KEYTOSTRING_CASE(L)
-	KEYTOSTRING_CASE(M)
-	KEYTOSTRING_CASE(N)
-	KEYTOSTRING_CASE(O)
-	KEYTOSTRING_CASE(P)
-	KEYTOSTRING_CASE(Q)
-	KEYTOSTRING_CASE(R)
-	KEYTOSTRING_CASE(S)
-	KEYTOSTRING_CASE(T)
-	KEYTOSTRING_CASE(U)
-	KEYTOSTRING_CASE(V)
-	KEYTOSTRING_CASE(W)
-	KEYTOSTRING_CASE(X)
-	KEYTOSTRING_CASE(Y)
-	KEYTOSTRING_CASE(Z)
-	KEYTOSTRING_CASE(Num0)
-	KEYTOSTRING_CASE(Num1)
-	KEYTOSTRING_CASE(Num2)
-	KEYTOSTRING_CASE(Num3)
-	KEYTOSTRING_CASE(Num4)
-	KEYTOSTRING_CASE(Num5)
-	KEYTOSTRING_CASE(Num6)
-	KEYTOSTRING_CASE(Num7)
-	KEYTOSTRING_CASE(Num8)
-	KEYTOSTRING_CASE(Num9)
-	KEYTOSTRING_CASE(Escape)
-	KEYTOSTRING_CASE(LControl)
-	KEYTOSTRING_CASE(LShift)
-	KEYTOSTRING_CASE(LAlt)
-	KEYTOSTRING_CASE(LSystem)
-	KEYTOSTRING_CASE(RControl)
-	KEYTOSTRING_CASE(RShift)
-	KEYTOSTRING_CASE(RAlt)
-	KEYTOSTRING_CASE(RSystem)
-	KEYTOSTRING_CASE(Menu)
-	KEYTOSTRING_CASE(LBracket)
-	KEYTOSTRING_CASE(RBracket)
-	KEYTOSTRING_CASE(SemiColon)
-	KEYTOSTRING_CASE(Comma)
-	KEYTOSTRING_CASE(Period)
-	KEYTOSTRING_CASE(Quote)
-	KEYTOSTRING_CASE(Slash)
-	KEYTOSTRING_CASE(BackSlash)
-	KEYTOSTRING_CASE(Tilde)
-	KEYTOSTRING_CASE(Equal)
-	KEYTOSTRING_CASE(Dash)
-	KEYTOSTRING_CASE(Space)
-	KEYTOSTRING_CASE(Return)
-	KEYTOSTRING_CASE(BackSpace)
-	KEYTOSTRING_CASE(Tab)
-	KEYTOSTRING_CASE(PageUp)
-	KEYTOSTRING_CASE(PageDown)
-	KEYTOSTRING_CASE(End)
-	KEYTOSTRING_CASE(Home)
-	KEYTOSTRING_CASE(Insert)
-	KEYTOSTRING_CASE(Delete)
-	KEYTOSTRING_CASE(Add)
-	KEYTOSTRING_CASE(Subtract)
-	KEYTOSTRING_CASE(Multiply)
-	KEYTOSTRING_CASE(Divide)
-	KEYTOSTRING_CASE(Left)
-	KEYTOSTRING_CASE(Right)
-	KEYTOSTRING_CASE(Up)
-	KEYTOSTRING_CASE(Down)
-	KEYTOSTRING_CASE(Numpad0)
-	KEYTOSTRING_CASE(Numpad1)
-	KEYTOSTRING_CASE(Numpad2)
-	KEYTOSTRING_CASE(Numpad3)
-	KEYTOSTRING_CASE(Numpad4)
-	KEYTOSTRING_CASE(Numpad5)
-	KEYTOSTRING_CASE(Numpad6)
-	KEYTOSTRING_CASE(Numpad7)
-	KEYTOSTRING_CASE(Numpad8)
-	KEYTOSTRING_CASE(Numpad9)
-	KEYTOSTRING_CASE(F1)
-	KEYTOSTRING_CASE(F2)
-	KEYTOSTRING_CASE(F3)
-	KEYTOSTRING_CASE(F4)
-	KEYTOSTRING_CASE(F5)
-	KEYTOSTRING_CASE(F6)
-	KEYTOSTRING_CASE(F7)
-	KEYTOSTRING_CASE(F8)
-	KEYTOSTRING_CASE(F9)
-	KEYTOSTRING_CASE(F10)
-	KEYTOSTRING_CASE(F11)
-	KEYTOSTRING_CASE(F12)
-	KEYTOSTRING_CASE(F13)
-	KEYTOSTRING_CASE(F14)
-	KEYTOSTRING_CASE(F15)
-	KEYTOSTRING_CASE(Pause)
+	KEY_TO_STRING_CASE(Unknown)
+	KEY_TO_STRING_CASE(A)
+	KEY_TO_STRING_CASE(B)
+	KEY_TO_STRING_CASE(C)
+	KEY_TO_STRING_CASE(D)
+	KEY_TO_STRING_CASE(E)
+	KEY_TO_STRING_CASE(F)
+	KEY_TO_STRING_CASE(G)
+	KEY_TO_STRING_CASE(H)
+	KEY_TO_STRING_CASE(I)
+	KEY_TO_STRING_CASE(J)
+	KEY_TO_STRING_CASE(K)
+	KEY_TO_STRING_CASE(L)
+	KEY_TO_STRING_CASE(M)
+	KEY_TO_STRING_CASE(N)
+	KEY_TO_STRING_CASE(O)
+	KEY_TO_STRING_CASE(P)
+	KEY_TO_STRING_CASE(Q)
+	KEY_TO_STRING_CASE(R)
+	KEY_TO_STRING_CASE(S)
+	KEY_TO_STRING_CASE(T)
+	KEY_TO_STRING_CASE(U)
+	KEY_TO_STRING_CASE(V)
+	KEY_TO_STRING_CASE(W)
+	KEY_TO_STRING_CASE(X)
+	KEY_TO_STRING_CASE(Y)
+	KEY_TO_STRING_CASE(Z)
+	KEY_TO_STRING_CASE(Num0)
+	KEY_TO_STRING_CASE(Num1)
+	KEY_TO_STRING_CASE(Num2)
+	KEY_TO_STRING_CASE(Num3)
+	KEY_TO_STRING_CASE(Num4)
+	KEY_TO_STRING_CASE(Num5)
+	KEY_TO_STRING_CASE(Num6)
+	KEY_TO_STRING_CASE(Num7)
+	KEY_TO_STRING_CASE(Num8)
+	KEY_TO_STRING_CASE(Num9)
+	KEY_TO_STRING_CASE(Escape)
+	KEY_TO_STRING_CASE(LControl)
+	KEY_TO_STRING_CASE(LShift)
+	KEY_TO_STRING_CASE(LAlt)
+	KEY_TO_STRING_CASE(LSystem)
+	KEY_TO_STRING_CASE(RControl)
+	KEY_TO_STRING_CASE(RShift)
+	KEY_TO_STRING_CASE(RAlt)
+	KEY_TO_STRING_CASE(RSystem)
+	KEY_TO_STRING_CASE(Menu)
+	KEY_TO_STRING_CASE(LBracket)
+	KEY_TO_STRING_CASE(RBracket)
+	KEY_TO_STRING_CASE(SemiColon)
+	KEY_TO_STRING_CASE(Comma)
+	KEY_TO_STRING_CASE(Period)
+	KEY_TO_STRING_CASE(Quote)
+	KEY_TO_STRING_CASE(Slash)
+	KEY_TO_STRING_CASE(BackSlash)
+	KEY_TO_STRING_CASE(Tilde)
+	KEY_TO_STRING_CASE(Equal)
+	KEY_TO_STRING_CASE(Dash)
+	KEY_TO_STRING_CASE(Space)
+	KEY_TO_STRING_CASE(Return)
+	KEY_TO_STRING_CASE(BackSpace)
+	KEY_TO_STRING_CASE(Tab)
+	KEY_TO_STRING_CASE(PageUp)
+	KEY_TO_STRING_CASE(PageDown)
+	KEY_TO_STRING_CASE(End)
+	KEY_TO_STRING_CASE(Home)
+	KEY_TO_STRING_CASE(Insert)
+	KEY_TO_STRING_CASE(Delete)
+	KEY_TO_STRING_CASE(Add)
+	KEY_TO_STRING_CASE(Subtract)
+	KEY_TO_STRING_CASE(Multiply)
+	KEY_TO_STRING_CASE(Divide)
+	KEY_TO_STRING_CASE(Left)
+	KEY_TO_STRING_CASE(Right)
+	KEY_TO_STRING_CASE(Up)
+	KEY_TO_STRING_CASE(Down)
+	KEY_TO_STRING_CASE(Numpad0)
+	KEY_TO_STRING_CASE(Numpad1)
+	KEY_TO_STRING_CASE(Numpad2)
+	KEY_TO_STRING_CASE(Numpad3)
+	KEY_TO_STRING_CASE(Numpad4)
+	KEY_TO_STRING_CASE(Numpad5)
+	KEY_TO_STRING_CASE(Numpad6)
+	KEY_TO_STRING_CASE(Numpad7)
+	KEY_TO_STRING_CASE(Numpad8)
+	KEY_TO_STRING_CASE(Numpad9)
+	KEY_TO_STRING_CASE(F1)
+	KEY_TO_STRING_CASE(F2)
+	KEY_TO_STRING_CASE(F3)
+	KEY_TO_STRING_CASE(F4)
+	KEY_TO_STRING_CASE(F5)
+	KEY_TO_STRING_CASE(F6)
+	KEY_TO_STRING_CASE(F7)
+	KEY_TO_STRING_CASE(F8)
+	KEY_TO_STRING_CASE(F9)
+	KEY_TO_STRING_CASE(F10)
+	KEY_TO_STRING_CASE(F11)
+	KEY_TO_STRING_CASE(F12)
+	KEY_TO_STRING_CASE(F13)
+	KEY_TO_STRING_CASE(F14)
+	KEY_TO_STRING_CASE(F15)
+	KEY_TO_STRING_CASE(Pause)
+	case sf::Keyboard::KeyCount:
+	default: break;
 	}
 
 	return "";
 }
 
-double Utility::ToRadians(int degrees)
+double Utility::ToRadians(const int degrees)
 {
 	return (degrees * M_PI) / 180;
 }
 
-sf::Vector2f Utility::UnitVector(sf::Vector2f vector)
+sf::Vector2f Utility::UnitVector(const sf::Vector2f vector)
 {
 	assert(vector != sf::Vector2f(0.f, 0.f));
 	return vector / Length(vector);
 }
 
-float Utility::Length(sf::Vector2f vector)
+float Utility::Length(const sf::Vector2f vector)
 {
 	return sqrtf(powf(vector.x, 2) + powf(vector.y, 2));
 }
 
-float Utility::ToDegrees(float angle_in_radians)
+float Utility::ToDegrees(const float angle)
 {
-	return angle_in_radians * (180 / M_PI);
+	return angle * (180 / M_PI);
 }
 
 

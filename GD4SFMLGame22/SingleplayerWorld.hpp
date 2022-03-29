@@ -12,9 +12,12 @@ public:
 
 	void SetLoseCallback(const std::function<void()>& callback);
 	void SetWinCallback(const std::function<void()>& callback);
+	Character* AddCharacter(sf::Int32 identifier);
 
 protected:
 	LevelInfo& BuildLevel(LevelManager::LevelData current_level_data) override;
+	Character* AddCharacterWithColor(sf::Int32 identifier, EColorType color, sf::IntRect rect,
+	                                 sf::Vector2f spawn_pos);
 	void UpdateSounds() const;
 	void UpdatePlatforms(sf::Time dt) const;
 	void DestroyEntitiesOutsideView();
@@ -27,5 +30,6 @@ private:
 	std::function<void()> m_lose_callback;
 	std::function<void()> m_win_callback;
 	bool m_has_won{};
+	std::vector<Character*> m_players;
 };
 

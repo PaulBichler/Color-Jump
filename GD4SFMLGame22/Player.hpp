@@ -13,13 +13,13 @@ enum class MissionStatus;
 class Player
 {
 public:
-
 	Player(sf::TcpSocket* socket, sf::Int32 identifier, const KeyBinding* binding);
 	void HandleEvent(const sf::Event& event, CommandQueue& commands);
 	void HandleRealtimeInput(CommandQueue& commands);
 	void HandleRealtimeNetworkInput(CommandQueue& commands);
+	std::map<PlayerAction, Command>::mapped_type GetAction(PlayerAction action);
 
-	//React to events or realtime state changes recevied over the network
+	//React to events or realtime state changes received over the network
 	void HandleNetworkEvent(PlayerAction action, CommandQueue& commands);
 	void HandleNetworkRealtimeChange(PlayerAction action, bool action_enabled);
 
@@ -29,11 +29,9 @@ public:
 
 	void DisableAllRealtimeActions() const;
 	bool IsLocal() const;
-	
-	sf::Keyboard::Key GetAssignedKey(PlayerAction action) const;
 
 private:
-	void InitPlayer();
+	void InitialiseActions();
 
 	std::map<PlayerAction, Command> m_action_binding;
 	const KeyBinding* m_key_binding;

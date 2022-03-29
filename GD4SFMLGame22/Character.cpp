@@ -13,7 +13,7 @@
 
 namespace
 {
-	const CharacterData Table = InitializeCharacterData();
+	const CharacterData kTable = InitializeCharacterData();
 }
 
 /*
@@ -37,7 +37,7 @@ Character::Character(const EColorType type, const TextureHolder& textures, const
 	m_jump_smoke_animation.SetDuration(sf::seconds(.5f));
 	m_jump_smoke_animation.setScale(.5f, .5f);
 
-	sf::FloatRect bounds = m_jump_smoke_animation.GetLocalBounds();
+	const sf::FloatRect bounds = m_jump_smoke_animation.GetLocalBounds();
 	m_jump_smoke_animation.setOrigin(std::floor(bounds.left + bounds.width / 2.f),
 	                                 std::floor(bounds.top + 50.f));
 
@@ -53,7 +53,7 @@ Character::Character(const EColorType type, const TextureHolder& textures, const
 
 float Character::GetMaxSpeed()
 {
-	return Table.m_movementSpeed;
+	return kTable.m_movementSpeed;
 }
 
 /*
@@ -91,7 +91,7 @@ void Character::Jump()
 	m_can_jump = false;
 	m_grounded = false;
 	m_current_platform = nullptr;
-	SetVelocity(0, Table.m_JumpForce);
+	SetVelocity(0, kTable.m_JumpForce);
 }
 
 /*
@@ -143,7 +143,7 @@ bool Character::IsOnPlatformOfType(const EPlatformType platform_type) const
  */
 void Character::StopMovement()
 {
-	SetVelocity(0, Table.m_gravityForce);
+	SetVelocity(0, kTable.m_gravityForce);
 }
 
 /*
@@ -190,10 +190,10 @@ void Character::SetGrounded()
 void Character::UpdateCurrent(const sf::Time dt, CommandQueue& commands)
 {
 	Entity::UpdateCurrent(dt, commands);
-	Accelerate(-m_velocity.x * Table.m_dragMultiplier, 0);
+	Accelerate(-m_velocity.x * kTable.m_dragMultiplier, 0);
 	if (!m_grounded)
 	{
-		Accelerate(0, Table.m_gravityForce);
+		Accelerate(0, kTable.m_gravityForce);
 	}
 
 	UpdateRay();

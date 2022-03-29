@@ -13,6 +13,7 @@ public:
 
 private:
 	SinglePlayerWorld m_world;
-	Player m_player;
+	typedef std::unique_ptr<Player> PlayerPtr;
+	std::map<int, PlayerPtr> m_players;
 };
 

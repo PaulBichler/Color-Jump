@@ -89,9 +89,9 @@ void SettingsState::UpdateLabels() const
 		const sf::Keyboard::Key key2 = GetContext().m_keys2->GetAssignedKey(action);
 
 		// Assign both key strings to labels
-		m_binding_labels[i]->SetText(Utility::toString(key1));
+		m_binding_labels[i]->SetText(Utility::ToString(key1));
 		m_binding_labels[i + static_cast<int>(PlayerAction::kActionCount)]->SetText(
-			Utility::toString(key2));
+			Utility::ToString(key2));
 	}
 }
 

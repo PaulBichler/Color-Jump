@@ -43,18 +43,14 @@ SceneNode::Ptr SingleplayerLevelLoader::LoadLevelLayer(const std::string& csv_pa
 			{
 			case kRedPlayer:
 			{
-				//Create player 1
-				std::unique_ptr<Character> player_1(m_tile_factory.CreatePlayer(tile_type, EColorType::kRed, spawn_pos));
-				level_info.player_1 = player_1.get();
-				level_parent->AttachChild(std::move(player_1));
+				level_info.m_red_player_rect = m_tile_factory.GetSubRect(kRedPlayer, spawn_pos);
+				level_info.m_red_player_spawn_pos = spawn_pos;
 			}
 			break;
 			case kBluePlayer:
 			{
-				//Create player 2
-				std::unique_ptr<Character> player_2(m_tile_factory.CreatePlayer(tile_type, EColorType::kBlue, spawn_pos));
-				level_info.player_2 = player_2.get();
-				level_parent->AttachChild(std::move(player_2));
+				level_info.m_blue_player_rect = m_tile_factory.GetSubRect(kBluePlayer, spawn_pos);
+				level_info.m_blue_player_spawn_pos = spawn_pos;
 			}
 			break;
 			case kHorizontalPlatformPart:

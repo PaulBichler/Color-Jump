@@ -41,13 +41,8 @@ GameServer::~GameServer()
 
 //This is the same as SpawnSelf but indicate that an aircraft from a different client is entering the world
 
-void GameServer::NotifyPlayerSpawn(const sf::Int32 identifier)
+void GameServer::SendPackageToAll(sf::Packet packet) const
 {
-	sf::Packet packet;
-	//First thing for every packet is what type of packet it is
-	packet << static_cast<sf::Int32>(server::PacketType::kPlayerConnect);
-	packet << identifier;
-
 	for (std::size_t i = 0; i < m_connected_players; ++i)
 	{
 		if (m_peers[i]->m_ready)
@@ -55,6 +50,16 @@ void GameServer::NotifyPlayerSpawn(const sf::Int32 identifier)
 			m_peers[i]->m_socket.send(packet);
 		}
 	}
+}
+
+void GameServer::NotifyPlayerSpawn(const sf::Int32 identifier) const
+{
+	sf::Packet packet;
+	//First thing for every packet is what type of packet it is
+	packet << static_cast<sf::Int32>(server::PacketType::kPlayerConnect);
+	packet << identifier;
+
+	SendPackageToAll(packet);
 }
 
 //This is the same as PlayerEvent, but for real-time actions. This means that we are changing an ongoing state to either true or false, so we add a Boolean value to the parameters
@@ -68,13 +73,7 @@ void GameServer::NotifyPlayerRealtimeChange(const sf::Int32 identifier, const sf
 	packet << action;
 	packet << action_enabled;
 
-	for (std::size_t i = 0; i < m_connected_players; ++i)
-	{
-		if (m_peers[i]->m_ready)
-		{
-			m_peers[i]->m_socket.send(packet);
-		}
-	}
+	SendPackageToAll(packet);
 }
 
 //This takes two sf::Int32 variables, the aircraft identifier and the action identifier
@@ -89,13 +88,7 @@ void GameServer::NotifyPlayerEvent(const sf::Int32 identifier, const sf::Int32 a
 	packet << identifier;
 	packet << action;
 
-	for (std::size_t i = 0; i < m_connected_players; ++i)
-	{
-		if (m_peers[i]->m_ready)
-		{
-			m_peers[i]->m_socket.send(packet);
-		}
-	}
+	SendPackageToAll(packet);
 }
 
 void GameServer::SetListening(const bool enable)
@@ -155,7 +148,7 @@ void GameServer::ExecutionThread()
 	}
 }
 
-void GameServer::Tick()
+void GameServer::Tick() const
 {
 	UpdateClientState();
 }
@@ -239,13 +232,9 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 			for (sf::Int32 i = 0; i < num_player; ++i)
 			{
 				sf::Int32 identifier;
-				sf::Int32 hit_points;
 				sf::Vector2f position;
-				sf::Vector2f velocity;
-				packet >> identifier >> position.x >> position.y >> velocity.x >> velocity.y >>
-					hit_points;
+				packet >> identifier >> position.x >> position.y;
 				m_player_info[identifier].m_position = position;
-				m_player_info[identifier].m_hit_points = hit_points;
 			}
 		}
 		break;
@@ -264,9 +253,7 @@ void GameServer::HandleIncomingConnections()
 	if (m_listener_socket.accept(m_peers[m_connected_players]->m_socket) == sf::TcpListener::Done)
 	{
 		//Order the new client to spawn its player 1
-		m_player_info[m_identifier_counter].m_position = sf::Vector2f(
-			m_battlefield_rect.width / 2, m_battlefield_rect.top + m_battlefield_rect.height / 2);
-		m_player_info[m_identifier_counter].m_hit_points = 100;
+		m_player_info[m_identifier_counter].m_position = sf::Vector2f(0,0);
 
 		sf::Packet packet;
 		packet << static_cast<sf::Int32>(server::PacketType::kSpawnSelf);
@@ -345,9 +332,7 @@ void GameServer::InformWorldState(sf::TcpSocket& socket)
 			for (sf::Int32 identifier : m_peers[i]->m_identifiers)
 			{
 				const PlayerInfo player_info = m_player_info[identifier];
-
-				packet << identifier << player_info.m_position.x << player_info.m_position.y <<
-					player_info.m_hit_points;
+				packet << identifier << player_info.m_position.x << player_info.m_position.y;
 			}
 		}
 	}
@@ -360,13 +345,7 @@ void GameServer::BroadcastMessage(const std::string& message) const
 	sf::Packet packet;
 	packet << static_cast<sf::Int32>(server::PacketType::kBroadcastMessage);
 	packet << message;
-	for (std::size_t i = 0; i < m_connected_players; ++i)
-	{
-		if (m_peers[i]->m_ready)
-		{
-			m_peers[i]->m_socket.send(packet);
-		}
-	}
+	SendPackageToAll(packet);
 }
 
 void GameServer::SendToAll(sf::Packet& packet) const
@@ -389,8 +368,7 @@ void GameServer::UpdateClientState() const
 	for (const auto& player : m_player_info)
 	{
 		const auto& player_info = player.second;
-		packet << player.first << player_info.m_position.x << player_info.m_position.y <<
-			player_info.m_hit_points;
+		packet << player.first << player_info.m_position.x << player_info.m_position.y;
 	}
 
 	SendToAll(packet);

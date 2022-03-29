@@ -11,7 +11,7 @@ public:
 	void Draw() override;
 	Character* AddCharacterWithColor(const sf::Int32 identifier, const EColorType color, const sf::IntRect rect, const sf::Vector2f
 	                                 spawn_pos);
-	Character* AddCharacter(sf::Int32 identifier);
+	Character* AddCharacter(const sf::Int32 identifier);
 	Character* GetCharacter(sf::Int32 identifier) const;
 	void RemoveCharacter(sf::Int32 identifier);
 
@@ -20,6 +20,7 @@ private:
 
 protected:
 	void SetCamera() override;
+	static bool HandlePlayerTileCollision(SceneNode::Pair pair);
 	void HandleCollisions() override;
 	sf::FloatRect GetBattlefieldBounds() const override;
 	std::vector<Character*> m_players;

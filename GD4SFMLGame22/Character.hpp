@@ -18,10 +18,10 @@ private:
 	Platform* m_current_platform;
 	RayGround* m_ray;
 	bool m_can_jump;
-	bool m_show_jump_animation;
+	bool m_show_jump_animation{};
 	Animation m_jump_smoke_animation;
 	SoundPlayer& m_sounds;
-	int m_identifier;
+	int m_identifier{};
 
 public:
 	Character(EColorType type, const TextureHolder& textures, const sf::IntRect& texture_rect, SoundPlayer& context);

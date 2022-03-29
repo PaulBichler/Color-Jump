@@ -29,14 +29,14 @@ private:
 	void HandlePacket(sf::Int32 packet_type, sf::Packet& packet);
 
 private:
-	typedef std::unique_ptr<Player> PlayerPtr;
-
-private:
 	MultiplayerWorld m_world;
+
 	sf::RenderWindow& m_window;
 	TextureHolder& m_texture_holder;
 
+	typedef std::unique_ptr<Player> PlayerPtr;
 	std::map<int, PlayerPtr> m_players;
+	
 	std::vector<sf::Int32> m_local_player_identifiers;
 	sf::TcpSocket m_socket;
 	bool m_connected;

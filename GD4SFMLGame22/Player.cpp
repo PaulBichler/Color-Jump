@@ -10,33 +10,48 @@
 //Movement is now for character
 struct CharacterMover
 {
-	CharacterMover(const float vx, const float vy) : velocity(vx, vy)
+	CharacterMover(const float vx, const float vy, const int identifier) : m_velocity(vx, vy),
+		m_identifier(identifier)
 	{
 	}
 
 	void operator()(Character& character, sf::Time) const
 	{
-		character.Accelerate(character.GetMaxSpeed() * velocity);
+		if (character.GetIdentifier() == m_identifier)
+			character.Accelerate(Character::GetMaxSpeed() * m_velocity);
 	}
 
-	sf::Vector2f velocity;
+	sf::Vector2f m_velocity;
+	int m_identifier;
+};
+
+struct CharacterJumpTrigger
+{
+	explicit CharacterJumpTrigger(const int identifier): m_identifier(identifier)
+	{
+	}
+
+	void operator()(Character& character, sf::Time) const
+	{
+		if (character.GetIdentifier() == m_identifier)
+			character.Jump();
+	}
+
+	int m_identifier;
 };
 
 /*
  *	Dylan Goncalves Martins (D00242562)
  *	Initialize player one keys 
  */
-void Player::InitPlayer()
+void Player::InitialiseActions()
 {
 	m_action_binding[PlayerAction::kMoveLeft].action = DerivedAction<Character>(
-		CharacterMover(-1, 0.f));
+		CharacterMover(-1, 0.f, m_identifier));
 	m_action_binding[PlayerAction::kMoveRight].action = DerivedAction<Character>(
-		CharacterMover(+1, 0.f));
+		CharacterMover(+1, 0.f, m_identifier));
 	m_action_binding[PlayerAction::kMoveUp].action = DerivedAction<Character>(
-		[](Character& a, sf::Time)
-		{
-			a.Jump();
-		});
+		CharacterJumpTrigger(m_identifier));
 }
 
 void Player::HandleRealtimeNetworkInput(CommandQueue& commands)
@@ -52,9 +67,14 @@ void Player::HandleRealtimeNetworkInput(CommandQueue& commands)
 	}
 }
 
+std::map<PlayerAction, Command>::mapped_type Player::GetAction(const PlayerAction action)
+{
+	return m_action_binding[action];
+}
+
 void Player::HandleNetworkEvent(const PlayerAction action, CommandQueue& commands)
 {
-	commands.Push(m_action_binding[action]);
+	commands.Push(GetAction(action));
 }
 
 void Player::HandleNetworkRealtimeChange(const PlayerAction action, const bool action_enabled)
@@ -101,7 +121,7 @@ Player::Player(sf::TcpSocket* socket, const sf::Int32 identifier, const KeyBindi
 	  , m_socket(socket)
 	  , m_current_mission_status(MissionStatus::kMissionRunning)
 {
-	InitPlayer();
+	InitialiseActions();
 
 	for (auto& pair : m_action_binding)
 		pair.second.category = Category::kPlayer;
@@ -130,7 +150,7 @@ void Player::HandleEvent(const sf::Event& event, CommandQueue& commands)
 			// Network disconnected -> local event
 			else
 			{
-				commands.Push(m_action_binding[action]);
+				commands.Push(GetAction(action));
 			}
 		}
 	}
@@ -160,12 +180,7 @@ void Player::HandleRealtimeInput(CommandQueue& commands)
 	{
 		// Lookup all actions and push corresponding commands to queue
 		const std::vector<PlayerAction> active_actions = m_key_binding->GetRealtimeActions();
-		for (PlayerAction action : active_actions)
-			commands.Push(m_action_binding[action]);
+		for (const PlayerAction action : active_actions)
+			commands.Push(GetAction(action));
 	}
-}
-
-sf::Keyboard::Key Player::GetAssignedKey(const PlayerAction action) const
-{
-	return m_key_binding->GetAssignedKey(action);
 }

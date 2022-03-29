@@ -32,6 +32,7 @@ Character* MultiplayerWorld::AddCharacterWithColor(const sf::Int32 identifier,
 	return m_players.back();
 }
 
+
 Character* MultiplayerWorld::AddCharacter(const sf::Int32 identifier)
 {
 	if (identifier % 2 == 0)
@@ -79,6 +80,44 @@ void MultiplayerWorld::SetCamera()
 {
 }
 
+bool MultiplayerWorld::HandlePlayerTileCollision(SceneNode::Pair pair)
+{
+	if (MatchesCategories(pair, Category::Type::kPlayer, Category::Type::kPlatform))
+	{
+		auto& player = dynamic_cast<Character&>(*pair.first);
+		auto& tile = dynamic_cast<Tile&>(*pair.second);
+
+
+		//Checks if player collided from underneath the center of the platform
+		if (IsPlayerBelowTile(player, tile))
+		{
+			//Checks if platform is collidable with player
+			if (IsPlayerAtHisTile(player, tile))
+			{
+				// move player out of collision and stop his movement
+				player.MoveOutOfCollision(tile.GetBoundingRect());
+				player.StopMovement();
+
+				// Set color of vertical platform if there is a collision from the side/underneath 
+				if (tile.GetType() == kVerticalImpactPlatformPart)
+				{
+					tile.HandleCollision(player.GetCharacterType());
+				}
+			}
+			// continue to next pair
+			return true;
+		}
+
+		//Ground players
+		if (tile.HandleCollision(player.GetCharacterType()))
+		{
+			//Collision
+			player.SetGrounded();
+		}
+	}
+	return false;
+}
+
 void MultiplayerWorld::HandleCollisions()
 {
 	std::set<SceneNode::Pair> collision_pairs;
@@ -87,41 +126,9 @@ void MultiplayerWorld::HandleCollisions()
 	std::set<SceneNode::Pair> pairs_player_one;
 	std::set<SceneNode::Pair> pairs_player_two;
 
-	for (SceneNode::Pair pair : collision_pairs)
+	for (const SceneNode::Pair& pair : collision_pairs)
 	{
-		if (MatchesCategories(pair, Category::Type::kPlayer, Category::Type::kPlatform))
-		{
-			auto& player = dynamic_cast<Character&>(*pair.first);
-			auto& tile = dynamic_cast<Tile&>(*pair.second);
-
-
-			//Checks if player collided from underneath the center of the platform
-			if (IsPlayerBelowTile(player, tile))
-			{
-				//Checks if platform is collidable with player
-				if (IsPlayerAtHisTile(player, tile))
-				{
-					// move player out of collision and stop his movement
-					player.MoveOutOfCollision(tile.GetBoundingRect());
-					player.StopMovement();
-
-					// Set color of vertical platform if there is a collision from the side/underneath 
-					if (tile.GetType() == kVerticalImpactPlatformPart)
-					{
-						tile.HandleCollision(player.GetCharacterType());
-					}
-				}
-				// continue to next pair
-				continue;
-			}
-
-			//Ground players
-			if (tile.HandleCollision(player.GetCharacterType()))
-			{
-				//Collision
-				player.SetGrounded();
-			}
-		}
+		if (HandlePlayerTileCollision(pair)) continue;
 
 		//Get All Ground Ray Casts for player one and two
 		GetGroundRayCasts(pairs_player_one, pair, Category::kRayOne);

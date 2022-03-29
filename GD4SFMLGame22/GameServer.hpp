@@ -15,7 +15,8 @@ class GameServer
 public:
 	explicit GameServer(sf::Vector2f battlefield_size);
 	~GameServer();
-	void NotifyPlayerSpawn(sf::Int32 identifier);
+	void SendPackageToAll(sf::Packet packet) const;
+	void NotifyPlayerSpawn(sf::Int32 identifier) const;
 	void NotifyPlayerRealtimeChange(sf::Int32 identifier, sf::Int32 action, bool action_enabled) const;
 	void NotifyPlayerEvent(sf::Int32 identifier, sf::Int32 action) const;
 
@@ -33,7 +34,6 @@ private:
 	struct PlayerInfo
 	{
 		sf::Vector2f m_position;
-		sf::Int32 m_hit_points;
 		std::map<sf::Int32, bool> m_realtime_actions;
 	};
 
@@ -42,7 +42,7 @@ private:
 private:
 	void SetListening(bool enable);
 	void ExecutionThread();
-	void Tick();
+	void Tick() const;
 	sf::Time Now() const;
 
 	void HandleIncomingPackets();
