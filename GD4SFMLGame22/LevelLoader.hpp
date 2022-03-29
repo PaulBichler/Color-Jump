@@ -11,6 +11,11 @@ struct LevelInfo
 {
 	SceneNode::Ptr level_parent;
 	SceneNode::Ptr background_parent;
+
+	sf::IntRect m_blue_player_rect;
+	sf::Vector2f m_blue_player_spawn_pos;
+	sf::IntRect m_red_player_rect;
+	sf::Vector2f m_red_player_spawn_pos;
 };
 
 template<class T> 

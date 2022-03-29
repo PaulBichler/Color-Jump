@@ -16,6 +16,7 @@
 
 #include "LevelLoader.hpp"
 #include "LevelManager.hpp"
+#include "SingleplayerLevelLoader.hpp"
 
 class World : sf::NonCopyable
 {
@@ -26,15 +27,20 @@ public:
 	virtual void Draw();
 	CommandQueue& GetCommandQueue();
 
+	Character* AddCharacter(sf::Int32 identifier);
+
 private:
 	void LoadTextures();
 	void InitializeSceneLayers();
 	virtual LevelInfo& BuildLevel(LevelManager::LevelData current_level_data) = 0;
 
+	Character* AddCharacterWithColor(sf::Int32 identifier, EColorType color, sf::IntRect rect,
+		sf::Vector2f spawn_pos);
+
 protected:
 	sf::FloatRect GetViewBounds() const;
 	static bool IsPlayerBelowPlatform(const Character& player, const PlatformPart& platform_part);
-	static bool IsPlayerBelowTile(const Character& player, const Tile& tile);
+	static bool IsPlayerAboveTile(const Character& player, const Tile& tile);
 	static bool CheckPlatform(const Platform* platform, EColorType character);
 	static bool CheckTile(const Tile& tile, const EColorType character);
 	static bool IsPlayerAtHisPlatform(const Character& player, const Platform* platform);
@@ -44,6 +50,8 @@ protected:
 	static void PlayerGroundRayCast(const std::set<SceneNode::Pair>& pairs);
 	void GetGroundRayCasts(std::set<SceneNode::Pair>& pairs, SceneNode::Pair pair, Category::Type category) const;
 	static bool MatchesCategories(SceneNode::Pair& collision, Category::Type type1, Category::Type type2);
+	
+	
 
 	virtual void HandleCollisions() = 0;
 	virtual sf::FloatRect GetBattlefieldBounds() const = 0;
@@ -62,4 +70,7 @@ protected:
 
 	sf::FloatRect m_world_bounds;
 	BloomEffect m_bloom_effect;
+
+	LevelInfo m_level_info;
+	std::vector<Character*> m_players;
 };
