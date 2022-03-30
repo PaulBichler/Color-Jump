@@ -31,7 +31,7 @@ public:
 	virtual unsigned int GetCategory() const;
 	virtual sf::FloatRect GetBoundingRect() const;
 
-	void CheckSceneCollision(SceneNode& scene_graph, std::set<Pair>& collision_pairs);
+	void CheckSceneCollision(SceneNode& scene_graph, std::set<Pair>& collision_pairs, const std::function<bool(SceneNode&)>& check_predicate);
 	void RemoveWrecks();
 
 
@@ -49,7 +49,7 @@ private:
 	virtual bool IsDestroyed() const;
 	bool IsMarkedForRemoval() const;
 	
-	void CheckNodeCollision(SceneNode& node, std::set<Pair>& collisionPairs);
+	void CheckNodeCollision(SceneNode& node, std::set<Pair>& collisionPairs, const std::function<bool(SceneNode&)>& check_predicate);
 	
 
 private:

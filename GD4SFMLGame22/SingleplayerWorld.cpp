@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "SingleplayerWorld.hpp"
 
 #include "PlatformPart.hpp"
@@ -129,7 +131,11 @@ void SinglePlayerWorld::DestroyEntitiesOutsideView()
 void SinglePlayerWorld::HandleCollisions()
 {
 	std::set<SceneNode::Pair> collision_pairs;
-	m_sceneGraph.CheckSceneCollision(m_sceneGraph, collision_pairs);
+	m_sceneGraph.CheckSceneCollision(m_sceneGraph, collision_pairs, [this](SceneNode& node)
+	{
+		//check collisions only for players and RayGround objects
+		return dynamic_cast<Character*>(&node) != nullptr || dynamic_cast<RayGround*>(&node) != nullptr;
+	});
 
 	std::set<SceneNode::Pair> pairs_player_one;
 	std::set<SceneNode::Pair> pairs_player_two;

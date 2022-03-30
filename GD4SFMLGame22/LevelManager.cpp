@@ -12,21 +12,21 @@ LevelManager::LevelData::LevelData(std::string platform_layer_path, std::string 
 }
 
 //Written by Paul Bichler (D00242563)
-LevelManager::LevelManager() : m_current_coop_index(0), m_current_multiplayer_index(0), m_is_multiplayer(false)
+LevelManager::LevelManager() : m_current_coop_index(0), m_current_multiplayer_index(0)
 {
 	//Holds level data info for coop levels (offline)
-	m_coop_levels.emplace_back("LevelData/LevelData_Level1_Platforms.csv", "LevelData/LevelData_Level1_Background.csv", sf::Vector2u(64, 64));
-	m_coop_levels.emplace_back("LevelData/LevelData_Level2_Platforms.csv", "LevelData/LevelData_Level2_Background.csv", sf::Vector2u(64, 64));
-	m_coop_levels.emplace_back("LevelData/LevelData_Level3_Platforms.csv", "LevelData/LevelData_Level3_Background.csv", sf::Vector2u(64, 64));
-	m_coop_levels.emplace_back("LevelData/LevelData_Level4_Platforms.csv", "LevelData/LevelData_Level4_Background.csv", sf::Vector2u(64, 64));
-	m_coop_levels.emplace_back("LevelData/LevelData_Level5_Platforms.csv", "LevelData/LevelData_Level5_Background.csv", sf::Vector2u(64, 64));
-	m_coop_levels.emplace_back("LevelData/LevelData_Level6_Platforms.csv", "LevelData/LevelData_Level6_Background.csv", sf::Vector2u(64, 64));
-	m_coop_levels.emplace_back("LevelData/LevelData_Level7_Platforms.csv", "LevelData/LevelData_Level7_Background.csv", sf::Vector2u(64, 64));
-	m_coop_levels.emplace_back("LevelData/LevelData_Level8_Platforms.csv", "LevelData/LevelData_Level8_Background.csv", sf::Vector2u(64, 64));
-	m_coop_levels.emplace_back("LevelData/LevelData_Level9_Platforms.csv", "LevelData/LevelData_Level9_Background.csv", sf::Vector2u(64, 64));
+	m_coop_levels.emplace_back("LevelData/Coop/LevelData_Level1_Platforms.csv", "LevelData/Coop/LevelData_Level1_Background.csv", sf::Vector2u(64, 64));
+	m_coop_levels.emplace_back("LevelData/Coop/LevelData_Level2_Platforms.csv", "LevelData/Coop/LevelData_Level2_Background.csv", sf::Vector2u(64, 64));
+	m_coop_levels.emplace_back("LevelData/Coop/LevelData_Level3_Platforms.csv", "LevelData/Coop/LevelData_Level3_Background.csv", sf::Vector2u(64, 64));
+	m_coop_levels.emplace_back("LevelData/Coop/LevelData_Level4_Platforms.csv", "LevelData/Coop/LevelData_Level4_Background.csv", sf::Vector2u(64, 64));
+	m_coop_levels.emplace_back("LevelData/Coop/LevelData_Level5_Platforms.csv", "LevelData/Coop/LevelData_Level5_Background.csv", sf::Vector2u(64, 64));
+	m_coop_levels.emplace_back("LevelData/Coop/LevelData_Level6_Platforms.csv", "LevelData/Coop/LevelData_Level6_Background.csv", sf::Vector2u(64, 64));
+	m_coop_levels.emplace_back("LevelData/Coop/LevelData_Level7_Platforms.csv", "LevelData/Coop/LevelData_Level7_Background.csv", sf::Vector2u(64, 64));
+	m_coop_levels.emplace_back("LevelData/Coop/LevelData_Level8_Platforms.csv", "LevelData/Coop/LevelData_Level8_Background.csv", sf::Vector2u(64, 64));
+	m_coop_levels.emplace_back("LevelData/Coop/LevelData_Level9_Platforms.csv", "LevelData/Coop/LevelData_Level9_Background.csv", sf::Vector2u(64, 64));
 
 	//Holds level data info for multiplayer levels (online)
-	m_multiplayer_levels.emplace_back("LevelData/LevelData_Level9_Platforms.csv", "LevelData/LevelData_Level9_Background.csv", sf::Vector2u(64, 64));
+	m_multiplayer_levels.emplace_back("LevelData/Multiplayer/LevelData_Multiplayer_Level1_ColliderTiles.csv", "LevelData/Multiplayer/LevelData_Multiplayer_Level1_BackgroundTiles.csv", sf::Vector2u(64, 64));
 }
 
 //Written by Paul Bichler (D00242563)

@@ -1,5 +1,7 @@
 #include "MultiplayerWorld.hpp"
 
+#include <iostream>
+
 #include "MultiplayerLevelLoader.hpp"
 #include "PlatformPart.hpp"
 
@@ -69,9 +71,11 @@ void MultiplayerWorld::RemoveCharacter(const sf::Int32 identifier)
 
 LevelInfo& MultiplayerWorld::BuildLevel(LevelManager::LevelData current_level_data)
 {
+	std::cout << "Load Level" << std::endl;
 	//This method is called in the constructor of the base World class
-	MultiplayerLevelLoader level_loader(current_level_data, m_textures, m_sounds);
+	SingleplayerLevelLoader level_loader(current_level_data, m_textures, m_sounds);
 	m_level_info = level_loader.LoadLevel();
+	std::cout << "Level Loaded" << std::endl;
 
 	return m_level_info;
 }
@@ -121,7 +125,11 @@ bool MultiplayerWorld::HandlePlayerTileCollision(SceneNode::Pair pair)
 void MultiplayerWorld::HandleCollisions()
 {
 	std::set<SceneNode::Pair> collision_pairs;
-	m_sceneGraph.CheckSceneCollision(m_sceneGraph, collision_pairs);
+	m_sceneGraph.CheckSceneCollision(m_sceneGraph, collision_pairs, [this](SceneNode& node)
+	{
+		//check collisions only for players and RayGround objects
+		return dynamic_cast<Character*>(&node) != nullptr || dynamic_cast<RayGround*>(&node) != nullptr;
+	});
 
 	std::set<SceneNode::Pair> pairs_player_one;
 	std::set<SceneNode::Pair> pairs_player_two;

@@ -134,24 +134,27 @@ bool Collision(const SceneNode& lhs, const SceneNode& rhs)
 	return lhs.GetBoundingRect().intersects(rhs.GetBoundingRect());
 }
 
-void SceneNode::CheckNodeCollision(SceneNode& node, std::set<Pair>& collisionPairs)
+void SceneNode::CheckNodeCollision(SceneNode& node, std::set<Pair>& collisionPairs, const std::function<bool(SceneNode&)>& check_predicate)
 {
 	if (this != &node && Collision(*this, node) && !IsDestroyed() && !node.IsDestroyed())
 	{
 		collisionPairs.insert(std::minmax(this, &node));
 	}
+
 	for (const Ptr& child : m_children)
 	{
-		child->CheckNodeCollision(node, collisionPairs);
+		child->CheckNodeCollision(node, collisionPairs, check_predicate);
 	}
 }
 
-void SceneNode::CheckSceneCollision(SceneNode& scene_graph, std::set<Pair>& collision_pairs)
+void SceneNode::CheckSceneCollision(SceneNode& scene_graph, std::set<Pair>& collision_pairs, const std::function<bool(SceneNode&)>& check_predicate)
 {
-	CheckNodeCollision(scene_graph, collision_pairs);
+	if(check_predicate(scene_graph))
+		CheckNodeCollision(scene_graph, collision_pairs, check_predicate);
+
 	for (Ptr& child : scene_graph.m_children)
 	{
-		CheckSceneCollision(*child, collision_pairs);
+		CheckSceneCollision(*child, collision_pairs, check_predicate);
 	}
 }
 

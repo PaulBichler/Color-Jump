@@ -1,5 +1,5 @@
 #pragma once
-#include "MultiplayerLevelLoader.hpp"
+#include "SingleplayerLevelLoader.hpp"
 #include "World.hpp"
 
 class MultiplayerWorld : public World
@@ -26,5 +26,5 @@ protected:
 	std::vector<Character*> m_players;
 
 private:
-	MLevelInfo m_level_info;
+	SLevelInfo m_level_info;
 };
