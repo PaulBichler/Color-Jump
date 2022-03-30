@@ -156,6 +156,7 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="BloomEffect.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="CollisionHandler.cpp" />
     <ClCompile Include="ColorTile.cpp" />
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="CommandQueue.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="Button.hpp" />
     <ClInclude Include="ButtonType.hpp" />
     <ClInclude Include="Category.hpp" />
+    <ClInclude Include="CollisionHandler.hpp" />
     <ClInclude Include="ColorTile.hpp" />
     <ClInclude Include="Command.hpp" />
     <ClInclude Include="CommandQueue.hpp" />

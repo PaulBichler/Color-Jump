@@ -195,6 +195,9 @@
     <ClCompile Include="MultiplayerGameState.cpp">
       <Filter>Source Files\GameStates</Filter>
     </ClCompile>
+    <ClCompile Include="CollisionHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Textures.hpp">
@@ -394,6 +397,9 @@
     </ClInclude>
     <ClInclude Include="MultiplayerGameState.hpp">
       <Filter>Header Files\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionHandler.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

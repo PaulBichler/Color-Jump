@@ -13,35 +13,10 @@ LevelInfo& SinglePlayerWorld::BuildLevel(LevelManager::LevelData current_level_d
 {
 	//This method is called in the constructor of the base World class
 	SingleplayerLevelLoader level_loader(current_level_data, m_textures, m_sounds);
-	m_level_info = level_loader.LoadLevel();
+	m_level_info = static_cast<LevelInfo>(level_loader.LoadLevel());
+	m_s_level_info = level_loader.LoadLevel();
 
-	return m_level_info;
-}
-
-Character* SinglePlayerWorld::AddCharacterWithColor(const sf::Int32 identifier,
-                                                    const EColorType color, const sf::IntRect rect,
-                                                    const sf::Vector2f spawn_pos)
-{
-	std::unique_ptr<Character> player(
-		new Character(color, m_textures, rect, m_sounds));
-	player->setPosition(spawn_pos);
-	player->SetIdentifier(identifier);
-
-	m_players.emplace_back(player.get());
-	m_scene_layers[static_cast<int>(Layers::kCharacters)]->AttachChild(std::move(player));
-	return m_players.back();
-}
-
-Character* SinglePlayerWorld::AddCharacter(const sf::Int32 identifier)
-{
-	if (identifier % 2 == 0)
-	{
-		return AddCharacterWithColor(identifier, EColorType::kRed, m_level_info.m_red_player_rect,
-		                             m_level_info.m_red_player_spawn_pos);
-	}
-
-	return AddCharacterWithColor(identifier, EColorType::kBlue, m_level_info.m_blue_player_rect,
-	                             m_level_info.m_blue_player_spawn_pos);
+	return m_s_level_info;
 }
 
 void SinglePlayerWorld::Update(sf::Time dt)
@@ -105,7 +80,7 @@ void SinglePlayerWorld::UpdateSounds() const
 //Updates the platforms (used by Pulse Platforms to change color every 2 seconds)
 void SinglePlayerWorld::UpdatePlatforms(const sf::Time dt) const
 {
-	for (const auto& platform : m_level_info.platforms)
+	for (const auto& platform : m_s_level_info.platforms)
 		platform->Update(dt);
 }
 

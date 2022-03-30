@@ -4,10 +4,6 @@
 struct SLevelInfo : LevelInfo
 {
 	std::vector<std::unique_ptr<Platform>> platforms;
-	sf::IntRect m_blue_player_rect;
-	sf::Vector2f m_blue_player_spawn_pos;
-	sf::IntRect m_red_player_rect;
-	sf::Vector2f m_red_player_spawn_pos;
 };
 
 class SingleplayerLevelLoader : public LevelLoader<SLevelInfo>
