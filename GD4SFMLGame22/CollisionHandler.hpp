@@ -12,6 +12,6 @@ class CollisionHandler
 	static void GroundPlayer(Character& player, Tile& tile);
 	static bool MatchesCategories(SceneNode::Pair& collision, Category::Type type1, Category::Type type2);
 public:
-	static bool HandlePlayerTileCollision(SceneNode::Pair pair);
+	static bool HandlePlayerTileCollision(SceneNode::Pair pair, Platform*& collided_platform);
 };
 

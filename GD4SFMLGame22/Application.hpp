@@ -10,6 +10,7 @@
 #include "StateStack.hpp"
 
 #include "LevelManager.hpp"
+#include "PlayerDataManager.hpp"
 
 
 class Application
@@ -37,6 +38,7 @@ private:
 	SoundPlayer m_sounds;
 
 	LevelManager m_level_manager;
+	PlayerDataManager m_player_data_manager;
 
 	StateStack m_stack;
 

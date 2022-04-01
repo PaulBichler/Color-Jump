@@ -16,7 +16,6 @@ public:
 	std::vector<action> GetRealtimeActions() const;
 	
 private:
-
 	std::map<sf::Keyboard::Key, action> m_key_map;
 };
 

@@ -19,8 +19,7 @@ Application::Application()
 	: m_window(sf::VideoMode(1344, 960), "States", sf::Style::Close)
 	  , m_key_binding_1(1)
 	  , m_key_binding_2(2)
-	  , m_stack(State::Context(m_window, m_textures, m_fonts, m_music, m_sounds, m_level_manager,
-	                           m_key_binding_1, m_key_binding_2))
+	  , m_stack(State::Context(m_window, m_textures, m_fonts, m_music, m_sounds, m_level_manager, m_player_data_manager, m_player_data_manager.GetData().m_player1_keybindings, m_player_data_manager.GetData().m_player2_keybindings))
 	  , m_statistics_num_frames(0)
 {
 	m_window.setKeyRepeatEnabled(false);
@@ -54,6 +53,7 @@ void Application::Run()
 
 			if (m_stack.IsEmpty())
 			{
+				m_player_data_manager.Save();
 				m_window.close();
 			}
 		}
@@ -70,6 +70,7 @@ void Application::ProcessInput()
 		m_stack.HandleEvent(event);
 		if (event.type == sf::Event::Closed)
 		{
+			m_player_data_manager.Save();
 			m_window.close();
 		}
 	}

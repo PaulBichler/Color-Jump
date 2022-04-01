@@ -1,7 +1,4 @@
-#include <iostream>
-
 #include "SingleplayerWorld.hpp"
-
 #include "PlatformPart.hpp"
 
 SinglePlayerWorld::SinglePlayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds)
@@ -14,7 +11,6 @@ void SinglePlayerWorld::Update(sf::Time dt)
 	DestroyEntitiesOutsideView();
 
 	UpdateSounds();
-	UpdatePlatforms(dt);
 	World::Update(dt);
 }
 
@@ -64,14 +60,6 @@ void SinglePlayerWorld::UpdateSounds() const
 		// Remove unused sounds
 		m_sounds.RemoveStoppedSounds();
 	}
-}
-
-//Written by Paul Bichler (D00242563)
-//Updates the platforms (used by Pulse Platforms to change color every 2 seconds)
-void SinglePlayerWorld::UpdatePlatforms(const sf::Time dt) const
-{
-	for (const auto& platform : m_level_info.platforms)
-		platform->Update(dt);
 }
 
 //Written by Paul Bichler (D00242563)

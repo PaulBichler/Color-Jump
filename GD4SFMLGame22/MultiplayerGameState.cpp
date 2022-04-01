@@ -326,7 +326,7 @@ void MultiplayerGameState::HandleSelfSpawn(sf::Packet& packet)
 	sf::Int32 identifier;
 	packet >> identifier;
 
-	m_world.AddCharacter(identifier);
+	m_world.AddCharacter(identifier, true);
 	m_players[identifier].reset(new Player(&m_socket, identifier, GetContext().m_keys1));
 	m_local_player_identifiers.push_back(identifier);
 	m_game_started = true;

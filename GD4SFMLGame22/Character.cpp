@@ -137,6 +137,11 @@ bool Character::IsOnPlatformOfType(const EPlatformType platform_type) const
 	return m_current_platform->GetPlatformType() == platform_type;
 }
 
+bool Character::IsOnPlatform(Platform* platform) const
+{
+	return m_current_platform == platform;
+}
+
 /*
  *	Dylan Goncalves Martins (D00242562)
  *	Removes velocity on x axis and sets y axis to gravity force

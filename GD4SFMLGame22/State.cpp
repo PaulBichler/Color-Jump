@@ -3,7 +3,7 @@
 #include "StateStack.hpp"
 
 State::Context::Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts,
-                        MusicPlayer& music, SoundPlayer& sounds, LevelManager& level_manager,
+                        MusicPlayer& music, SoundPlayer& sounds, LevelManager& level_manager, PlayerDataManager& player_data_manager,
                         KeyBinding& keys1, KeyBinding& keys2)
 	: m_window(&window)
 	  , m_textures(&textures)
@@ -11,6 +11,7 @@ State::Context::Context(sf::RenderWindow& window, TextureHolder& textures, FontH
 	  , m_music(&music)
 	  , m_sounds(&sounds)
 	  , m_level_manager(&level_manager)
+	  , m_player_data_manager(&player_data_manager)
 	  , m_keys1(&keys1)
 	  , m_keys2(&keys2)
 {
@@ -22,8 +23,7 @@ State::State(StateStack& stack, const Context context)
 {
 }
 
-State::~State()
-= default;
+State::~State() = default;
 
 
 void State::RequestStackPush(const StateID state_id) const

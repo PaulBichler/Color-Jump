@@ -28,13 +28,14 @@ public:
 	virtual void Draw();
 	CommandQueue& GetCommandQueue();
 
-	Character* AddCharacter(sf::Int32 identifier);
+	virtual Character* AddCharacter(sf::Int32 identifier, bool is_client_player = false);
 
 private:
 	void LoadTextures();
 	void InitializeSceneLayers();
 	virtual void LoadLevel(LevelManager::LevelData current_level_data);
 	Character* AddCharacterWithColor(sf::Int32 identifier, EColorType color, sf::IntRect rect, sf::Vector2f spawn_pos);
+	void UpdatePlatforms(sf::Time dt) const;
 
 protected:
 	sf::FloatRect GetViewBounds() const;
@@ -49,8 +50,6 @@ protected:
 	static void PlayerGroundRayCast(const std::set<SceneNode::Pair>& pairs);
 	void GetGroundRayCasts(std::set<SceneNode::Pair>& pairs, SceneNode::Pair pair, Category::Type category) const;
 	static bool MatchesCategories(SceneNode::Pair& collision, Category::Type type1, Category::Type type2);
-	
-	
 
 	virtual void HandleCollisions() = 0;
 	virtual sf::FloatRect GetBattlefieldBounds() const = 0;

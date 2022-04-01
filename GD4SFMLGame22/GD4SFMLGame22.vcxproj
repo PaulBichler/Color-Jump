@@ -183,6 +183,7 @@
     <ClCompile Include="PlatformPart.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Character.cpp" />
+    <ClCompile Include="PlayerDataManager.cpp" />
     <ClCompile Include="PostEffect.cpp" />
     <ClCompile Include="RayGround.cpp" />
     <ClCompile Include="SceneNode.cpp" />
@@ -244,6 +245,7 @@
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="PlayerAction.hpp" />
     <ClInclude Include="Character.hpp" />
+    <ClInclude Include="PlayerDataManager.hpp" />
     <ClInclude Include="PostEffect.hpp" />
     <ClInclude Include="RayGround.hpp" />
     <ClInclude Include="ResourceHolder.hpp" />

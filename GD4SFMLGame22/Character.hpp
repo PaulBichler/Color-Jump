@@ -33,6 +33,7 @@ public:
 	EColorType GetCharacterType() const;
 	Platform* GetCurrentPlatform() const;
 	bool IsOnPlatformOfType(EPlatformType platform_type) const;
+	bool IsOnPlatform(Platform* platform) const;
 	void StopMovement();
 	void MoveOutOfCollision(const sf::FloatRect& rect);
 	void SetIdentifier(int identifier);

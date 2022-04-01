@@ -110,7 +110,7 @@ void CollisionHandler::GroundPlayer(Character& player, Tile& tile)
 	}
 }
 
-bool CollisionHandler::HandlePlayerTileCollision(SceneNode::Pair pair)
+bool CollisionHandler::HandlePlayerTileCollision(SceneNode::Pair pair, Platform*& collided_platform)
 {
 	if (MatchesCategories(pair, Category::Type::kPlayer, Category::Type::kPlatform))
 	{
@@ -121,6 +121,7 @@ bool CollisionHandler::HandlePlayerTileCollision(SceneNode::Pair pair)
 		if (CollideFromAbove(player, platform_part) || !platform->DoesPlayerCollide(player.GetCharacterType()))
 			return true;
 
+		collided_platform = platform;
 		GroundPlayer(player, platform_part);
 	}
 	return false;

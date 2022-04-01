@@ -41,6 +41,16 @@ void World::Update(const sf::Time dt)
 
 	//Apply movement
 	m_sceneGraph.Update(dt, m_command_queue);
+
+	UpdatePlatforms(dt);
+}
+
+//Written by Paul Bichler (D00242563)
+//Updates the platforms (used by Pulse Platforms to change color every 2 seconds)
+void World::UpdatePlatforms(sf::Time dt) const
+{
+	for (const auto& platform : m_level_info.platforms)
+		platform->Update(dt);
 }
 
 void World::Draw()
@@ -280,8 +290,7 @@ Character* World::AddCharacterWithColor(const sf::Int32 identifier,
 	const EColorType color, const sf::IntRect rect,
 	const sf::Vector2f spawn_pos)
 {
-	std::unique_ptr<Character> player(
-		new Character(color, m_textures, rect, m_sounds));
+	std::unique_ptr<Character> player(new Character(color, m_textures, rect, m_sounds));
 	player->setPosition(spawn_pos);
 	player->SetIdentifier(identifier);
 
@@ -291,7 +300,7 @@ Character* World::AddCharacterWithColor(const sf::Int32 identifier,
 }
 
 
-Character* World::AddCharacter(const sf::Int32 identifier)
+Character* World::AddCharacter(const sf::Int32 identifier, bool is_client_player)
 {
 	if (identifier % 2 == 0)
 	{

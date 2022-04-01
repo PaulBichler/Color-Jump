@@ -10,6 +10,7 @@
 #include "KeyBinding.hpp"
 #include "LevelManager.hpp"
 #include "MusicPlayer.hpp"
+#include "PlayerDataManager.hpp"
 #include "SoundPlayer.hpp"
 
 namespace sf
@@ -27,13 +28,14 @@ public:
 
 	struct Context
 	{
-		Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, MusicPlayer& music, SoundPlayer& sounds, LevelManager& level_manager, KeyBinding& keys1, KeyBinding& keys2);
+		Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, MusicPlayer& music, SoundPlayer& sounds, LevelManager& level_manager, PlayerDataManager& player_data_manager, KeyBinding& keys1, KeyBinding& keys2);
 		sf::RenderWindow* m_window;
 		TextureHolder* m_textures;
 		FontHolder* m_fonts;
 		MusicPlayer* m_music;
 		SoundPlayer* m_sounds;
 		LevelManager* m_level_manager;
+		PlayerDataManager* m_player_data_manager;
 		KeyBinding* m_keys1;
 		KeyBinding* m_keys2;
 	};
