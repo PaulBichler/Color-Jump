@@ -115,7 +115,7 @@ void GameServer::ExecutionThread()
 
 	const sf::Time frame_rate = sf::seconds(1.f / 60.f);
 	sf::Time frame_time = sf::Time::Zero;
-	const sf::Time tick_rate = sf::seconds(1.f / 20.f);
+	const sf::Time tick_rate = sf::seconds(1.f / 30.f);
 	sf::Time tick_time = sf::Time::Zero;
 	sf::Clock frame_clock, tick_clock;
 
@@ -204,7 +204,6 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 			detected_timeout = true;
 		}
 		break;
-
 	case client::PacketType::kPlayerEvent:
 		{
 			sf::Int32 identifier;
@@ -232,9 +231,11 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 			for (sf::Int32 i = 0; i < num_player; ++i)
 			{
 				sf::Int32 identifier;
+				sf::Int32 team_identifier;
 				sf::Vector2f position;
-				packet >> identifier >> position.x >> position.y;
+				packet >> identifier >> position.x >> position.y >> team_identifier;
 				m_player_info[identifier].m_position = position;
+				m_player_info[identifier].m_team_identifier = team_identifier;
 			}
 		}
 		break;
@@ -253,7 +254,8 @@ void GameServer::HandleIncomingConnections()
 	if (m_listener_socket.accept(m_peers[m_connected_players]->m_socket) == sf::TcpListener::Done)
 	{
 		//Order the new client to spawn its player 1
-		m_player_info[m_identifier_counter].m_position = sf::Vector2f(0,0);
+		m_player_info[m_identifier_counter].m_team_identifier = 0;
+		m_player_info[m_identifier_counter].m_position = sf::Vector2f(0, 0);
 
 		sf::Packet packet;
 		packet << static_cast<sf::Int32>(server::PacketType::kSpawnSelf);
@@ -332,7 +334,8 @@ void GameServer::InformWorldState(sf::TcpSocket& socket)
 			for (sf::Int32 identifier : m_peers[i]->m_identifiers)
 			{
 				const PlayerInfo player_info = m_player_info[identifier];
-				packet << identifier << player_info.m_position.x << player_info.m_position.y;
+				packet << identifier << player_info.m_position.x << player_info.m_position.y <<
+					player_info.m_team_identifier;
 			}
 		}
 	}

@@ -79,7 +79,7 @@ void SinglePlayerWorld::UpdatePlatforms(const sf::Time dt) const
 void SinglePlayerWorld::DestroyEntitiesOutsideView()
 {
 	Command command;
-	command.category = Category::Type::kPlayerOne | Category::Type::kPlayerTwo;
+	command.category = Category::Type::kPlayer;
 	command.action = DerivedAction<Entity>([this](Entity& e, sf::Time)
 	{
 		//Does the object intersect with the battlefield (Lose Condition)

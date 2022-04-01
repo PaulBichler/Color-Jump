@@ -354,7 +354,7 @@ void MultiplayerGameState::HandlePlayerConnect(sf::Packet& packet)
 
 	// Utility::Debug(std::to_string(identifier));
 
-	m_world.AddCharacter(identifier);
+	m_world.AddGhostCharacter(identifier);
 	m_players[identifier].reset(new Player(&m_socket, identifier, nullptr));
 }
 
@@ -373,11 +373,13 @@ void MultiplayerGameState::HandleInitialState(sf::Packet& packet)
 	for (sf::Int32 i = 0; i < player_count; ++i)
 	{
 		sf::Int32 identifier;
+		sf::Int32 team_identifier;
 		sf::Vector2f position;
-		packet >> identifier >> position.x >> position.y;
+		packet >> identifier >> position.x >> position.y >> team_identifier;
 
-		Character* character = m_world.AddCharacter(identifier);
+		Character* character = m_world.AddGhostCharacter(identifier);
 		character->setPosition(position);
+		character->SetTeamIdentifier(team_identifier);
 
 		m_players[identifier].reset(new Player(&m_socket, identifier, nullptr));
 	}
@@ -409,6 +411,21 @@ void MultiplayerGameState::HandlePlayerEvent(sf::Packet& packet)
 	{
 		itr->second->HandleNetworkEvent(static_cast<PlayerAction>(action),
 		                                m_world.GetCommandQueue());
+	}
+}
+
+void MultiplayerGameState::HandleTeamSelection(sf::Packet& packet) const
+{
+	sf::Int32 player_count;
+	packet >> player_count;
+	for (sf::Int32 i = 0; i < player_count; ++i)
+	{
+		sf::Int32 identifier;
+		sf::Int32 team_identifier;
+		packet >> identifier >> team_identifier;
+
+		Character* character = m_world.GetCharacter(identifier);
+		character->SetTeamIdentifier(team_identifier);
 	}
 }
 

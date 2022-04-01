@@ -10,6 +10,9 @@ public:
 	void Draw() override;
 	Character* GetCharacter(sf::Int32 identifier) const;
 	void RemoveCharacter(sf::Int32 identifier);
+	Character* AddGhostCharacterWithColor(sf::Int32 identifier, EColorType color,
+	                                      const sf::IntRect& int_rect, const sf::Vector2f& spawn_pos);
+	Character* AddGhostCharacter(sf::Int32 identifier);
 
 protected:
 	void SetCamera() override;

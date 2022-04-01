@@ -101,7 +101,7 @@ bool CollisionHandler::CheckTile(const Tile& tile, const EColorType character)
 	return false;
 }
 
-bool CollisionHandler::CollideFromAbove(Character& player, Tile& tile)
+bool CollisionHandler::CollideAndChangeColors(Character& player, Tile& tile)
 {
 	//Checks if player collided from underneath the center of the platform
 	if (IsPlayerAboveTile(player, tile))
@@ -142,12 +142,24 @@ bool CollisionHandler::TileCollision(SceneNode::Pair pair)
 		auto& platform_part = dynamic_cast<PlatformPart&>(*pair.second);
 		Platform* platform = platform_part.GetPlatform();
 
-		if (CollideFromAbove(player, platform_part) || !platform->DoesPlayerCollide(player.GetCharacterType()))
+		if (CollideAndChangeColors(player, platform_part) || !platform->HandlePlayerCollision(
+			player.GetCharacterType()))
 			return true;
 
 		GroundPlayer(player, platform_part);
 	}
 	return false;
+}
+
+void CollisionHandler::GroundPlayerAndChangePlatformColor(Character& player,
+	Platform* platform)
+{
+	//Ground players
+	if (platform->HandlePlayerCollisionAndChangeColor(player.GetCharacterType()))
+	{
+		//Collision
+		player.SetGrounded(platform);
+	}
 }
 
 
@@ -173,7 +185,7 @@ bool CollisionHandler::MatchesCategories(SceneNode::Pair& collision, Category::T
 
 void CollisionHandler::GroundPlayer(Character& player, Platform* platform)
 {
-	if (platform->DoesPlayerCollide(player.GetCharacterType()))
+	if (platform->HandlePlayerCollision(player.GetCharacterType()))
 	{
 		player.SetGrounded(platform);
 	}
@@ -207,7 +219,7 @@ void CollisionHandler::ChangeVerticalPlatformColor(const Character& player, Plat
 	// Set color of vertical platform if there is a collision from the side/underneath 
 	if (platform->GetPlatformType() == EPlatformType::kVerticalImpact)
 	{
-		platform->DoesPlayerCollide(player.GetCharacterType());
+		platform->HandlePlayerCollision(player.GetCharacterType());
 	}
 }
 
@@ -225,7 +237,7 @@ void CollisionHandler::StopPlayerMovement(Character& player, const PlatformPart&
 	}
 }
 
-bool CollisionHandler::CollideFromAbove(Character& player, const PlatformPart& platform_part,
+bool CollisionHandler::CollideAndChangeColors(Character& player, const PlatformPart& platform_part,
                                         Platform* platform)
 {
 	//Checks if player collided from underneath the center of the platform
@@ -248,10 +260,21 @@ bool CollisionHandler::PlatformCollision(SceneNode::Pair pair,
 		const auto& platform_part = dynamic_cast<PlatformPart&>(*pair.second);
 		Platform* platform = platform_part.GetPlatform();
 
-		if (CollideFromAbove(player, platform_part, platform)) return true;
+		if (CollideAndChangeColors(player, platform_part, platform)) return true;
+
+		GroundPlayerAndChangePlatformColor(player, platform);
+		IsAtTheFinishLine(players, callback, platform);
+	}
+
+	if (MatchesCategories(pair, Category::Type::kGhost, Category::Type::kPlatform))
+	{
+		auto& player = dynamic_cast<Character&>(*pair.first);
+		const auto& platform_part = dynamic_cast<PlatformPart&>(*pair.second);
+		Platform* platform = platform_part.GetPlatform();
+
+		if (Collide(player, platform_part, platform)) return true;
 
 		GroundPlayer(player, platform);
-		IsAtTheFinishLine(players, callback, platform);
 	}
 	return false;
 }
@@ -392,6 +415,19 @@ bool CollisionHandler::CheckPlatformUnderneath(const EColorType color, const EPl
 	return false;
 }
 
+bool CollisionHandler::Collide(Character& character, const PlatformPart& platform_part,
+	Platform* platform)
+{
+	//Checks if player collided from underneath the center of the platform
+	if (IsPlayerAbovePlatform(character, platform_part))
+	{
+		StopPlayerMovement(character, platform_part, platform);
+		// continue to next pair
+		return true;
+	}
+	return false;
+}
+
 void CollisionHandler::TrapCollision(SceneNode::Pair pair, const std::function<void()>& callback)
 {
 	//Check Lose Condition
@@ -402,11 +438,10 @@ void CollisionHandler::TrapCollision(SceneNode::Pair pair, const std::function<v
 	}
 }
 
-void CollisionHandler::GetGroundRayCasts(std::map<Character *,std::set<SceneNode::Pair>> sets,
-	const SceneNode::Pair& pair, const Category::Type category)
+void CollisionHandler::GetGroundRayCasts(std::map<Character*, std::set<SceneNode::Pair>>& sets,
+                                         const SceneNode::Pair& pair, const Category::Type category)
 {
-
-	if (pair.first->GetCategory() == category)
+	if ((pair.first->GetCategory() & category) != 0)
 	{
 		const auto& ray_ground = dynamic_cast<RayGround&>(*pair.first);
 
@@ -417,7 +452,7 @@ void CollisionHandler::GetGroundRayCasts(std::map<Character *,std::set<SceneNode
 		}
 	}
 
-	if (pair.second->GetCategory() == category)
+	if ((pair.second->GetCategory() & category) != 0)
 	{
 		const auto& ray_ground = dynamic_cast<RayGround&>(*pair.second);
 
@@ -448,7 +483,8 @@ void CollisionHandler::PlayerGroundRayCast(
 				const Character* player = ray_ground.m_character;
 
 				// Check if platform underneath is valid
-				if (CheckPlatformUnderneath(player->GetCharacterType(), platform->GetPlatformType()))
+				if (CheckPlatformUnderneath(player->GetCharacterType(),
+				                            platform->GetPlatformType()))
 				{
 					//collision found
 					collide = true;
@@ -482,8 +518,4 @@ void CollisionHandler::PlayerGroundRayCast(
 			}
 		}
 	}
-
-	
-
-	
 }

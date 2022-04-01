@@ -36,7 +36,7 @@ void Platform::AddPlatformPart(PlatformPart* tile)
 //Written by Paul Bichler (D00242563)
 //This method is used to decide whether a player will collide with the platform.
 //It also decides how the platform reacts to the collision.
-bool Platform::DoesPlayerCollide(const EColorType color_type)
+bool Platform::HandlePlayerCollisionAndChangeColor(const EColorType color_type)
 {
 	switch (m_type)
 	{
@@ -66,6 +66,35 @@ bool Platform::DoesPlayerCollide(const EColorType color_type)
 		if (color_type != EColorType::kRed)
 			return false;
 		break;
+	case EPlatformType::kNormal:
+	case EPlatformType::kHorizontalPulse:
+	case EPlatformType::kVerticalPulse:
+	case EPlatformType::kGoal:
+	default:
+		break;
+	}
+
+	return true;
+}
+
+bool Platform::HandlePlayerCollision(const EColorType color_type)
+{
+	switch (m_type)
+	{
+		//Only the Blue Player can collide with the blue platforms
+	case EPlatformType::kHorizontalBlue:
+	case EPlatformType::kVerticalBlue:
+		if (color_type != EColorType::kBlue)
+			return false;
+		break;
+		//Only the Red Player can collide with the red platforms
+	case EPlatformType::kHorizontalRed:
+	case EPlatformType::kVerticalRed:
+		if (color_type != EColorType::kRed)
+			return false;
+		break;
+	case EPlatformType::kHorizontalImpact:
+	case EPlatformType::kVerticalImpact:
 	case EPlatformType::kNormal:
 	case EPlatformType::kHorizontalPulse:
 	case EPlatformType::kVerticalPulse:

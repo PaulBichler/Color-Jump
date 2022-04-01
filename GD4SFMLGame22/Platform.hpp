@@ -11,7 +11,8 @@ public:
 	Platform(EPlatformType platform_type, TextureHolder& textures);
 	EPlatformType GetPlatformType() const;
 	void AddPlatformPart(PlatformPart* tile);
-	virtual bool DoesPlayerCollide(EColorType color_type);
+	bool HandlePlayerCollisionAndChangeColor(EColorType color_type);
+	virtual bool HandlePlayerCollision(EColorType color_type);
 	void SetType(EPlatformType type);
 
 	void Update(sf::Time dt);

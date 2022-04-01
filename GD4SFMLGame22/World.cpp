@@ -132,6 +132,7 @@ Character* World::AddCharacterWithColor(const sf::Int32 identifier,
 		new Character(color, m_textures, rect, m_sounds));
 	player->setPosition(spawn_pos);
 	player->SetIdentifier(identifier);
+	player->SetTeamIdentifier((identifier + 1) / 2);
 
 	m_players.emplace_back(player.get());
 	m_scene_layers[static_cast<int>(Layers::kCharacters)]->AttachChild(std::move(player));
