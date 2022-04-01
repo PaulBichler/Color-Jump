@@ -21,7 +21,8 @@ namespace
  *	Creates the character for the players
  *	Also Creates a "Ray" and sets it as a child of the character
  */
-Character::Character(const EColorType type, const TextureHolder& textures, const sf::IntRect& texture_rect,
+Character::Character(const EColorType type, const TextureHolder& textures,
+                     const sf::IntRect& texture_rect,
                      SoundPlayer& context)
 	: Entity(100),
 	  m_type(type),
@@ -153,7 +154,13 @@ void Character::StopMovement()
  */
 void Character::MoveOutOfCollision(const sf::FloatRect& rect)
 {
-	const sf::Vector2f velocity = GetVelocity();
+	sf::Vector2f velocity = GetVelocity();
+
+	if (velocity == sf::Vector2f(0,0))
+	{
+		velocity = sf::Vector2f(0, -9.81f);
+	}
+
 	const sf::Vector2f normal_velocity = Utility::UnitVector(velocity);
 	SetVelocity(0, 0);
 

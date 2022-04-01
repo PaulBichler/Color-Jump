@@ -1,5 +1,7 @@
 #include "MultiplayerWorld.hpp"
 #include "CollisionHandler.hpp"
+#include "PlatformPart.hpp"
+#include "Utility.hpp"
 
 MultiplayerWorld::MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds)
 	: World(output_target, sounds)
@@ -48,24 +50,26 @@ void MultiplayerWorld::HandleCollisions()
 	m_sceneGraph.CheckSceneCollision(m_sceneGraph, collision_pairs, [this](SceneNode& node)
 	{
 		//check collisions only for players and RayGround objects
-		return dynamic_cast<Character*>(&node) != nullptr || dynamic_cast<RayGround*>(&node) != nullptr;
+		return dynamic_cast<Character*>(&node) != nullptr || dynamic_cast<RayGround*>(&node) !=
+			nullptr;
 	});
 
-	std::set<SceneNode::Pair> pairs_player_one;
-	std::set<SceneNode::Pair> pairs_player_two;
+	std::map<Character*, std::set<SceneNode::Pair>> player_pairs;
+
+	for (auto players : m_players)
+	{
+		player_pairs.insert(std::pair<Character*, std::set<SceneNode::Pair> >(players, std::set<SceneNode::Pair>()));
+	}
 
 	for (const SceneNode::Pair& pair : collision_pairs)
 	{
-		if (CollisionHandler::HandlePlayerTileCollision(pair)) continue;
+		if (CollisionHandler::PlatformCollision(pair, m_players, m_reached_goal_callback)) continue;
 
 		//Get All Ground Ray Casts for player one and two
-		GetGroundRayCasts(pairs_player_one, pair, Category::kRayOne);
-		GetGroundRayCasts(pairs_player_two, pair, Category::kRayTwo);
+		CollisionHandler::GetGroundRayCasts(player_pairs, pair, Category::kRay);
 	}
 
-	//Check Ground Ray Casts
-	PlayerGroundRayCast(pairs_player_one);
-	PlayerGroundRayCast(pairs_player_two);
+	CollisionHandler::PlayerGroundRayCast(player_pairs);
 }
 
 sf::FloatRect MultiplayerWorld::GetBattlefieldBounds() const

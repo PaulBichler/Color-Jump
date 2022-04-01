@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "CollisionHandler.hpp"
 #include "SingleplayerWorld.hpp"
 
 #include "PlatformPart.hpp"
@@ -92,6 +93,8 @@ void SinglePlayerWorld::DestroyEntitiesOutsideView()
 	m_command_queue.Push(command);
 }
 
+
+
 //Written by Dylan Goncalves Martins (), modified by Paul Bichler (D00242563)
 void SinglePlayerWorld::HandleCollisions()
 {
@@ -99,72 +102,26 @@ void SinglePlayerWorld::HandleCollisions()
 	m_sceneGraph.CheckSceneCollision(m_sceneGraph, collision_pairs, [this](SceneNode& node)
 	{
 		//check collisions only for players and RayGround objects
-		return dynamic_cast<Character*>(&node) != nullptr || dynamic_cast<RayGround*>(&node) != nullptr;
+		return dynamic_cast<Character*>(&node) != nullptr || dynamic_cast<RayGround*>(&node) !=
+			nullptr;
 	});
 
 	std::set<SceneNode::Pair> pairs_player_one;
 	std::set<SceneNode::Pair> pairs_player_two;
 
-	for (SceneNode::Pair pair : collision_pairs)
+	for (const SceneNode::Pair& pair : collision_pairs)
 	{
-		if (MatchesCategories(pair, Category::Type::kPlayer, Category::Type::kPlatform))
-		{
-			auto& player = dynamic_cast<Character&>(*pair.first);
-			auto& platform_part = dynamic_cast<PlatformPart&>(*pair.second);
-			Platform* platform = platform_part.GetPlatform();
+		if (CollisionHandler::PlatformCollision(pair, m_players, m_win_callback))
+			continue;
 
-			//Checks if player collided from underneath the center of the platform
-			if (IsPlayerBelowPlatform(player, platform_part))
-			{
-				//Checks if platform is collidable with player
-				if (IsPlayerAtHisPlatform(player, platform))
-				{
-					// move player out of collision and stop his movement
-					player.MoveOutOfCollision(platform_part.GetBoundingRect());
-					player.StopMovement();
-
-					// Set color of vertical platform if there is a collision from the side/underneath 
-					if (platform->GetPlatformType() == EPlatformType::kVerticalImpact)
-					{
-						platform->DoesPlayerCollide(player.GetCharacterType());
-					}
-				}
-				// continue to next pair
-				continue;
-			}
-
-			if (platform->DoesPlayerCollide(player.GetCharacterType()))
-			{
-				//Collision
-				player.SetGrounded(platform);
-			}
-
-			//Check Win Condition
-			if (!m_has_won && platform->GetPlatformType() == EPlatformType::kGoal)
-			{
-				if (m_players[0]->IsOnPlatformOfType(EPlatformType::kGoal) &&
-					m_players[1]->IsOnPlatformOfType(EPlatformType::kGoal))
-				{
-					//Win
-					m_win_callback();
-					m_has_won = true;
-				}
-			}
-		}
-
-		//Check Lose Condition
-		if (MatchesCategories(pair, Category::Type::kPlayer, Category::Type::kEnemyTrap))
-		{
-			//Lose
-			m_lose_callback();
-		}
+		CollisionHandler::TrapCollision(pair, m_lose_callback);
 
 		//Get All Ground Ray Casts for player one and two
-		GetGroundRayCasts(pairs_player_one, pair, Category::kRayOne);
-		GetGroundRayCasts(pairs_player_two, pair, Category::kRayTwo);
+		CollisionHandler::GetGroundRayCasts(pairs_player_one, pair, Category::kRayOne);
+		CollisionHandler::GetGroundRayCasts(pairs_player_two, pair, Category::kRayTwo);
 	}
 
 	//Check Ground Ray Casts
-	PlayerGroundRayCast(pairs_player_one);
-	PlayerGroundRayCast(pairs_player_two);
+	CollisionHandler::PlayerGroundRayCast(pairs_player_one);
+	CollisionHandler::PlayerGroundRayCast(pairs_player_two);
 }

@@ -167,7 +167,7 @@ std::string Utility::ToString(const sf::Keyboard::Key key)
 
 double Utility::ToRadians(const int degrees)
 {
-	return (degrees * M_PI) / 180;
+	return degrees * M_PI / 180;
 }
 
 sf::Vector2f Utility::UnitVector(const sf::Vector2f vector)

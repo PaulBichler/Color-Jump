@@ -15,4 +15,8 @@ protected:
 	void SetCamera() override;
 	void HandleCollisions() override;
 	sf::FloatRect GetBattlefieldBounds() const override;
+
+private:
+	std::function<void()> m_lose_callback;
+	std::function<void()> m_reached_goal_callback;
 };

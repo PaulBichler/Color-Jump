@@ -56,14 +56,16 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(const std::string& csv_path, LevelInf
 			{
 			case kRedPlayer:
 			{
+				//Do not swap these lines as for red the spawn position is set in GetSubRect
 				level_info.m_red_player_rect = m_tile_factory.GetSubRect(kRedPlayer, spawn_pos);
 				level_info.m_red_player_spawn_pos = spawn_pos;
 			}
 			break;
 			case kBluePlayer:
 			{
-				level_info.m_blue_player_rect = m_tile_factory.GetSubRect(kBluePlayer, spawn_pos);
+				//Do not swap these lines as for blue the spawn position is set before GetSubRect
 				level_info.m_blue_player_spawn_pos = spawn_pos;
+				level_info.m_blue_player_rect = m_tile_factory.GetSubRect(kBluePlayer, spawn_pos);
 			}
 			break;
 			case kHorizontalPlatformPart:
