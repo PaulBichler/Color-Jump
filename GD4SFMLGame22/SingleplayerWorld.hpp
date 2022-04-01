@@ -1,5 +1,4 @@
 #pragma once
-#include "SingleplayerLevelLoader.hpp"
 #include "World.hpp"
 
 class SinglePlayerWorld : public World
@@ -14,7 +13,6 @@ public:
 	void SetWinCallback(const std::function<void()>& callback);
 
 protected:
-	LevelInfo& BuildLevel(LevelManager::LevelData current_level_data) override;
 	void UpdateSounds() const;
 	void UpdatePlatforms(sf::Time dt) const;
 	void DestroyEntitiesOutsideView();
@@ -26,7 +24,5 @@ private:
 	std::function<void()> m_lose_callback;
 	std::function<void()> m_win_callback;
 	bool m_has_won{};
-
-	SLevelInfo m_s_level_info;
 };
 

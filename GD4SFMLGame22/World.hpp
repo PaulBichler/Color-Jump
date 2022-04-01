@@ -16,12 +16,13 @@
 
 #include "LevelLoader.hpp"
 #include "LevelManager.hpp"
-#include "SingleplayerLevelLoader.hpp"
 
 class World : sf::NonCopyable
 {
 public:
 	World(sf::RenderTarget& output_target, SoundPlayer& sounds);
+	virtual ~World() = default;
+
 	void BuildWorld(LevelManager::LevelData current_level_data);
 	virtual void Update(sf::Time dt);
 	virtual void Draw();
@@ -32,10 +33,8 @@ public:
 private:
 	void LoadTextures();
 	void InitializeSceneLayers();
-	virtual LevelInfo& BuildLevel(LevelManager::LevelData current_level_data) = 0;
-
-	Character* AddCharacterWithColor(sf::Int32 identifier, EColorType color, sf::IntRect rect,
-		sf::Vector2f spawn_pos);
+	virtual void LoadLevel(LevelManager::LevelData current_level_data);
+	Character* AddCharacterWithColor(sf::Int32 identifier, EColorType color, sf::IntRect rect, sf::Vector2f spawn_pos);
 
 protected:
 	sf::FloatRect GetViewBounds() const;

@@ -176,7 +176,6 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MenuState.cpp" />
     <ClCompile Include="MultiplayerGameState.cpp" />
-    <ClCompile Include="MultiplayerLevelLoader.cpp" />
     <ClCompile Include="MultiplayerWorld.cpp" />
     <ClCompile Include="MusicPlayer.cpp" />
     <ClCompile Include="ParticleNode.cpp" />
@@ -188,7 +187,6 @@
     <ClCompile Include="RayGround.cpp" />
     <ClCompile Include="SceneNode.cpp" />
     <ClCompile Include="SettingsState.cpp" />
-    <ClCompile Include="SingleplayerLevelLoader.cpp" />
     <ClCompile Include="SinglePlayerWorld.cpp" />
     <ClCompile Include="SoundNode.cpp" />
     <ClCompile Include="SoundPlayer.cpp" />
@@ -234,7 +232,6 @@
     <ClInclude Include="LevelWinState.hpp" />
     <ClInclude Include="MenuState.hpp" />
     <ClInclude Include="MultiplayerGameState.hpp" />
-    <ClInclude Include="MultiplayerLevelLoader.hpp" />
     <ClInclude Include="MultiplayerWorld.hpp" />
     <ClInclude Include="MusicPlayer.hpp" />
     <ClInclude Include="MusicThemes.hpp" />
@@ -254,7 +251,6 @@
     <ClInclude Include="SceneNode.hpp" />
     <ClInclude Include="SettingsState.hpp" />
     <ClInclude Include="Shaders.hpp" />
-    <ClInclude Include="SingleplayerLevelLoader.hpp" />
     <ClInclude Include="SinglePlayerWorld.hpp" />
     <ClInclude Include="SoundEffect.hpp" />
     <ClInclude Include="SoundNode.hpp" />

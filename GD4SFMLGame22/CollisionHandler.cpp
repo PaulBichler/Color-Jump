@@ -1,6 +1,8 @@
 #include "CollisionHandler.hpp"
 
 #include "Character.hpp"
+#include "PlatformPart.hpp"
+#include "Utility.hpp"
 
 
 void CollisionHandler::ChangeVerticalTileColor(const Character& player, Tile& tile)
@@ -113,11 +115,13 @@ bool CollisionHandler::HandlePlayerTileCollision(SceneNode::Pair pair)
 	if (MatchesCategories(pair, Category::Type::kPlayer, Category::Type::kPlatform))
 	{
 		auto& player = dynamic_cast<Character&>(*pair.first);
-		auto& tile = dynamic_cast<Tile&>(*pair.second);
+		auto& platform_part = dynamic_cast<PlatformPart&>(*pair.second);
+		Platform* platform = platform_part.GetPlatform();
 
-		if (CollideFromAbove(player, tile)) return true;
+		if (CollideFromAbove(player, platform_part) || !platform->DoesPlayerCollide(player.GetCharacterType()))
+			return true;
 
-		GroundPlayer(player, tile);
+		GroundPlayer(player, platform_part);
 	}
 	return false;
 }

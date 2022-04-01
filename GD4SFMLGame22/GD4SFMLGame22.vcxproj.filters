@@ -168,12 +168,6 @@
     <ClCompile Include="LevelLoader.cpp">
       <Filter>Source Files\Level\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Platform.cpp">
-      <Filter>Source Files\Level\Singleplayer</Filter>
-    </ClCompile>
-    <ClCompile Include="PlatformPart.cpp">
-      <Filter>Source Files\Level\Singleplayer</Filter>
-    </ClCompile>
     <ClCompile Include="LevelManager.cpp">
       <Filter>Source Files\Level\Base</Filter>
     </ClCompile>
@@ -183,12 +177,6 @@
     <ClCompile Include="TileFactory.cpp">
       <Filter>Source Files\Level\Base</Filter>
     </ClCompile>
-    <ClCompile Include="MultiplayerLevelLoader.cpp">
-      <Filter>Source Files\Level\Multiplayer</Filter>
-    </ClCompile>
-    <ClCompile Include="SingleplayerLevelLoader.cpp">
-      <Filter>Source Files\Level\Singleplayer</Filter>
-    </ClCompile>
     <ClCompile Include="ColorTile.cpp">
       <Filter>Source Files\Level\Multiplayer</Filter>
     </ClCompile>
@@ -197,6 +185,12 @@
     </ClCompile>
     <ClCompile Include="CollisionHandler.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform.cpp">
+      <Filter>Source Files\Level\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformPart.cpp">
+      <Filter>Source Files\Level\Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -359,9 +353,6 @@
     <ClInclude Include="World.hpp">
       <Filter>Header Files\Level\Base</Filter>
     </ClInclude>
-    <ClInclude Include="EPlatformType.hpp">
-      <Filter>Header Files\Level\Singleplayer</Filter>
-    </ClInclude>
     <ClInclude Include="ETileType.hpp">
       <Filter>Header Files\Level\Base</Filter>
     </ClInclude>
@@ -370,12 +361,6 @@
     </ClInclude>
     <ClInclude Include="LevelManager.hpp">
       <Filter>Header Files\Level\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Platform.hpp">
-      <Filter>Header Files\Level\Singleplayer</Filter>
-    </ClInclude>
-    <ClInclude Include="PlatformPart.hpp">
-      <Filter>Header Files\Level\Singleplayer</Filter>
     </ClInclude>
     <ClInclude Include="Tile.hpp">
       <Filter>Header Files\Level\Base</Filter>
@@ -386,20 +371,23 @@
     <ClInclude Include="EGameMode.hpp">
       <Filter>Header Files\Level\Base</Filter>
     </ClInclude>
-    <ClInclude Include="SingleplayerLevelLoader.hpp">
-      <Filter>Header Files\Level\Singleplayer</Filter>
-    </ClInclude>
     <ClInclude Include="KeyBinding.hpp">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MultiplayerLevelLoader.hpp">
-      <Filter>Header Files\Level\Multiplayer</Filter>
     </ClInclude>
     <ClInclude Include="MultiplayerGameState.hpp">
       <Filter>Header Files\GameStates</Filter>
     </ClInclude>
     <ClInclude Include="CollisionHandler.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EPlatformType.hpp">
+      <Filter>Header Files\Level\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform.hpp">
+      <Filter>Header Files\Level\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformPart.hpp">
+      <Filter>Header Files\Level\Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

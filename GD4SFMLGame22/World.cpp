@@ -93,16 +93,22 @@ void World::InitializeSceneLayers()
 	}
 }
 
+void World::LoadLevel(LevelManager::LevelData current_level_data)
+{
+	LevelLoader level_loader(current_level_data, m_textures, m_sounds);
+	m_level_info = level_loader.LoadLevel();
+}
+
 //Written by Paul Bichler (D00242563)
 void World::BuildWorld(LevelManager::LevelData current_level_data)
 {
 	//Load the level based on the level data in the level manager 
-	LevelInfo& level_info = BuildLevel(std::move(current_level_data));
+	LoadLevel(std::move(current_level_data));
 
 	m_scene_layers[static_cast<int>(Layers::kBackground)]->AttachChild(
-		std::move(level_info.background_parent));
+		std::move(m_level_info.background_parent));
 	m_scene_layers[static_cast<int>(Layers::kLevel)]->AttachChild(
-		std::move(level_info.level_parent));
+		std::move(m_level_info.level_parent));
 }
 
 CommandQueue& World::GetCommandQueue()

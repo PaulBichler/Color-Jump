@@ -1,5 +1,4 @@
 #pragma once
-#include "SingleplayerLevelLoader.hpp"
 #include "World.hpp"
 
 class MultiplayerWorld : public World
@@ -11,9 +10,6 @@ public:
 	void Draw() override;
 	Character* GetCharacter(sf::Int32 identifier) const;
 	void RemoveCharacter(sf::Int32 identifier);
-
-private:
-	LevelInfo& BuildLevel(LevelManager::LevelData current_level_data) override;
 
 protected:
 	void SetCamera() override;

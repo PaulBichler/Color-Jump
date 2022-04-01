@@ -1,8 +1,5 @@
 #include "MultiplayerWorld.hpp"
-
 #include "CollisionHandler.hpp"
-#include "MultiplayerLevelLoader.hpp"
-#include "PlatformPart.hpp"
 
 MultiplayerWorld::MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds)
 	: World(output_target, sounds)
@@ -39,16 +36,6 @@ void MultiplayerWorld::RemoveCharacter(const sf::Int32 identifier)
 		character->Destroy();
 		m_players.erase(std::find(m_players.begin(), m_players.end(), character));
 	}
-}
-
-LevelInfo& MultiplayerWorld::BuildLevel(LevelManager::LevelData current_level_data)
-{
-	std::cout << "Load Level" << std::endl;
-	//This method is called in the constructor of the base World class
-	MultiplayerLevelLoader level_loader(current_level_data, m_textures, m_sounds);
-	m_level_info = static_cast<LevelInfo>(level_loader.LoadLevel());
-
-	return m_level_info;
 }
 
 void MultiplayerWorld::SetCamera()

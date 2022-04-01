@@ -9,6 +9,7 @@ public:
 	Platform* GetPlatform() const;
 	sf::FloatRect GetBoundingRect() const override;
 	unsigned GetCategory() const override;
+
 private:
 	Platform* m_parent;
 };
