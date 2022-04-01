@@ -17,7 +17,8 @@ public:
 	~GameServer();
 	void SendPackageToAll(sf::Packet packet) const;
 	void NotifyPlayerSpawn(sf::Int32 identifier) const;
-	void NotifyPlayerRealtimeChange(sf::Int32 identifier, sf::Int32 action, bool action_enabled) const;
+	void NotifyPlayerRealtimeChange(sf::Int32 identifier, sf::Int32 action,
+	                                bool action_enabled) const;
 	void NotifyPlayerEvent(sf::Int32 identifier, sf::Int32 action) const;
 
 private:
@@ -33,11 +34,12 @@ private:
 
 	struct PlayerInfo
 	{
+		int m_team_identifier{};
 		sf::Vector2f m_position;
 		std::map<sf::Int32, bool> m_realtime_actions;
 	};
 
-	typedef std::unique_ptr<RemotePeer> peer_ptr;
+	using peer_ptr = std::unique_ptr<RemotePeer>;
 
 private:
 	void SetListening(bool enable);
@@ -46,7 +48,10 @@ private:
 	sf::Time Now() const;
 
 	void HandleIncomingPackets();
-	void HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer, bool& detected_timeout);
+	void NotifyPlayerPlatformChange(sf::Int32 team_id, sf::Int32 platform_id,
+	                                sf::Int32 platform_color) const;
+	void HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer,
+	                          bool& detected_timeout);
 
 	void HandleIncomingConnections();
 	void HandleDisconnections();
@@ -74,9 +79,4 @@ private:
 	std::vector<peer_ptr> m_peers;
 	sf::Int32 m_identifier_counter;
 	bool m_waiting_thread_end;
-
-	
 };
-
-
-

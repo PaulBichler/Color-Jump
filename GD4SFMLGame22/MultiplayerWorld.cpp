@@ -1,9 +1,13 @@
 #include "MultiplayerWorld.hpp"
 #include "CollisionHandler.hpp"
+#include "GhostCharacter.hpp"
+#include "PlatformPart.hpp"
 #include "Utility.hpp"
 
-MultiplayerWorld::MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds)
-	: World(output_target, sounds)
+MultiplayerWorld::MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds,
+                                   MultiplayerGameState* state)
+	: World(output_target, sounds),
+	  m_state(state)
 {
 }
 
@@ -46,6 +50,50 @@ void MultiplayerWorld::RemoveCharacter(const sf::Int32 identifier)
 	}
 }
 
+Character* MultiplayerWorld::AddGhostCharacterWithColor(const sf::Int32 identifier,
+                                                        const EColorType color,
+                                                        const sf::IntRect& int_rect,
+                                                        const sf::Vector2f& spawn_pos)
+{
+	std::unique_ptr<GhostCharacter> player(
+		new GhostCharacter(color, m_textures, int_rect, m_sounds));
+	player->setPosition(spawn_pos);
+	player->SetIdentifier(identifier);
+	player->SetTeamIdentifier((identifier + 1) / 2);
+
+	m_players.emplace_back(player.get());
+	m_scene_layers[static_cast<int>(Layers::kCharacters)]->AttachChild(std::move(player));
+	return m_players.back();
+}
+
+Character* MultiplayerWorld::AddGhostCharacter(const sf::Int32 identifier)
+{
+	if (identifier % 2 == 0)
+	{
+		return AddGhostCharacterWithColor(identifier, EColorType::kRed,
+		                                  m_level_info.m_red_player_rect,
+		                                  m_level_info.m_red_player_spawn_pos);
+	}
+
+	return AddGhostCharacterWithColor(identifier, EColorType::kBlue,
+	                                  m_level_info.m_blue_player_rect,
+	                                  m_level_info.m_blue_player_spawn_pos);
+}
+
+void MultiplayerWorld::UpdatePlatform(const sf::Int32 platform_id, const EPlatformType platform_color) const
+{
+	// Get all platforms
+	// Set the new one to the correct color
+
+	for (const auto& platform : m_level_info.platforms)
+	{
+		if (platform->GetID() == platform_id)
+		{
+			platform->SetType(platform_color);
+		}
+	}
+}
+
 Character* MultiplayerWorld::AddCharacter(sf::Int32 identifier, bool is_client_player)
 {
 	Character* player_character = World::AddCharacter(identifier, is_client_player);
@@ -65,38 +113,34 @@ void MultiplayerWorld::HandleCollisions()
 	std::set<SceneNode::Pair> collision_pairs;
 	m_sceneGraph.CheckSceneCollision(m_sceneGraph, collision_pairs, [this](SceneNode& node)
 	{
+		const auto character = dynamic_cast<Character*>(&node);
+		const bool character_cond = character != nullptr;
+
+		const auto ray_ground = dynamic_cast<RayGround*>(&node);
+		const bool ray_cond = ray_ground != nullptr;
+
 		//check collisions only for players and RayGround objects
-		return dynamic_cast<Character*>(&node) != nullptr || dynamic_cast<RayGround*>(&node) != nullptr;
+		return character_cond || ray_cond;
 	});
 
-	std::set<SceneNode::Pair> pairs_player_one;
-	std::set<SceneNode::Pair> pairs_player_two;
+	std::map<Character*, std::set<SceneNode::Pair>> player_pairs;
+
+	for (auto players : m_players)
+	{
+		player_pairs.insert(
+			std::pair<Character*, std::set<SceneNode::Pair>>(players, std::set<SceneNode::Pair>()));
+	}
 
 	for (const SceneNode::Pair& pair : collision_pairs)
 	{
-		Platform* collided_platform = nullptr;
-		if (CollisionHandler::HandlePlayerTileCollision(pair, collided_platform)) continue;
-
-		//Check if a checkpoint has been reached by both players
-		if (collided_platform != nullptr && collided_platform->GetPlatformType() == EPlatformType::kGoal)
-		{
-			Utility::Debug("Checkpoint reached!");
-			//if (m_players[0]->IsOnPlatform(collided_platform) &&
-			//	m_players[1]->IsOnPlatform(collided_platform))
-			//{
-			//	//Win
-			//	m_win_callback();
-			//}
-		}
+		if (CollisionHandler::PlatformCollision(pair, m_players, m_reached_goal_callback, this))
+			continue;
 
 		//Get All Ground Ray Casts for player one and two
-		GetGroundRayCasts(pairs_player_one, pair, Category::kRayOne);
-		GetGroundRayCasts(pairs_player_two, pair, Category::kRayTwo);
+		CollisionHandler::GetGroundRayCasts(player_pairs, pair, Category::kRay);
 	}
 
-	//Check Ground Ray Casts
-	PlayerGroundRayCast(pairs_player_one);
-	PlayerGroundRayCast(pairs_player_two);
+	CollisionHandler::PlayerGroundRayCast(player_pairs);
 }
 
 sf::FloatRect MultiplayerWorld::GetBattlefieldBounds() const

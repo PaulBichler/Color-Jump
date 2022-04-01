@@ -42,6 +42,8 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(const std::string& csv_path, LevelInf
 	//Convert the csv level data into a 2-dimensional vector (this makes it easier to create platforms)
 	m_level_data_vector = LevelDataToVector(csv_path);
 
+	int platform_id = 0;
+
 	//Loop through the 2-dimensional level vector and construct the level tile by tile
 	for (int row = 0; row < m_level_data_vector.size(); row++)
 	{
@@ -56,14 +58,16 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(const std::string& csv_path, LevelInf
 			{
 			case kRedPlayer:
 			{
+				//Do not swap these lines as for red the spawn position is set in GetSubRect
 				level_info.m_red_player_rect = m_tile_factory.GetSubRect(kRedPlayer, spawn_pos);
 				level_info.m_red_player_spawn_pos = spawn_pos;
 			}
 			break;
 			case kBluePlayer:
 			{
-				level_info.m_blue_player_rect = m_tile_factory.GetSubRect(kBluePlayer, spawn_pos);
+				//Do not swap these lines as for blue the spawn position is set before GetSubRect
 				level_info.m_blue_player_spawn_pos = spawn_pos;
+				level_info.m_blue_player_rect = m_tile_factory.GetSubRect(kBluePlayer, spawn_pos);
 			}
 			break;
 			case kHorizontalPlatformPart:
@@ -77,8 +81,12 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(const std::string& csv_path, LevelInf
 			case kVerticalRedPlatformPart:
 			case kFinishPlatformPart:
 				//Construct a platform (the platform type is determined by the tile type)
-				CreatePlatform(level_info, tile_type, row, col, level_parent, spawn_pos);
-				break;
+				{
+					
+					//Construct a platform (the platform type is determined by the tile type)
+					CreatePlatform(level_info, tile_type, row, col, level_parent, spawn_pos, platform_id++);
+				}
+			break;
 			case kNone:
 				//Tiles marked with (-1 = kNone) do nothing
 				break;
@@ -132,9 +140,9 @@ std::vector<std::vector<int>> LevelLoader::LevelDataToVector(const std::string& 
 //platform parts connected to it, to construct a platform.
 void LevelLoader::CreatePlatform(LevelInfo& level_info, const ETileType tile_type,
 	const int row, const int col, SceneNode::Ptr& parent,
-	const sf::Vector2f spawn_pos)
+	const sf::Vector2f spawn_pos, const int platform_id)
 {
-	std::unique_ptr<Platform> platform(new Platform(static_cast<EPlatformType>(tile_type), m_textures));
+	std::unique_ptr<Platform> platform(new Platform(platform_id, static_cast<EPlatformType>(tile_type), m_textures));
 	AddPlatformParts(platform.get(), row, col, parent, tile_type, spawn_pos);
 	level_info.platforms.emplace_back(std::move(platform));
 }

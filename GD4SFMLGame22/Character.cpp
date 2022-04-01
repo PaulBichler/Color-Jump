@@ -16,12 +16,20 @@ namespace
 	const CharacterData kTable = InitializeCharacterData();
 }
 
+void Character::CreateRay()
+{
+	std::unique_ptr<RayGround> ray(new RayGround(this));
+	m_ray = ray.get();
+	AttachChild(std::move(ray));
+}
+
 /*
  *	Dylan Goncalves Martins (D00242562)
  *	Creates the character for the players
  *	Also Creates a "Ray" and sets it as a child of the character
  */
-Character::Character(const EColorType type, const TextureHolder& textures, const sf::IntRect& texture_rect,
+Character::Character(const EColorType type, const TextureHolder& textures,
+                     const sf::IntRect& texture_rect,
                      SoundPlayer& context)
 	: Entity(100),
 	  m_type(type),
@@ -44,10 +52,7 @@ Character::Character(const EColorType type, const TextureHolder& textures, const
 	Utility::Debug("Character created.");
 	Utility::CentreOrigin(m_sprite);
 
-	std::unique_ptr<RayGround> ray(new RayGround(this));
-	m_ray = ray.get();
-	AttachChild(std::move(ray));
-
+	CreateRay();
 	UpdateRay();
 }
 
@@ -71,6 +76,13 @@ unsigned Character::GetCategory() const
 	return static_cast<int>(Category::kPlayerTwo);
 }
 
+void Character::Debug()
+{
+	Utility::Debug("Id:       " + std::to_string(m_identifier));
+	Utility::Debug("Team Id:  " + std::to_string(m_team_identifier));
+	Utility::Debug("Color Id: " + std::to_string(static_cast<int>(m_type)));
+}
+
 /*
  *	Dylan Goncalves Martins (D00242562)
  *	Jump action for the player
@@ -79,6 +91,7 @@ unsigned Character::GetCategory() const
 void Character::Jump()
 {
 	Utility::Debug("Jump requested");
+	Debug();
 
 	if (m_can_jump == false)
 	{
@@ -158,7 +171,13 @@ void Character::StopMovement()
  */
 void Character::MoveOutOfCollision(const sf::FloatRect& rect)
 {
-	const sf::Vector2f velocity = GetVelocity();
+	sf::Vector2f velocity = GetVelocity();
+
+	if (velocity == sf::Vector2f(0, 0))
+	{
+		velocity = sf::Vector2f(0, -9.81f);
+	}
+
 	const sf::Vector2f normal_velocity = Utility::UnitVector(velocity);
 	SetVelocity(0, 0);
 
@@ -173,9 +192,19 @@ void Character::SetIdentifier(const int identifier)
 	m_identifier = identifier;
 }
 
+void Character::SetTeamIdentifier(const int identifier)
+{
+	m_team_identifier = identifier;
+}
+
 sf::Int32 Character::GetIdentifier() const
 {
 	return m_identifier;
+}
+
+sf::Int32 Character::GetTeamIdentifier() const
+{
+	return m_team_identifier;
 }
 
 void Character::SetHitPoints(const sf::Int32 hit_points)

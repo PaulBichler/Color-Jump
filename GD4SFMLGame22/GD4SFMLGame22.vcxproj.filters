@@ -192,6 +192,9 @@
     <ClCompile Include="PlatformPart.cpp">
       <Filter>Source Files\Level\Base</Filter>
     </ClCompile>
+    <ClCompile Include="GhostCharacter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="PlayerDataManager.cpp">
       <Filter>Source Files\Player</Filter>
     </ClCompile>
@@ -391,6 +394,9 @@
     </ClInclude>
     <ClInclude Include="PlatformPart.hpp">
       <Filter>Header Files\Level\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="GhostCharacter.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PlayerDataManager.hpp">
       <Filter>Header Files\Player</Filter>

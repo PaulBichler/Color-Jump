@@ -22,6 +22,5 @@ protected:
 private:
 	std::function<void()> m_lose_callback;
 	std::function<void()> m_win_callback;
-	bool m_has_won{};
 };
 
