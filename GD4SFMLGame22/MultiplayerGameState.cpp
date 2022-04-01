@@ -32,7 +32,7 @@ sf::IpAddress GetAddressFromFile()
 MultiplayerGameState::MultiplayerGameState(StateStack& stack, const Context context,
                                            const bool is_host)
 	: State(stack, context)
-	  , m_world(*context.m_window, *context.m_sounds)
+	  , m_world(*context.m_window, *context.m_sounds, this)
 	  , m_window(*context.m_window)
 	  , m_texture_holder(*context.m_textures)
 	  , m_connected(false)
@@ -117,6 +117,18 @@ void MultiplayerGameState::Draw()
 		m_window.draw(m_failed_connection_text);
 	}
 }
+
+void MultiplayerGameState::SendPlatformInfo(const sf::Int32 team_id, const sf::Int32 platform_id, EPlatformType platform)
+{
+	sf::Packet packet;
+	packet << static_cast<sf::Int32>(client::PacketType::kPlatformUpdate);
+	packet << team_id;
+	packet << platform_id;
+	packet << static_cast<sf::Int32>(platform);
+
+	m_socket.send(packet);
+}
+
 
 bool MultiplayerGameState::Update(const sf::Time dt)
 {
@@ -429,6 +441,25 @@ void MultiplayerGameState::HandleTeamSelection(sf::Packet& packet) const
 	}
 }
 
+void MultiplayerGameState::HandleUpdatePlatformColors(sf::Packet& packet)
+{
+	sf::Int32 team_id;
+	sf::Int32 platform_id;
+	sf::Int32 platform_color;
+
+	packet >> team_id >> platform_id >> platform_color;
+
+	for (const int identifier : m_local_player_identifiers)
+	{
+		const auto character = m_world.GetCharacter(identifier);
+
+		if (character->GetTeamIdentifier() == team_id)
+		{
+			m_world.UpdatePlatform(platform_id, static_cast<EPlatformType>(platform_color));
+		}
+	}
+}
+
 void MultiplayerGameState::HandlePacket(sf::Int32 packet_type, sf::Packet& packet)
 {
 	switch (static_cast<server::PacketType>(packet_type))
@@ -460,6 +491,9 @@ void MultiplayerGameState::HandlePacket(sf::Int32 packet_type, sf::Packet& packe
 		break;
 	case server::PacketType::kPlayerEvent:
 		HandlePlayerEvent(packet);
+		break;
+	case server::PacketType::kUpdatePlatformColors: 
+		HandleUpdatePlatformColors(packet);
 		break;
 	default:
 		break;

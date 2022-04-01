@@ -8,11 +8,12 @@
 #include "ResourceHolder.hpp"
 #include "Utility.hpp"
 
-Platform::Platform(const EPlatformType platform_type, TextureHolder& textures)
+Platform::Platform(const sf::Int32 id, const EPlatformType platform_type, TextureHolder& textures)
 	: m_type(platform_type),
 	  m_textures(textures),
 	  m_current_texture(nullptr),
-	  m_current_pulse_cooldown(2.f)
+	  m_current_pulse_cooldown(2.f),
+	  m_id(id)
 {
 	SetType(platform_type);
 }
@@ -81,13 +82,13 @@ bool Platform::HandlePlayerCollision(const EColorType color_type)
 {
 	switch (m_type)
 	{
-		//Only the Blue Player can collide with the blue platforms
+	//Only the Blue Player can collide with the blue platforms
 	case EPlatformType::kHorizontalBlue:
 	case EPlatformType::kVerticalBlue:
 		if (color_type != EColorType::kBlue)
 			return false;
 		break;
-		//Only the Red Player can collide with the red platforms
+	//Only the Red Player can collide with the red platforms
 	case EPlatformType::kHorizontalRed:
 	case EPlatformType::kVerticalRed:
 		if (color_type != EColorType::kRed)
@@ -179,6 +180,11 @@ void Platform::Update(sf::Time dt)
 
 		m_current_pulse_cooldown = 2.f;
 	}
+}
+
+sf::Int32 Platform::GetID() const
+{
+	return m_id;
 }
 
 //Written by Paul Bichler (D00242563)

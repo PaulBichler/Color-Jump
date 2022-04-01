@@ -8,7 +8,7 @@ class PlatformPart;
 class Platform
 {
 public:
-	Platform(EPlatformType platform_type, TextureHolder& textures);
+	Platform(sf::Int32 id, EPlatformType platform_type, TextureHolder& textures);
 	EPlatformType GetPlatformType() const;
 	void AddPlatformPart(PlatformPart* tile);
 	bool HandlePlayerCollisionAndChangeColor(EColorType color_type);
@@ -16,6 +16,7 @@ public:
 	void SetType(EPlatformType type);
 
 	void Update(sf::Time dt);
+	sf::Int32 GetID() const;
 
 protected:
 	EPlatformType m_type;
@@ -24,6 +25,7 @@ protected:
 	sf::Texture* m_current_texture;
 	bool m_is_pulse{};
 	float m_current_pulse_cooldown;
+	sf::Int32 m_id;
 
 private:
 	void SetTextureOnParts(sf::Texture& texture);

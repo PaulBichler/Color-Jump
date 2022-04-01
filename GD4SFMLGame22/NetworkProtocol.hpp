@@ -16,7 +16,8 @@ namespace server
 		kPlayerDisconnect,
 		kSpawnSelf,
 		kUpdateClientState,
-		kMissionSuccess
+		kMissionSuccess,
+		kUpdatePlatformColors
 	};
 }
 
@@ -28,6 +29,8 @@ namespace client
 		kPlayerEvent,
 		kPlayerRealtimeChange,
 		kPositionUpdate,
-		kQuit
+		kQuit,
+		kGameEvent,
+		kPlatformUpdate
 	};
 }

@@ -4,8 +4,10 @@
 #include "PlatformPart.hpp"
 #include "Utility.hpp"
 
-MultiplayerWorld::MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds)
-	: World(output_target, sounds)
+MultiplayerWorld::MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds,
+                                   MultiplayerGameState* state)
+	: World(output_target, sounds),
+	  m_state(state)
 {
 }
 
@@ -41,7 +43,8 @@ void MultiplayerWorld::RemoveCharacter(const sf::Int32 identifier)
 	}
 }
 
-Character* MultiplayerWorld::AddGhostCharacterWithColor(const sf::Int32 identifier, const EColorType color,
+Character* MultiplayerWorld::AddGhostCharacterWithColor(const sf::Int32 identifier,
+                                                        const EColorType color,
                                                         const sf::IntRect& int_rect,
                                                         const sf::Vector2f& spawn_pos)
 {
@@ -68,6 +71,20 @@ Character* MultiplayerWorld::AddGhostCharacter(const sf::Int32 identifier)
 	return AddGhostCharacterWithColor(identifier, EColorType::kBlue,
 	                                  m_level_info.m_blue_player_rect,
 	                                  m_level_info.m_blue_player_spawn_pos);
+}
+
+void MultiplayerWorld::UpdatePlatform(const sf::Int32 platform_id, const EPlatformType platform_color) const
+{
+	// Get all platforms
+	// Set the new one to the correct color
+
+	for (const auto& platform : m_level_info.platforms)
+	{
+		if (platform->GetID() == platform_id)
+		{
+			platform->SetType(platform_color);
+		}
+	}
 }
 
 void MultiplayerWorld::SetCamera()
@@ -99,7 +116,8 @@ void MultiplayerWorld::HandleCollisions()
 
 	for (const SceneNode::Pair& pair : collision_pairs)
 	{
-		if (CollisionHandler::PlatformCollision(pair, m_players, m_reached_goal_callback)) continue;
+		if (CollisionHandler::PlatformCollision(pair, m_players, m_reached_goal_callback, this))
+			continue;
 
 		//Get All Ground Ray Casts for player one and two
 		CollisionHandler::GetGroundRayCasts(player_pairs, pair, Category::kRay);

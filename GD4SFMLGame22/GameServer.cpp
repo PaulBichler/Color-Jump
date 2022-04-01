@@ -190,6 +190,19 @@ void GameServer::HandleIncomingPackets()
 	}
 }
 
+void GameServer::NotifyPlayerPlatformChange(const sf::Int32 team_id, const sf::Int32 platform_id,
+                                            const sf::Int32 platform_color) const
+{
+	sf::Packet packet;
+	//First thing for every packet is what type of packet it is
+	packet << static_cast<sf::Int32>(server::PacketType::kUpdatePlatformColors);
+	packet << team_id;
+	packet << platform_id;
+	packet << platform_color;
+
+	SendPackageToAll(packet);
+}
+
 void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer,
                                       bool& detected_timeout)
 {
@@ -239,6 +252,20 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 			}
 		}
 		break;
+
+	case client::PacketType::kPlatformUpdate:
+		{
+			sf::Int32 team_id;
+			sf::Int32 platform_id;
+			sf::Int32 platform_color;
+
+			packet >> team_id >> platform_id >> platform_color;
+
+			NotifyPlayerPlatformChange(team_id, platform_id, platform_color);
+		}
+		break;
+
+	case client::PacketType::kGameEvent:
 	default:
 		break;
 	}

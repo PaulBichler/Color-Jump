@@ -1,6 +1,7 @@
 #include "CollisionHandler.hpp"
 
 #include "Character.hpp"
+#include "MultiplayerGameState.hpp"
 #include "PlatformPart.hpp"
 #include "Utility.hpp"
 
@@ -151,12 +152,18 @@ bool CollisionHandler::TileCollision(SceneNode::Pair pair)
 	return false;
 }
 
-void CollisionHandler::GroundPlayerAndChangePlatformColor(Character& player,
-	Platform* platform)
+void CollisionHandler::GroundPlayerAndChangePlatformColor(Character& player, Platform* platform,
+                                                          MultiplayerWorld* multiplayer_world)
 {
 	//Ground players
 	if (platform->HandlePlayerCollisionAndChangeColor(player.GetCharacterType()))
 	{
+		if (multiplayer_world != nullptr)
+		{
+			multiplayer_world->m_state->SendPlatformInfo(player.GetTeamIdentifier(),
+			                                             platform->GetID(),
+			                                             platform->GetPlatformType());
+		}
 		//Collision
 		player.SetGrounded(platform);
 	}
@@ -238,7 +245,7 @@ void CollisionHandler::StopPlayerMovement(Character& player, const PlatformPart&
 }
 
 bool CollisionHandler::CollideAndChangeColors(Character& player, const PlatformPart& platform_part,
-                                        Platform* platform)
+                                              Platform* platform)
 {
 	//Checks if player collided from underneath the center of the platform
 	if (IsPlayerAbovePlatform(player, platform_part))
@@ -252,7 +259,8 @@ bool CollisionHandler::CollideAndChangeColors(Character& player, const PlatformP
 
 bool CollisionHandler::PlatformCollision(SceneNode::Pair pair,
                                          const std::vector<Character*>& players,
-                                         const std::function<void()>& callback)
+                                         const std::function<void()>& callback,
+                                         MultiplayerWorld* multiplayer_world)
 {
 	if (MatchesCategories(pair, Category::Type::kPlayer, Category::Type::kPlatform))
 	{
@@ -262,7 +270,7 @@ bool CollisionHandler::PlatformCollision(SceneNode::Pair pair,
 
 		if (CollideAndChangeColors(player, platform_part, platform)) return true;
 
-		GroundPlayerAndChangePlatformColor(player, platform);
+		GroundPlayerAndChangePlatformColor(player, platform, multiplayer_world);
 		IsAtTheFinishLine(players, callback, platform);
 	}
 
@@ -416,7 +424,7 @@ bool CollisionHandler::CheckPlatformUnderneath(const EColorType color, const EPl
 }
 
 bool CollisionHandler::Collide(Character& character, const PlatformPart& platform_part,
-	Platform* platform)
+                               Platform* platform)
 {
 	//Checks if player collided from underneath the center of the platform
 	if (IsPlayerAbovePlatform(character, platform_part))

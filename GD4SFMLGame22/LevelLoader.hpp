@@ -28,7 +28,8 @@ public:
 private:
 	virtual SceneNode::Ptr LoadLevelLayer(const std::string& csv_path, LevelInfo& level_info, bool is_collider_layer);
 	std::vector<std::vector<int>> LevelDataToVector(const std::string& csv_path) const;
-	void CreatePlatform(LevelInfo& level_info, ETileType tile_type, int row, int col, SceneNode::Ptr& parent, sf::Vector2f spawn_pos);
+	void CreatePlatform(LevelInfo& level_info, const ETileType tile_type, const int row, const int col, SceneNode::Ptr&
+	                    parent, const sf::Vector2f spawn_pos, int platform_id);
 	void AddPlatformParts(Platform* platform, int row, int col, SceneNode::Ptr& parent, ETileType tile_type, sf::Vector2f spawn_pos);
 
 private:

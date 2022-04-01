@@ -1,10 +1,11 @@
 #pragma once
+class MultiplayerGameState;
 #include "World.hpp"
 
 class MultiplayerWorld : public World
 {
 public:
-	MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds);
+	MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds, MultiplayerGameState* state);
 
 	void Update(sf::Time dt) override;
 	void Draw() override;
@@ -13,6 +14,7 @@ public:
 	Character* AddGhostCharacterWithColor(sf::Int32 identifier, EColorType color,
 	                                      const sf::IntRect& int_rect, const sf::Vector2f& spawn_pos);
 	Character* AddGhostCharacter(sf::Int32 identifier);
+	void UpdatePlatform(sf::Int32 platform_id, EPlatformType platform_color) const;
 
 protected:
 	void SetCamera() override;
@@ -22,4 +24,8 @@ protected:
 private:
 	std::function<void()> m_lose_callback;
 	std::function<void()> m_reached_goal_callback;
+
+public:
+	MultiplayerGameState* m_state;
+	std::vector<Platform*> m_platforms;
 };

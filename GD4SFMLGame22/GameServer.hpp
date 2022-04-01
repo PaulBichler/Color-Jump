@@ -48,6 +48,8 @@ private:
 	sf::Time Now() const;
 
 	void HandleIncomingPackets();
+	void NotifyPlayerPlatformChange(sf::Int32 team_id, sf::Int32 platform_id,
+	                                sf::Int32 platform_color) const;
 	void HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer,
 	                          bool& detected_timeout);
 
