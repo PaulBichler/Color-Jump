@@ -5,7 +5,7 @@ class MultiplayerGameState;
 class MultiplayerWorld : public World
 {
 public:
-	MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds, MultiplayerGameState* state);
+	MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds, FontHolder& fonts, MultiplayerGameState* state);
 
 	void Update(sf::Time dt) override;
 	void Draw() override;

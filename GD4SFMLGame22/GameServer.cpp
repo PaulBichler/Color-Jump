@@ -63,8 +63,7 @@ void GameServer::NotifyPlayerSpawn(const sf::Int32 identifier) const
 }
 
 //This is the same as PlayerEvent, but for real-time actions. This means that we are changing an ongoing state to either true or false, so we add a Boolean value to the parameters
-void GameServer::NotifyPlayerRealtimeChange(const sf::Int32 identifier, const sf::Int32 action,
-                                            const bool action_enabled) const
+void GameServer::NotifyPlayerRealtimeChange(const sf::Int32 identifier, const sf::Int32 action, const bool action_enabled) const
 {
 	sf::Packet packet;
 	//First thing for every packet is what type of packet it is
@@ -87,6 +86,17 @@ void GameServer::NotifyPlayerEvent(const sf::Int32 identifier, const sf::Int32 a
 	packet << static_cast<sf::Int32>(server::PacketType::kPlayerEvent);
 	packet << identifier;
 	packet << action;
+
+	SendPackageToAll(packet);
+}
+
+void GameServer::NotifyPlayerNameSet(sf::Int32 identifier, const std::string name) const
+{
+	sf::Packet packet;
+	//First thing for every packet is what type of packet it is
+	packet << static_cast<sf::Int32>(server::PacketType::kUpdatePlayerName);
+	packet << identifier;
+	packet << name;
 
 	SendPackageToAll(packet);
 }
@@ -266,6 +276,18 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 		break;
 
 	case client::PacketType::kGameEvent:
+		break;
+	case client::PacketType::kPlayerNameSet:
+		{
+			sf::Int32 identifier;
+			std::string name;
+			packet >> identifier >> name;
+			name = name.substr(0, 20);
+			m_player_info[identifier].name = name;
+
+			NotifyPlayerNameSet(identifier, name);
+		}
+		break;
 	default:
 		break;
 	}
@@ -361,8 +383,11 @@ void GameServer::InformWorldState(sf::TcpSocket& socket)
 			for (sf::Int32 identifier : m_peers[i]->m_identifiers)
 			{
 				const PlayerInfo player_info = m_player_info[identifier];
-				packet << identifier << player_info.m_position.x << player_info.m_position.y <<
-					player_info.m_team_identifier;
+				packet << identifier
+						<< player_info.m_position.x
+						<< player_info.m_position.y
+						<< player_info.m_team_identifier
+						<< player_info.name;
 			}
 		}
 	}

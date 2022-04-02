@@ -17,9 +17,9 @@ public:
 	~GameServer();
 	void SendPackageToAll(sf::Packet packet) const;
 	void NotifyPlayerSpawn(sf::Int32 identifier) const;
-	void NotifyPlayerRealtimeChange(sf::Int32 identifier, sf::Int32 action,
-	                                bool action_enabled) const;
+	void NotifyPlayerRealtimeChange(sf::Int32 identifier, sf::Int32 action, bool action_enabled) const;
 	void NotifyPlayerEvent(sf::Int32 identifier, sf::Int32 action) const;
+	void NotifyPlayerNameSet(sf::Int32 identifier, std::string name) const;
 
 private:
 	struct RemotePeer
@@ -37,6 +37,7 @@ private:
 		int m_team_identifier{};
 		sf::Vector2f m_position;
 		std::map<sf::Int32, bool> m_realtime_actions;
+		std::string name;
 	};
 
 	using peer_ptr = std::unique_ptr<RemotePeer>;

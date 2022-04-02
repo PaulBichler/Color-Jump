@@ -12,9 +12,10 @@
 #include "PlatformPart.hpp"
 
 
-World::World(sf::RenderTarget& output_target, SoundPlayer& sounds)
+World::World(sf::RenderTarget& output_target, SoundPlayer& sounds, FontHolder& fonts)
 	: m_target(output_target)
 	  , m_camera(output_target.getDefaultView())
+	  , m_fonts(fonts)
 	  , m_sounds(sounds)
 	  , m_scene_layers()
 	  , m_world_bounds(0.f, 0.f, m_camera.getSize().x, m_camera.getSize().y)
@@ -106,7 +107,7 @@ void World::InitializeSceneLayers()
 
 void World::LoadLevel(LevelManager::LevelData current_level_data)
 {
-	LevelLoader level_loader(current_level_data, m_textures, m_sounds);
+	LevelLoader level_loader(current_level_data, m_textures, m_fonts, m_sounds);
 	m_level_info = level_loader.LoadLevel();
 }
 
@@ -129,16 +130,14 @@ CommandQueue& World::GetCommandQueue()
 
 sf::FloatRect World::GetViewBounds() const
 {
-	const auto view_bounds = sf::FloatRect(m_camera.getCenter() - m_camera.getSize() / 2.f,
-	                                       m_camera.getSize());
+	const auto view_bounds = sf::FloatRect(m_camera.getCenter() - m_camera.getSize() / 2.f, m_camera.getSize());
 	return view_bounds;
 }
 
-Character* World::AddCharacterWithColor(const sf::Int32 identifier,
-                                        const EColorType color, const sf::IntRect rect,
+Character* World::AddCharacterWithColor(const sf::Int32 identifier,const EColorType color, const sf::IntRect rect,
                                         const sf::Vector2f spawn_pos)
 {
-	std::unique_ptr<Character> player(new Character(color, m_textures, rect, m_sounds));
+	std::unique_ptr<Character> player(new Character(color, m_textures, m_fonts, rect, m_sounds));
 	player->setPosition(spawn_pos);
 	player->SetIdentifier(identifier);
 	player->SetTeamIdentifier((identifier + 1) / 2);

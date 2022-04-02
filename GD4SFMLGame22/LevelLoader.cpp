@@ -12,10 +12,10 @@
 //Written by Paul Bichler (D00242563)
 //The LevelLoader class is used to construct levels based on the level data CSV files in the LevelManager.
 //It uses the TileFactory class to create instances for the tile types specified in the level files.
-LevelLoader::LevelLoader(LevelManager::LevelData& level_data, TextureHolder& textures, SoundPlayer& sound_player)
+LevelLoader::LevelLoader(LevelManager::LevelData& level_data, TextureHolder& textures, FontHolder& fonts, SoundPlayer& sound_player)
 	: m_level_data(level_data),
 	  m_textures(textures),
-	  m_tile_factory(textures, level_data.m_tile_size, sound_player)
+	  m_tile_factory(textures, fonts, level_data.m_tile_size, sound_player)
 {
 }
 

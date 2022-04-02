@@ -29,10 +29,9 @@ sf::IpAddress GetAddressFromFile()
 	return local_address;
 }
 
-MultiplayerGameState::MultiplayerGameState(StateStack& stack, const Context context,
-                                           const bool is_host)
+MultiplayerGameState::MultiplayerGameState(StateStack& stack, const Context context, const bool is_host)
 	: State(stack, context)
-	  , m_world(*context.m_window, *context.m_sounds, this)
+	  , m_world(*context.m_window, *context.m_sounds, *context.m_fonts, this)
 	  , m_window(*context.m_window)
 	  , m_texture_holder(*context.m_textures)
 	  , m_connected(false)
@@ -125,6 +124,16 @@ void MultiplayerGameState::SendPlatformInfo(const sf::Int32 team_id, const sf::I
 	packet << team_id;
 	packet << platform_id;
 	packet << static_cast<sf::Int32>(platform);
+
+	m_socket.send(packet);
+}
+
+void MultiplayerGameState::SendPlayerName(sf::Int32 identifier, const std::string& name)
+{
+	sf::Packet packet;
+	packet << static_cast<sf::Int32>(client::PacketType::kPlayerNameSet);
+	packet << identifier;
+	packet << name;
 
 	m_socket.send(packet);
 }
@@ -337,11 +346,13 @@ void MultiplayerGameState::HandleSelfSpawn(sf::Packet& packet)
 {
 	sf::Int32 identifier;
 	packet >> identifier;
-
+	
 	m_world.AddCharacter(identifier, true);
 	m_players[identifier].reset(new Player(&m_socket, identifier, GetContext().m_keys1));
 	m_local_player_identifiers.push_back(identifier);
 	m_game_started = true;
+
+	SendPlayerName(identifier, GetContext().m_player_data_manager->GetData().m_player_name);
 }
 
 void MultiplayerGameState::HandleBroadcast(sf::Packet& packet)
@@ -387,11 +398,13 @@ void MultiplayerGameState::HandleInitialState(sf::Packet& packet)
 		sf::Int32 identifier;
 		sf::Int32 team_identifier;
 		sf::Vector2f position;
-		packet >> identifier >> position.x >> position.y >> team_identifier;
+		std::string name;
+		packet >> identifier >> position.x >> position.y >> team_identifier >> name;
 
 		Character* character = m_world.AddGhostCharacter(identifier);
 		character->setPosition(position);
 		character->SetTeamIdentifier(team_identifier);
+		character->SetName(name);
 
 		m_players[identifier].reset(new Player(&m_socket, identifier, nullptr));
 	}
@@ -441,7 +454,7 @@ void MultiplayerGameState::HandleTeamSelection(sf::Packet& packet) const
 	}
 }
 
-void MultiplayerGameState::HandleUpdatePlatformColors(sf::Packet& packet)
+void MultiplayerGameState::HandleUpdatePlatformColors(sf::Packet& packet) const
 {
 	sf::Int32 team_id;
 	sf::Int32 platform_id;
@@ -458,6 +471,14 @@ void MultiplayerGameState::HandleUpdatePlatformColors(sf::Packet& packet)
 			m_world.UpdatePlatform(platform_id, static_cast<EPlatformType>(platform_color));
 		}
 	}
+}
+
+void MultiplayerGameState::HandleUpdatePlayerName(sf::Packet& packet) const
+{
+	sf::Int32 identifier;
+	std::string name;
+	packet >> identifier >> name;
+	m_world.GetCharacter(identifier)->SetName(name);
 }
 
 void MultiplayerGameState::HandlePacket(sf::Int32 packet_type, sf::Packet& packet)
@@ -494,6 +515,9 @@ void MultiplayerGameState::HandlePacket(sf::Int32 packet_type, sf::Packet& packe
 		break;
 	case server::PacketType::kUpdatePlatformColors: 
 		HandleUpdatePlatformColors(packet);
+		break;
+	case server::PacketType::kUpdatePlayerName:
+		HandleUpdatePlayerName(packet);
 		break;
 	default:
 		break;

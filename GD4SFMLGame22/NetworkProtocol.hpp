@@ -17,7 +17,8 @@ namespace server
 		kSpawnSelf,
 		kUpdateClientState,
 		kMissionSuccess,
-		kUpdatePlatformColors
+		kUpdatePlatformColors,
+		kUpdatePlayerName
 	};
 }
 
@@ -31,6 +32,7 @@ namespace client
 		kPositionUpdate,
 		kQuit,
 		kGameEvent,
-		kPlatformUpdate
+		kPlatformUpdate,
+		kPlayerNameSet
 	};
 }

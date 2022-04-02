@@ -4,9 +4,9 @@
 class GhostCharacter :public Character
 {
 public:
-	GhostCharacter(const EColorType type, const TextureHolder& textures, const sf::IntRect& texture_rect,
+	GhostCharacter(const EColorType type, const TextureHolder& textures, const FontHolder& fonts, const sf::IntRect& texture_rect,
 		SoundPlayer& context)
-		: Character(type, textures, texture_rect, context)
+		: Character(type, textures, fonts, texture_rect, context)
 	{
 	}
 

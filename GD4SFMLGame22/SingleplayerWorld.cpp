@@ -1,11 +1,8 @@
-#include <iostream>
-
 #include "CollisionHandler.hpp"
 #include "SingleplayerWorld.hpp"
-#include "PlatformPart.hpp"
 
-SinglePlayerWorld::SinglePlayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds)
-	: World(output_target, sounds)
+SinglePlayerWorld::SinglePlayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds, FontHolder& fonts)
+	: World(output_target, sounds, fonts)
 {
 }
 

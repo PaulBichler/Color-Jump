@@ -4,7 +4,7 @@
 class SinglePlayerWorld : public World
 {
 public:
-	SinglePlayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds);
+	SinglePlayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds, FontHolder& fonts);
 
 	void Update(sf::Time dt) override;
 	void Draw() override;

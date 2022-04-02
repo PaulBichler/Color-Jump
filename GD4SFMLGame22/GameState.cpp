@@ -7,7 +7,7 @@
 //Written by Paul Bichler (D00242563)
 GameState::GameState(StateStack& stack, const Context context)
 	: State(stack, context)
-	  , m_world(*context.m_window, *context.m_sounds)
+	  , m_world(*context.m_window, *context.m_sounds, *context.m_fonts)
 {
 	//Define what happens when the level is lost
 	m_world.SetLoseCallback([this]
@@ -28,7 +28,7 @@ GameState::GameState(StateStack& stack, const Context context)
 
 	for (int i = 0; i < 2; ++i)
 	{
-		m_world.AddCharacter(i);
+		m_world.AddCharacter(i, "");
 		m_players[i].reset(new Player(nullptr, i, i == 0 ? context.m_keys1 : context.m_keys2));
 	}
 

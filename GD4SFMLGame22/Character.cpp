@@ -28,7 +28,7 @@ void Character::CreateRay()
  *	Creates the character for the players
  *	Also Creates a "Ray" and sets it as a child of the character
  */
-Character::Character(const EColorType type, const TextureHolder& textures,
+Character::Character(const EColorType type, const TextureHolder& textures, const FontHolder& fonts,
                      const sf::IntRect& texture_rect,
                      SoundPlayer& context)
 	: Entity(100),
@@ -37,8 +37,8 @@ Character::Character(const EColorType type, const TextureHolder& textures,
 	  m_grounded(false),
 	  m_current_platform(nullptr),
 	  m_can_jump(true),
-	  m_jump_smoke_animation(textures.Get(Textures::kJumpSmoke)),
-	  m_sounds(context)
+	  m_sounds(context),
+	  m_jump_smoke_animation(textures.Get(Textures::kJumpSmoke))
 {
 	m_jump_smoke_animation.SetFrameSize(sf::Vector2i(256, 256));
 	m_jump_smoke_animation.SetNumFrames(16);
@@ -48,6 +48,9 @@ Character::Character(const EColorType type, const TextureHolder& textures,
 	const sf::FloatRect bounds = m_jump_smoke_animation.GetLocalBounds();
 	m_jump_smoke_animation.setOrigin(std::floor(bounds.left + bounds.width / 2.f),
 	                                 std::floor(bounds.top + 50.f));
+
+	m_name_text.setFont(fonts.Get(Fonts::Main));
+	m_name_text.setCharacterSize(15.f);
 
 	Utility::Debug("Character created.");
 	Utility::CentreOrigin(m_sprite);
@@ -81,6 +84,7 @@ void Character::Debug()
 	Utility::Debug("Id:       " + std::to_string(m_identifier));
 	Utility::Debug("Team Id:  " + std::to_string(m_team_identifier));
 	Utility::Debug("Color Id: " + std::to_string(static_cast<int>(m_type)));
+	Utility::Debug("Name:     " + m_name);
 }
 
 /*
@@ -197,6 +201,14 @@ void Character::SetTeamIdentifier(const int identifier)
 	m_team_identifier = identifier;
 }
 
+void Character::SetName(const std::string& name)
+{
+	m_name = name;
+	m_name_text.setString(name);
+	const sf::FloatRect bounds = m_name_text.getLocalBounds();
+	m_name_text.setOrigin(std::floor(bounds.left + bounds.width / 2.f), (m_sprite.getOrigin().y + m_sprite.getTextureRect().height / 2.f) - 5.f);
+}
+
 sf::Int32 Character::GetIdentifier() const
 {
 	return m_identifier;
@@ -205,6 +217,11 @@ sf::Int32 Character::GetIdentifier() const
 sf::Int32 Character::GetTeamIdentifier() const
 {
 	return m_team_identifier;
+}
+
+std::string Character::GetName() const
+{
+	return m_name;
 }
 
 void Character::SetHitPoints(const sf::Int32 hit_points)
@@ -254,6 +271,7 @@ void Character::UpdateRay() const
 void Character::DrawCurrent(sf::RenderTarget& target, const sf::RenderStates states) const
 {
 	target.draw(m_sprite, states);
+	target.draw(m_name_text, states);
 
 	if (m_show_jump_animation)
 		target.draw(m_jump_smoke_animation, states);

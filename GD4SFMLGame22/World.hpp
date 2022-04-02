@@ -21,7 +21,7 @@ class World : sf::NonCopyable
 {
 public:
 	virtual ~World() = default;
-	World(sf::RenderTarget& output_target, SoundPlayer& sounds);
+	World(sf::RenderTarget& output_target, SoundPlayer& sounds, FontHolder& fonts);
 
 	void BuildWorld(LevelManager::LevelData current_level_data);
 	virtual void Update(sf::Time dt);
@@ -48,6 +48,7 @@ protected:
 	sf::RenderTexture m_scene_texture;
 	sf::View m_camera;
 	TextureHolder m_textures;
+	FontHolder& m_fonts;
 	SoundPlayer& m_sounds;
 	SceneNode m_sceneGraph;
 	std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)> m_scene_layers;

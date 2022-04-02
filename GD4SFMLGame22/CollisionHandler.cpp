@@ -135,8 +135,7 @@ void CollisionHandler::GroundPlayer(Character& player, Tile& tile)
 	}
 }
 
-void CollisionHandler::GroundPlayerAndChangePlatformColor(Character& player, Platform* platform,
-                                                          MultiplayerWorld* multiplayer_world)
+void CollisionHandler::GroundPlayerAndChangePlatformColor(Character& player, Platform* platform, MultiplayerWorld* multiplayer_world)
 {
 	//Ground players
 	if (platform->HandlePlayerCollisionAndChangeColor(player.GetCharacterType()))

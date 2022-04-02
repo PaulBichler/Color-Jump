@@ -4,9 +4,9 @@
 #include "PlatformPart.hpp"
 #include "Utility.hpp"
 
-MultiplayerWorld::MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds,
-                                   MultiplayerGameState* state)
-	: World(output_target, sounds),
+MultiplayerWorld::MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds, FontHolder& fonts, MultiplayerGameState* state)
+	: World(output_target, sounds, fonts),
+	  m_client_player(nullptr),
 	  m_state(state)
 {
 }
@@ -55,8 +55,7 @@ Character* MultiplayerWorld::AddGhostCharacterWithColor(const sf::Int32 identifi
                                                         const sf::IntRect& int_rect,
                                                         const sf::Vector2f& spawn_pos)
 {
-	std::unique_ptr<GhostCharacter> player(
-		new GhostCharacter(color, m_textures, int_rect, m_sounds));
+	std::unique_ptr<GhostCharacter> player(new GhostCharacter(color, m_textures, m_fonts, int_rect, m_sounds));
 	player->setPosition(spawn_pos);
 	player->SetIdentifier(identifier);
 	player->SetTeamIdentifier((identifier + 1) / 2);

@@ -28,8 +28,11 @@ private:
 	void HandleRealtimeChange(sf::Packet& packet);
 	void HandlePlayerEvent(sf::Packet& packet);
 	void HandleTeamSelection(sf::Packet& packet) const;
-	void HandleUpdatePlatformColors(sf::Packet& packet);
+	void HandleUpdatePlatformColors(sf::Packet& packet) const;
+	void HandleUpdatePlayerName(sf::Packet& packet) const;
 	void HandlePacket(sf::Int32 packet_type, sf::Packet& packet);
+
+	void SendPlayerName(sf::Int32 identifier, const std::string& name);
 
 private:
 	MultiplayerWorld m_world;
