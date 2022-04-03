@@ -395,9 +395,8 @@ void MultiplayerGameState::HandlePlayerConnect(sf::Packet& packet)
 	sf::Int8 identifier;
 	packet >> identifier;
 
-	// Utility::Debug(std::to_string(identifier));
-
 	m_world.AddGhostCharacter(identifier);
+	m_world.UpdateCharacters();
 	m_players[identifier].reset(new Player(&m_socket, identifier, nullptr));
 }
 
@@ -426,8 +425,6 @@ void MultiplayerGameState::HandleInitialState(sf::Packet& packet)
 		character->setPosition(position);
 		character->SetTeamIdentifier(team_identifier);
 		character->SetName(name);
-		
-
 		m_players[identifier].reset(new Player(&m_socket, identifier, nullptr));
 	}
 }
