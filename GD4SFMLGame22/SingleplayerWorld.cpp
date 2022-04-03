@@ -76,8 +76,6 @@ void SinglePlayerWorld::DestroyEntitiesOutsideView()
 	m_command_queue.Push(command);
 }
 
-
-
 //Written by Dylan Goncalves Martins (), modified by Paul Bichler (D00242563)
 void SinglePlayerWorld::HandleCollisions()
 {

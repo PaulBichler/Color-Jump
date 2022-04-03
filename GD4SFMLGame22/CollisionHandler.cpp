@@ -190,11 +190,11 @@ void CollisionHandler::IsAtTheFinishLine(const Character* player_1, const Charac
 	//Check Win Condition
 	if (platform_type == EPlatformType::kCheckpoint)
 	{
-		if (player_1 == nullptr || player_2 == nullptr)
-			return;
+		/*if (player_1 == nullptr || player_2 == nullptr)
+			return;*/
 
 		const bool player_1_check = player_1->IsOnPlatformOfType(platform_type);
-		const bool player_2_check = player_2->IsOnPlatformOfType(platform_type);
+		/*const bool player_2_check = player_2->IsOnPlatformOfType(platform_type);*/
 
 		if (player_1_check)
 		{
@@ -277,7 +277,7 @@ bool CollisionHandler::IsPlayerAbovePlatform(const Character& player,
 bool CollisionHandler::IsPlayerAtHisPlatform(const Character& player, const Platform* platform)
 {
 	const auto platform_type = platform->GetPlatformType();
-	if (platform_type == EPlatformType::kNormal || platform_type == EPlatformType::kGoal || platform_type == EPlatformType::kCheckpoint)
+	if (platform_type == EPlatformType::kNormal || platform_type == EPlatformType::kGoal || platform_type == EPlatformType::kCheckpoint || platform_type == EPlatformType::kCheckpointActivated)
 	{
 		return true;
 	}
@@ -374,7 +374,7 @@ void CollisionHandler::PlayerGroundRayCast(const std::set<SceneNode::Pair>& pair
 
 bool CollisionHandler::CheckPlatformUnderneath(const EColorType color, const EPlatformType platform)
 {
-	if (platform == EPlatformType::kGoal || platform == EPlatformType::kNormal || platform == EPlatformType::kCheckpoint)
+	if (platform == EPlatformType::kGoal || platform == EPlatformType::kNormal || platform == EPlatformType::kCheckpoint || platform == EPlatformType::kCheckpointActivated)
 	{
 		return true;
 	}

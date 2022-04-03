@@ -49,6 +49,7 @@ public:
 	std::string GetName() const;
 	void SetHitPoints(const sf::Int8 hit_points);
 	void SetGrounded();
+	sf::IntRect GetSize() const;
 
 protected:
 	void UpdateCurrent(sf::Time dt, CommandQueue& commands) override;

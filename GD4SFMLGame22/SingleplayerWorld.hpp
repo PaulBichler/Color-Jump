@@ -14,7 +14,7 @@ public:
 
 protected:
 	void UpdateSounds() const;
-	void DestroyEntitiesOutsideView();
+	void DestroyEntitiesOutsideView() override;
 	sf::FloatRect GetBattlefieldBounds() const override;
 	void HandleCollisions() override;
 

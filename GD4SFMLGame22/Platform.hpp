@@ -17,6 +17,7 @@ public:
 
 	void Update(sf::Time dt);
 	sf::Int8 GetID() const;
+	std::vector<PlatformPart*>& GetParts();
 
 protected:
 	EPlatformType m_type;
