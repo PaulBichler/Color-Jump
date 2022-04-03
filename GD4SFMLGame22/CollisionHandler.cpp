@@ -261,17 +261,6 @@ bool CollisionHandler::PlatformCollision(SceneNode::Pair pair,
 		GroundPlayerAndChangePlatformColor(player, platform, multiplayer_world);
 		IsAtTheFinishLine(players, callback, platform, player.GetTeamIdentifier());
 	}
-
-	if (MatchesCategories(pair, Category::Type::kGhost, Category::Type::kPlatform))
-	{
-		auto& player = dynamic_cast<Character&>(*pair.first);
-		const auto& platform_part = dynamic_cast<PlatformPart&>(*pair.second);
-		Platform* platform = platform_part.GetPlatform();
-
-		if (Collide(player, platform_part, platform)) return true;
-
-		GroundPlayer(player, platform);
-	}
 	return false;
 }
 

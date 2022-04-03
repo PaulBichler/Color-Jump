@@ -106,7 +106,7 @@ void World::InitializeSceneLayers()
 
 void World::LoadLevel(LevelManager::LevelData current_level_data)
 {
-	LevelLoader level_loader(current_level_data, m_textures, m_fonts, m_sounds);
+	LevelLoader level_loader(current_level_data, m_textures);
 	m_level_info = level_loader.LoadLevel();
 }
 
@@ -137,6 +137,7 @@ Character* World::AddCharacterWithColor(const sf::Int8 identifier,const EColorTy
                                         const sf::Vector2f spawn_pos)
 {
 	std::unique_ptr<Character> player(new Character(color, m_textures, m_fonts, rect, m_sounds));
+	player->InitRay();
 	player->setPosition(spawn_pos);
 	player->SetIdentifier(identifier);
 	player->SetTeamIdentifier((identifier + 1) / 2);

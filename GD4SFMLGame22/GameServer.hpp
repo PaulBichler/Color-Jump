@@ -17,8 +17,8 @@ public:
 	~GameServer();
 	void SendPackageToAll(sf::Packet packet) const;
 	void NotifyPlayerSpawn(sf::Int8 identifier) const;
-	void NotifyPlayerRealtimeChange(sf::Int8 identifier, sf::Int32 action, bool action_enabled) const;
-	void NotifyPlayerEvent(sf::Int8 identifier, sf::Int32 action) const;
+	void NotifyPlayerRealtimeChange(sf::Int8 identifier, sf::Int8 action, bool action_enabled) const;
+	void NotifyPlayerEvent(sf::Int8 identifier, sf::Int8 action) const;
 	void NotifyPlayerSet(sf::Int8 identifier, sf::Int8 team_id, const std::string& name) const;
 
 private:
@@ -36,7 +36,7 @@ private:
 	{
 		sf::Int8 m_team_identifier{};
 		sf::Vector2f m_position;
-		std::map<sf::Int32, bool> m_realtime_actions;
+		std::map<sf::Int8, bool> m_realtime_actions;
 		std::string name;
 	};
 

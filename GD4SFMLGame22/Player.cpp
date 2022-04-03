@@ -143,7 +143,7 @@ void Player::HandleEvent(const sf::Event& event, CommandQueue& commands)
 				sf::Packet packet;
 				packet << static_cast<sf::Int8>(client::PacketType::kPlayerEvent);
 				packet << m_identifier;
-				packet << static_cast<sf::Int32>(action);
+				packet << static_cast<sf::Int8>(action);
 				m_socket->send(packet);
 			}
 
@@ -166,7 +166,7 @@ void Player::HandleEvent(const sf::Event& event, CommandQueue& commands)
 			sf::Packet packet;
 			packet << static_cast<sf::Int8>(client::PacketType::kPlayerRealtimeChange);
 			packet << m_identifier;
-			packet << static_cast<sf::Int32>(action);
+			packet << static_cast<sf::Int8>(action);
 			packet << (event.type == sf::Event::KeyPressed);
 			m_socket->send(packet);
 		}

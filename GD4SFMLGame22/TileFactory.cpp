@@ -58,12 +58,9 @@ sf::IntRect TileFactory::GetSubRect(const ETileType tile_type, sf::Vector2f& spa
 }
 
 //Written by Paul Bichler (D00242563)
-TileFactory::TileFactory(TextureHolder& textures, FontHolder& fonts, const sf::Vector2u tile_size,
-                         SoundPlayer& sound_player)
+TileFactory::TileFactory(TextureHolder& textures, const sf::Vector2u tile_size)
 	: m_textures(textures),
-	  m_fonts(fonts),
-	  m_tile_size(tile_size),
-	  m_sound_player(sound_player)
+	  m_tile_size(tile_size)
 {
 	m_tile_map_columns = textures.Get(Textures::kLevelTileSet).getSize().x / tile_size.x;
 }
@@ -99,15 +96,4 @@ ColorTile* TileFactory::CreateColorTile(const ETileType tile_type, const EColorT
 	                                      color_type);
 	color_tile->setPosition(spawn_pos);
 	return color_tile;
-}
-
-//Written by Paul Bichler (D00242563)
-Character* TileFactory::CreatePlayer(const ETileType tile_type, const EColorType type,
-                                     sf::Vector2f spawn_pos) const
-{
-	auto character = new Character(type, m_textures, m_fonts, 
-	                               GetSubRect(tile_type, spawn_pos),
-	                               m_sound_player);
-	character->setPosition(spawn_pos);
-	return character;
 }

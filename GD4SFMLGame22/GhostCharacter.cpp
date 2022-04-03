@@ -2,7 +2,6 @@
 
 void GhostCharacter::UpdateCurrent(sf::Time dt, CommandQueue& commands)
 {
-	
 }
 
 sf::FloatRect GhostCharacter::GetBoundingRect() const

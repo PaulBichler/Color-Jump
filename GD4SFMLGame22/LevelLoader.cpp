@@ -12,10 +12,10 @@
 //Written by Paul Bichler (D00242563)
 //The LevelLoader class is used to construct levels based on the level data CSV files in the LevelManager.
 //It uses the TileFactory class to create instances for the tile types specified in the level files.
-LevelLoader::LevelLoader(LevelManager::LevelData& level_data, TextureHolder& textures, FontHolder& fonts, SoundPlayer& sound_player)
+LevelLoader::LevelLoader(LevelManager::LevelData& level_data, TextureHolder& textures)
 	: m_level_data(level_data),
 	  m_textures(textures),
-	  m_tile_factory(textures, fonts, level_data.m_tile_size, sound_player)
+	  m_tile_factory(textures, level_data.m_tile_size)
 {
 }
 
@@ -51,7 +51,7 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(const std::string& csv_path, LevelInf
 		{
 			//The id in the level data CSV is converted to a TileType enum to make the code more readable and easily adjustable
 			int id = m_level_data_vector[row][col];
-			ETileType tile_type = static_cast<ETileType>(id);
+			const auto tile_type = static_cast<ETileType>(id);
 
 			//Construct the tile based on the tile type
 			switch (tile_type)
@@ -152,7 +152,7 @@ void LevelLoader::CreatePlatform(LevelInfo& level_info, const ETileType tile_typ
 void LevelLoader::AddPlatformParts(Platform* platform, const int row, const int col, SceneNode::Ptr& parent,
 	const ETileType tile_type, sf::Vector2f spawn_pos)
 {
-	const ETileType type = static_cast<ETileType>(m_level_data_vector[row][col]);
+	const auto type = static_cast<ETileType>(m_level_data_vector[row][col]);
 
 	std::unique_ptr<PlatformPart> platform_part(m_tile_factory.CreatePlatformPart(tile_type, spawn_pos, platform));
 	parent->AttachChild(std::move(platform_part));

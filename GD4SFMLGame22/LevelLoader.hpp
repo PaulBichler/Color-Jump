@@ -21,9 +21,7 @@ class LevelLoader
 {
 public:
 	virtual ~LevelLoader() = default;
-	LevelLoader(LevelManager::LevelData& level_data, TextureHolder& textures, FontHolder& fonts,
-	            SoundPlayer& sound_player);
-
+	LevelLoader(LevelManager::LevelData& level_data, TextureHolder& textures);
 	LevelInfo LoadLevel();
 
 private:

@@ -418,7 +418,7 @@ void MultiplayerGameState::HandleInitialState(sf::Packet& packet)
 void MultiplayerGameState::HandleRealtimeChange(sf::Packet& packet)
 {
 	sf::Int8 identifier;
-	sf::Int32 action;
+	sf::Int8 action;
 	bool action_enabled;
 	packet >> identifier >> action >> action_enabled;
 
@@ -432,7 +432,7 @@ void MultiplayerGameState::HandleRealtimeChange(sf::Packet& packet)
 void MultiplayerGameState::HandlePlayerEvent(sf::Packet& packet)
 {
 	sf::Int8 identifier;
-	sf::Int32 action;
+	sf::Int8 action;
 	packet >> identifier >> action;
 
 	const auto itr = m_players.find(identifier);

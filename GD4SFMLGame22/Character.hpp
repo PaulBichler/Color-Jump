@@ -27,7 +27,7 @@ protected:
 	sf::Int8 m_team_identifier{};
 
 public:
-	
+	void InitRay();
 	Character(EColorType type, const TextureHolder& textures, const FontHolder& fonts, const sf::IntRect& texture_rect, SoundPlayer& context);
 	static float GetMaxSpeed();
 	unsigned GetCategory() const override;
@@ -53,7 +53,8 @@ public:
 protected:
 	void UpdateCurrent(sf::Time dt, CommandQueue& commands) override;
 	void UpdateRay() const;
-	void CreateRay();
+	virtual void CreateRay();
+	
 
 	bool m_show_jump_animation{};
 	Animation m_jump_smoke_animation;

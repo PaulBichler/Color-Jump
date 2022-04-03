@@ -23,6 +23,12 @@ void Character::CreateRay()
 	AttachChild(std::move(ray));
 }
 
+void Character::InitRay()
+{
+	CreateRay();
+	UpdateRay();
+}
+
 /*
  *	Dylan Goncalves Martins (D00242562)
  *	Creates the character for the players
@@ -47,7 +53,7 @@ Character::Character(const EColorType type, const TextureHolder& textures, const
 
 	const sf::FloatRect bounds = m_jump_smoke_animation.GetLocalBounds();
 	m_jump_smoke_animation.setOrigin(std::floor(bounds.left + bounds.width / 2.f),
-	                                 std::floor(bounds.top + 50.f));
+		std::floor(bounds.top + 50.f));
 
 	m_name_text.setFont(fonts.Get(Fonts::Main));
 	m_name_text.setCharacterSize(15.f);
@@ -56,9 +62,6 @@ Character::Character(const EColorType type, const TextureHolder& textures, const
 
 	Utility::Debug("Character created.");
 	Utility::CentreOrigin(m_sprite);
-
-	CreateRay();
-	UpdateRay();
 }
 
 float Character::GetMaxSpeed()

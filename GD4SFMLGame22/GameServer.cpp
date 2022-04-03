@@ -63,7 +63,7 @@ void GameServer::NotifyPlayerSpawn(const sf::Int8 identifier) const
 }
 
 //This is the same as PlayerEvent, but for real-time actions. This means that we are changing an ongoing state to either true or false, so we add a Boolean value to the parameters
-void GameServer::NotifyPlayerRealtimeChange(const sf::Int8 identifier, const sf::Int32 action,
+void GameServer::NotifyPlayerRealtimeChange(const sf::Int8 identifier, const sf::Int8 action,
                                             const bool action_enabled) const
 {
 	sf::Packet packet;
@@ -76,7 +76,7 @@ void GameServer::NotifyPlayerRealtimeChange(const sf::Int8 identifier, const sf:
 	SendPackageToAll(packet);
 }
 
-void GameServer::NotifyPlayerEvent(const sf::Int8 identifier, const sf::Int32 action) const
+void GameServer::NotifyPlayerEvent(const sf::Int8 identifier, const sf::Int8 action) const
 {
 	sf::Packet packet;
 	//First thing for every packet is what type of packet it is
@@ -230,7 +230,7 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 	case client::PacketType::kPlayerEvent:
 		{
 			sf::Int8 identifier;
-			sf::Int32 action;
+			sf::Int8 action;
 			packet >> identifier >> action;
 			NotifyPlayerEvent(identifier, action);
 		}
@@ -239,7 +239,7 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 	case client::PacketType::kPlayerRealtimeChange:
 		{
 			sf::Int8 identifier;
-			sf::Int32 action;
+			sf::Int8 action;
 			bool action_enabled;
 			packet >> identifier >> action >> action_enabled;
 			NotifyPlayerRealtimeChange(identifier, action, action_enabled);
