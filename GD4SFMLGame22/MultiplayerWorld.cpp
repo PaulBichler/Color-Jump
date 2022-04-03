@@ -85,14 +85,24 @@ Character* MultiplayerWorld::AddGhostCharacter(const sf::Int8 identifier)
 	                                  m_level_info.m_blue_player_spawn_pos);
 }
 
-void MultiplayerWorld::UpdatePlatform(const sf::Int8 platform_id,
+void MultiplayerWorld::UpdatePlatform(const sf::Int8 id,const sf::Int8 platform_id,
                                       const EPlatformType platform_color)
 {
 	for (auto& platform : m_level_info.platforms)
 	{
 		if (platform->GetID() == platform_id)
 		{
-			platform->SetType(platform_color);
+			if (platform_color == EPlatformType::kCheckpointActivated)
+			{
+				if (GetClientCharacter()->GetIdentifier() == id)
+				{
+					platform->SetType(platform_color);
+				}
+			}
+			else
+			{
+				platform->SetType(platform_color);
+			}
 
 			//Initialize the first checkpoint (spawn platform)
 			if (m_checkoint == nullptr)

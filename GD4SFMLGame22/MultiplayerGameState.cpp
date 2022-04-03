@@ -18,6 +18,7 @@ sf::IpAddress GetAddressFromFile()
 		std::string ip_address;
 		if (input_file >> ip_address)
 		{
+			Utility::Debug(ip_address);
 			return ip_address;
 		}
 	}
@@ -500,7 +501,7 @@ void MultiplayerGameState::HandleUpdatePlatformColors(sf::Packet& packet)
 			m_world.SetTeammate(send_char);
 		}
 
-		m_world.UpdatePlatform(platform_id, static_cast<EPlatformType>(platform_color));
+		m_world.UpdatePlatform(, platform_id, static_cast<EPlatformType>(platform_color));
 	}
 }
 
