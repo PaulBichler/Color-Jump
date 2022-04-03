@@ -200,13 +200,13 @@ void GameServer::HandleIncomingPackets()
 	}
 }
 
-void GameServer::NotifyPlayerPlatformChange(const sf::Int8 team_id, const sf::Int8 platform_id,
+void GameServer::NotifyPlayerPlatformChange(const sf::Int8 player_id, const sf::Int8 platform_id,
                                             const sf::Int8 platform_color) const
 {
 	sf::Packet packet;
 	//First thing for every packet is what type of packet it is
 	packet << static_cast<sf::Int8>(server::PacketType::kUpdatePlatformColors);
-	packet << team_id;
+	packet << player_id;
 	packet << platform_id;
 	packet << platform_color;
 
@@ -263,13 +263,13 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 
 	case client::PacketType::kPlatformUpdate:
 		{
-			sf::Int8 team_id;
+			sf::Int8 player_id;
 			sf::Int8 platform_id;
 			sf::Int8 platform_color;
 
-			packet >> team_id >> platform_id >> platform_color;
+			packet >> player_id >> platform_id >> platform_color;
 
-			NotifyPlayerPlatformChange(team_id, platform_id, platform_color);
+			NotifyPlayerPlatformChange(player_id, platform_id, platform_color);
 		}
 		break;
 

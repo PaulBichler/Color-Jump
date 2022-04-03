@@ -11,13 +11,14 @@ public:
 	void Draw() override;
 	Character* GetCharacter(const sf::Int8 identifier) const;
 	void RemoveCharacter(const sf::Int8 identifier);
-	Character* AddGhostCharacterWithColor(const sf::Int8 identifier, const EColorType color, const sf::IntRect& int_rect, const sf::Vector2f&
-	                                      spawn_pos);
+	Character* AddGhostCharacterWithColor(const sf::Int8 identifier, const EColorType color, const sf::IntRect& int_rect, const sf::Vector2f& spawn_pos);
 	Character* AddGhostCharacter(const sf::Int8 identifier);
-	void UpdatePlatform(const sf::Int8 platform_id, const EPlatformType platform_color) const;
+	void UpdatePlatform(sf::Int8 platform_id, const EPlatformType platform_color) const;
 	Character* AddCharacter(const sf::Int8 identifier, const bool is_client_player = false) override;
-	void AddCharacterToTeam(Character* character, sf::Int8 team_id);
-	void RemoveCharacterFromTeam(Character* character, sf::Int8 team_id);
+	Character* GetClientCharacter() const;
+	void SetPlatformOnCharacter(Character* character, sf::Int8 platform_id) const;
+	void SetTeammate(Character* character);
+	Character* GetTeammate() const;
 
 protected:
 	void HandleCollisions() override;
@@ -28,7 +29,7 @@ private:
 
 private:
 	Character* m_client_player;
-	std::map<int, std::vector<Character*>> m_teams;
+	Character* m_team_mate;
 	std::function<void()> m_lose_callback;
 	std::function<void()> m_reached_goal_callback;
 

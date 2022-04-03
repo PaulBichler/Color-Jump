@@ -44,7 +44,7 @@ Character* MultiplayerWorld::GetCharacter(const sf::Int8 identifier) const
 void MultiplayerWorld::RemoveCharacter(const sf::Int8 identifier)
 {
 	Character* character = GetCharacter(identifier);
-	RemoveCharacterFromTeam(character, character->GetTeamIdentifier());
+
 	if (character)
 	{
 		character->Destroy();
@@ -105,17 +105,31 @@ Character* MultiplayerWorld::AddCharacter(const sf::Int8 identifier, const bool 
 	return player_character;
 }
 
-void MultiplayerWorld::AddCharacterToTeam(Character* character, sf::Int8 team_id)
+Character* MultiplayerWorld::GetClientCharacter() const
 {
-	m_teams[team_id].emplace_back(character);
+	return m_client_player;
 }
 
-void MultiplayerWorld::RemoveCharacterFromTeam(Character* character, sf::Int8 team_identifier)
+void MultiplayerWorld::SetPlatformOnCharacter(Character* character, sf::Int8 platform_id) const
 {
-	const auto begin = m_teams[team_identifier].begin();
-	const auto end = m_teams[team_identifier].end();
-	const auto erasePos = std::find(begin, end, character);
-	m_teams[team_identifier].erase(erasePos);
+	for (const auto& platform : m_level_info.platforms)
+	{
+		if (platform->GetID() == platform_id)
+		{
+			character->SetGrounded(platform.get());
+			break;
+		}
+	}
+}
+
+void MultiplayerWorld::SetTeammate(Character* character)
+{
+	m_team_mate = character;
+}
+
+Character* MultiplayerWorld::GetTeammate() const
+{
+	return m_team_mate;
 }
 
 void MultiplayerWorld::HandleCollisions()
@@ -159,5 +173,5 @@ sf::FloatRect MultiplayerWorld::GetBattlefieldBounds() const
 
 void MultiplayerWorld::OnReachedGoal()
 {
-
+	Utility::Debug("Checkpoint Reached!");
 }

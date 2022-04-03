@@ -143,7 +143,7 @@ void CollisionHandler::GroundPlayerAndChangePlatformColor(Character& player, Pla
 	{
 		if (multiplayer_world != nullptr)
 		{
-			multiplayer_world->m_state->SendPlatformInfo(player.GetTeamIdentifier(),
+			multiplayer_world->m_state->SendPlatformInfo(player.GetIdentifier(),
 			                                             platform->GetID(),
 			                                             platform->GetPlatformType());
 		}
@@ -181,32 +181,30 @@ void CollisionHandler::GroundPlayer(Character& player, Platform* platform)
 	}
 }
 
-void CollisionHandler::IsAtTheFinishLine(const std::vector<Character*>& players,
-                                         const std::function<void()>
-                                         & callback, const Platform* platform,
-                                         const sf::Int8 team_id)
+void CollisionHandler::IsAtTheFinishLine(const Character* player_1, const Character* player_2,
+                                         const std::function<void()>& callback, 
+										 const Platform* platform)
 {
-	EPlatformType platform_type = platform->GetPlatformType();
+	const EPlatformType platform_type = platform->GetPlatformType();
 
 	//Check Win Condition
-	if (platform_type == EPlatformType::kGoal || platform_type == EPlatformType::kCheckpoint)
+	if (platform_type == EPlatformType::kCheckpoint)
 	{
-		bool is_playing = false;
-		for (const auto character : players)
-		{
-			if (character->GetTeamIdentifier() == team_id)
-			{
-				if (!character->IsOnPlatformOfType(EPlatformType::kGoal))
-				{
-					is_playing = true;
-				}
-			}
-		}
+		if (player_1 == nullptr || player_2 == nullptr)
+			return;
 
-		if (!is_playing)
+		const bool player_1_check = player_1->IsOnPlatformOfType(platform_type);
+		const bool player_2_check = player_2->IsOnPlatformOfType(platform_type);
+
+		if (player_1_check)
 		{
 			callback();
 		}
+	}
+
+	if(platform_type == EPlatformType::kGoal)
+	{
+		
 	}
 }
 
@@ -259,7 +257,7 @@ bool CollisionHandler::PlatformCollision(SceneNode::Pair pair,
 		if (CollideAndChangeColors(player, platform_part, platform)) return true;
 
 		GroundPlayerAndChangePlatformColor(player, platform, multiplayer_world);
-		IsAtTheFinishLine(players, callback, platform, player.GetTeamIdentifier());
+		IsAtTheFinishLine(&player, multiplayer_world->GetTeammate(), callback, platform);
 	}
 	return false;
 }
@@ -278,8 +276,8 @@ bool CollisionHandler::IsPlayerAbovePlatform(const Character& player,
 
 bool CollisionHandler::IsPlayerAtHisPlatform(const Character& player, const Platform* platform)
 {
-	if (platform->GetPlatformType() == EPlatformType::kNormal || platform->GetPlatformType() ==
-		EPlatformType::kGoal)
+	const auto platform_type = platform->GetPlatformType();
+	if (platform_type == EPlatformType::kNormal || platform_type == EPlatformType::kGoal || platform_type == EPlatformType::kCheckpoint)
 	{
 		return true;
 	}
@@ -376,7 +374,7 @@ void CollisionHandler::PlayerGroundRayCast(const std::set<SceneNode::Pair>& pair
 
 bool CollisionHandler::CheckPlatformUnderneath(const EColorType color, const EPlatformType platform)
 {
-	if (platform == EPlatformType::kGoal || platform == EPlatformType::kNormal)
+	if (platform == EPlatformType::kGoal || platform == EPlatformType::kNormal || platform == EPlatformType::kCheckpoint)
 	{
 		return true;
 	}

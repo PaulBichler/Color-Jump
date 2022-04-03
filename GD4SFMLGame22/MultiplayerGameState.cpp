@@ -118,12 +118,12 @@ void MultiplayerGameState::Draw()
 	}
 }
 
-void MultiplayerGameState::SendPlatformInfo(const sf::Int8 team_id, const sf::Int8 platform_id,
+void MultiplayerGameState::SendPlatformInfo(const sf::Int8 player_id, const sf::Int8 platform_id,
                                             EPlatformType platform)
 {
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(client::PacketType::kPlatformUpdate);
-	packet << team_id;
+	packet << player_id;
 	packet << platform_id;
 	packet << static_cast<sf::Int8>(platform);
 
@@ -443,7 +443,7 @@ void MultiplayerGameState::HandlePlayerEvent(sf::Packet& packet)
 	}
 }
 
-void MultiplayerGameState::HandleTeamSelection(sf::Packet& packet)
+void MultiplayerGameState::HandleTeamSelection(sf::Packet& packet) const
 {
 	sf::Int8 player_count;
 	packet >> player_count;
@@ -455,26 +455,29 @@ void MultiplayerGameState::HandleTeamSelection(sf::Packet& packet)
 
 		Character* character = m_world.GetCharacter(identifier);
 		character->SetTeamIdentifier(team_identifier);
-		m_world.AddCharacterToTeam(character, team_identifier);
 	}
 }
 
-void MultiplayerGameState::HandleUpdatePlatformColors(sf::Packet& packet) const
+void MultiplayerGameState::HandleUpdatePlatformColors(sf::Packet& packet)
 {
-	sf::Int8 team_id;
+	sf::Int8 player_id;
 	sf::Int8 platform_id;
 	sf::Int8 platform_color;
 
-	packet >> team_id >> platform_id >> platform_color;
+	packet >> player_id >> platform_id >> platform_color;
 
-	for (const sf::Int8 identifier : m_local_player_identifiers)
+	const auto client_char = m_world.GetClientCharacter();
+	const auto send_char= m_world.GetCharacter(player_id);
+
+	if (client_char->GetTeamIdentifier() == send_char->GetTeamIdentifier())
 	{
-		const auto character = m_world.GetCharacter(identifier);
-
-		if (character->GetTeamIdentifier() == team_id)
+		if (client_char->GetIdentifier() != player_id)
 		{
-			m_world.UpdatePlatform(platform_id, static_cast<EPlatformType>(platform_color));
+			m_world.SetPlatformOnCharacter(send_char, platform_id);
+			m_world.SetTeammate(send_char);
 		}
+
+		m_world.UpdatePlatform(platform_id, static_cast<EPlatformType>(platform_color));
 	}
 }
 

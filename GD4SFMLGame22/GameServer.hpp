@@ -49,7 +49,7 @@ private:
 	sf::Time Now() const;
 
 	void HandleIncomingPackets();
-	void NotifyPlayerPlatformChange(sf::Int8 team_id, const sf::Int8 platform_id,
+	void NotifyPlayerPlatformChange(sf::Int8 player_id, const sf::Int8 platform_id,
 	                                const sf::Int8 platform_color) const;
 	void HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer,
 	                          bool& detected_timeout);

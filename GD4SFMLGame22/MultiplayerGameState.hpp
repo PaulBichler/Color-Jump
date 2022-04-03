@@ -10,7 +10,7 @@ class MultiplayerGameState : public State
 public:
 	MultiplayerGameState(StateStack& stack, Context context, bool is_host);
 	void Draw() override;
-	void SendPlatformInfo(const sf::Int8 team_id, const sf::Int8 platform_id, EPlatformType platform);
+	void SendPlatformInfo(const sf::Int8 player_id, const sf::Int8 platform_id, EPlatformType platform);
 	bool Update(sf::Time dt) override;
 	bool HandleEvent(const sf::Event& event) override;
 	virtual void OnActivate();
@@ -27,8 +27,8 @@ private:
 	void HandleInitialState(sf::Packet& packet);
 	void HandleRealtimeChange(sf::Packet& packet);
 	void HandlePlayerEvent(sf::Packet& packet);
-	void HandleTeamSelection(sf::Packet& packet);
-	void HandleUpdatePlatformColors(sf::Packet& packet) const;
+	void HandleTeamSelection(sf::Packet& packet) const;
+	void HandleUpdatePlatformColors(sf::Packet& packet);
 	void HandleUpdatePlayer(sf::Packet& packet) const;
 	void HandlePacket(sf::Int8 packet_type, sf::Packet& packet);
 
