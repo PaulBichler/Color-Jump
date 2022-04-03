@@ -42,7 +42,7 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(const std::string& csv_path, LevelInf
 	//Convert the csv level data into a 2-dimensional vector (this makes it easier to create platforms)
 	m_level_data_vector = LevelDataToVector(csv_path);
 
-	int platform_id = 0;
+	sf::Int8 platform_id = 0;
 
 	//Loop through the 2-dimensional level vector and construct the level tile by tile
 	for (int row = 0; row < m_level_data_vector.size(); row++)
@@ -140,7 +140,7 @@ std::vector<std::vector<int>> LevelLoader::LevelDataToVector(const std::string& 
 //platform parts connected to it, to construct a platform.
 void LevelLoader::CreatePlatform(LevelInfo& level_info, const ETileType tile_type,
 	const int row, const int col, SceneNode::Ptr& parent,
-	const sf::Vector2f spawn_pos, const int platform_id)
+	const sf::Vector2f spawn_pos, const sf::Int8 platform_id)
 {
 	std::unique_ptr<Platform> platform(new Platform(platform_id, static_cast<EPlatformType>(tile_type), m_textures));
 	AddPlatformParts(platform.get(), row, col, parent, tile_type, spawn_pos);

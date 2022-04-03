@@ -193,12 +193,12 @@ void Character::MoveOutOfCollision(const sf::FloatRect& rect)
 	}
 }
 
-void Character::SetIdentifier(const int identifier)
+void Character::SetIdentifier(const sf::Int8 identifier)
 {
 	m_identifier = identifier;
 }
 
-void Character::SetTeamIdentifier(const int identifier)
+void Character::SetTeamIdentifier(const sf::Int8 identifier)
 {
 	m_team_identifier = identifier;
 
@@ -217,12 +217,12 @@ void Character::SetName(const std::string& name)
 	                      m_sprite.getOrigin().y + m_sprite.getTextureRect().height / 2.f - 5.f);
 }
 
-sf::Int32 Character::GetIdentifier() const
+sf::Int8 Character::GetIdentifier() const
 {
 	return m_identifier;
 }
 
-sf::Int32 Character::GetTeamIdentifier() const
+sf::Int8 Character::GetTeamIdentifier() const
 {
 	return m_team_identifier;
 }
@@ -232,7 +232,7 @@ std::string Character::GetName() const
 	return m_name;
 }
 
-void Character::SetHitPoints(const sf::Int32 hit_points)
+void Character::SetHitPoints(const sf::Int8 hit_points)
 {
 	m_hit_points = hit_points;
 }

@@ -13,7 +13,7 @@ enum class MissionStatus;
 class Player
 {
 public:
-	Player(sf::TcpSocket* socket, sf::Int32 identifier, const KeyBinding* binding);
+	Player(sf::TcpSocket* socket, sf::Int8 identifier, const KeyBinding* binding);
 	void HandleEvent(const sf::Event& event, CommandQueue& commands);
 	void HandleRealtimeInput(CommandQueue& commands);
 	void HandleRealtimeNetworkInput(CommandQueue& commands);
@@ -36,7 +36,7 @@ private:
 	std::map<PlayerAction, Command> m_action_binding;
 	const KeyBinding* m_key_binding;
 	std::map<PlayerAction, bool> m_action_proxies;
-	int m_identifier;
+	sf::Int8 m_identifier;
 	sf::TcpSocket* m_socket;
 	MissionStatus m_current_mission_status;
 };

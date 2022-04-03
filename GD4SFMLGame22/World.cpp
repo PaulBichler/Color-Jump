@@ -134,7 +134,7 @@ sf::FloatRect World::GetViewBounds() const
 	return view_bounds;
 }
 
-Character* World::AddCharacterWithColor(const sf::Int32 identifier,const EColorType color, const sf::IntRect rect,
+Character* World::AddCharacterWithColor(const sf::Int8 identifier,const EColorType color, const sf::IntRect rect,
                                         const sf::Vector2f spawn_pos)
 {
 	std::unique_ptr<Character> player(new Character(color, m_textures, m_fonts, rect, m_sounds));
@@ -148,7 +148,7 @@ Character* World::AddCharacterWithColor(const sf::Int32 identifier,const EColorT
 }
 
 
-Character* World::AddCharacter(const sf::Int32 identifier, bool is_client_player)
+Character* World::AddCharacter(const sf::Int8 identifier, const bool is_client_player)
 {
 	if (identifier % 2 == 0)
 	{

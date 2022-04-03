@@ -52,23 +52,23 @@ void GameServer::SendPackageToAll(sf::Packet packet) const
 	}
 }
 
-void GameServer::NotifyPlayerSpawn(const sf::Int32 identifier) const
+void GameServer::NotifyPlayerSpawn(const sf::Int8 identifier) const
 {
 	sf::Packet packet;
 	//First thing for every packet is what type of packet it is
-	packet << static_cast<sf::Int32>(server::PacketType::kPlayerConnect);
+	packet << static_cast<sf::Int8>(server::PacketType::kPlayerConnect);
 	packet << identifier;
 
 	SendPackageToAll(packet);
 }
 
 //This is the same as PlayerEvent, but for real-time actions. This means that we are changing an ongoing state to either true or false, so we add a Boolean value to the parameters
-void GameServer::NotifyPlayerRealtimeChange(const sf::Int32 identifier, const sf::Int32 action,
+void GameServer::NotifyPlayerRealtimeChange(const sf::Int8 identifier, const sf::Int32 action,
                                             const bool action_enabled) const
 {
 	sf::Packet packet;
 	//First thing for every packet is what type of packet it is
-	packet << static_cast<sf::Int32>(server::PacketType::kPlayerRealtimeChange);
+	packet << static_cast<sf::Int8>(server::PacketType::kPlayerRealtimeChange);
 	packet << identifier;
 	packet << action;
 	packet << action_enabled;
@@ -76,28 +76,24 @@ void GameServer::NotifyPlayerRealtimeChange(const sf::Int32 identifier, const sf
 	SendPackageToAll(packet);
 }
 
-//This takes two sf::Int32 variables, the aircraft identifier and the action identifier
-//as declared in the Player class. This is used to inform all peers that plane X has
-//triggered an action
-
-void GameServer::NotifyPlayerEvent(const sf::Int32 identifier, const sf::Int32 action) const
+void GameServer::NotifyPlayerEvent(const sf::Int8 identifier, const sf::Int32 action) const
 {
 	sf::Packet packet;
 	//First thing for every packet is what type of packet it is
-	packet << static_cast<sf::Int32>(server::PacketType::kPlayerEvent);
+	packet << static_cast<sf::Int8>(server::PacketType::kPlayerEvent);
 	packet << identifier;
 	packet << action;
 
 	SendPackageToAll(packet);
 }
 
-void GameServer::NotifyPlayerSet(const sf::Int32 identifier, const sf::Int32 team_id,
-                                     const std::string
-                                     & name) const
+void GameServer::NotifyPlayerSet(const sf::Int8 identifier, const sf::Int8 team_id,
+                                 const std::string
+                                 & name) const
 {
 	sf::Packet packet;
 	//First thing for every packet is what type of packet it is
-	packet << static_cast<sf::Int32>(server::PacketType::kUpdatePlayer);
+	packet << static_cast<sf::Int8>(server::PacketType::kUpdatePlayer);
 	packet << identifier;
 	packet << team_id;
 	packet << name;
@@ -129,7 +125,7 @@ void GameServer::ExecutionThread()
 
 	const sf::Time frame_rate = sf::seconds(1.f / 60.f);
 	sf::Time frame_time = sf::Time::Zero;
-	const sf::Time tick_rate = sf::seconds(1.f / 30.f);
+	const sf::Time tick_rate = sf::seconds(1.f / 24.f);
 	sf::Time tick_time = sf::Time::Zero;
 	sf::Clock frame_clock, tick_clock;
 
@@ -204,12 +200,12 @@ void GameServer::HandleIncomingPackets()
 	}
 }
 
-void GameServer::NotifyPlayerPlatformChange(const sf::Int32 team_id, const sf::Int32 platform_id,
-                                            const sf::Int32 platform_color) const
+void GameServer::NotifyPlayerPlatformChange(const sf::Int8 team_id, const sf::Int8 platform_id,
+                                            const sf::Int8 platform_color) const
 {
 	sf::Packet packet;
 	//First thing for every packet is what type of packet it is
-	packet << static_cast<sf::Int32>(server::PacketType::kUpdatePlatformColors);
+	packet << static_cast<sf::Int8>(server::PacketType::kUpdatePlatformColors);
 	packet << team_id;
 	packet << platform_id;
 	packet << platform_color;
@@ -220,7 +216,7 @@ void GameServer::NotifyPlayerPlatformChange(const sf::Int32 team_id, const sf::I
 void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer,
                                       bool& detected_timeout)
 {
-	sf::Int32 packet_type;
+	sf::Int8 packet_type;
 	packet >> packet_type;
 
 	switch (static_cast<client::PacketType>(packet_type))
@@ -233,7 +229,7 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 		break;
 	case client::PacketType::kPlayerEvent:
 		{
-			sf::Int32 identifier;
+			sf::Int8 identifier;
 			sf::Int32 action;
 			packet >> identifier >> action;
 			NotifyPlayerEvent(identifier, action);
@@ -242,7 +238,7 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 
 	case client::PacketType::kPlayerRealtimeChange:
 		{
-			sf::Int32 identifier;
+			sf::Int8 identifier;
 			sf::Int32 action;
 			bool action_enabled;
 			packet >> identifier >> action >> action_enabled;
@@ -252,12 +248,12 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 
 	case client::PacketType::kPositionUpdate:
 		{
-			sf::Int32 num_player;
+			sf::Int8 num_player;
 			packet >> num_player;
 
-			for (sf::Int32 i = 0; i < num_player; ++i)
+			for (sf::Int8 i = 0; i < num_player; ++i)
 			{
-				sf::Int32 identifier;
+				sf::Int8 identifier;
 				sf::Vector2f position;
 				packet >> identifier >> position.x >> position.y;
 				m_player_info[identifier].m_position = position;
@@ -267,9 +263,9 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 
 	case client::PacketType::kPlatformUpdate:
 		{
-			sf::Int32 team_id;
-			sf::Int32 platform_id;
-			sf::Int32 platform_color;
+			sf::Int8 team_id;
+			sf::Int8 platform_id;
+			sf::Int8 platform_color;
 
 			packet >> team_id >> platform_id >> platform_color;
 
@@ -281,8 +277,8 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 		break;
 	case client::PacketType::kPlayerUpdate:
 		{
-			sf::Int32 identifier;
-			sf::Int32 team_id;
+			sf::Int8 identifier;
+			sf::Int8 team_id;
 			std::string name;
 			packet >> identifier >> team_id >> name;
 			name = name.substr(0, 20);
@@ -310,7 +306,7 @@ void GameServer::HandleIncomingConnections()
 		m_player_info[m_identifier_counter].m_position = sf::Vector2f(0, 0);
 
 		sf::Packet packet;
-		packet << static_cast<sf::Int32>(server::PacketType::kSpawnSelf);
+		packet << static_cast<sf::Int8>(server::PacketType::kSpawnSelf);
 		packet << m_identifier_counter;
 
 		m_peers[m_connected_players]->m_identifiers.emplace_back(m_identifier_counter);
@@ -344,10 +340,10 @@ void GameServer::HandleDisconnections()
 		if ((*itr)->m_timed_out)
 		{
 			//Inform everyone of a disconnection, erase
-			for (sf::Int32 identifier : (*itr)->m_identifiers)
+			for (const sf::Int8 identifier : (*itr)->m_identifiers)
 			{
 				SendToAll(
-					sf::Packet() << static_cast<sf::Int32>(server::PacketType::kPlayerDisconnect) <<
+					sf::Packet() << static_cast<sf::Int8>(server::PacketType::kPlayerDisconnect) <<
 					identifier);
 				m_player_info.erase(identifier);
 			}
@@ -376,14 +372,14 @@ void GameServer::HandleDisconnections()
 void GameServer::InformWorldState(sf::TcpSocket& socket)
 {
 	sf::Packet packet;
-	packet << static_cast<sf::Int32>(server::PacketType::kInitialState);
-	packet << static_cast<sf::Int32>(m_player_count);
+	packet << static_cast<sf::Int8>(server::PacketType::kInitialState);
+	packet << static_cast<sf::Int8>(m_player_count);
 
 	for (std::size_t i = 0; i < m_connected_players; ++i)
 	{
 		if (m_peers[i]->m_ready)
 		{
-			for (sf::Int32 identifier : m_peers[i]->m_identifiers)
+			for (const sf::Int8 identifier : m_peers[i]->m_identifiers)
 			{
 				const PlayerInfo player_info = m_player_info[identifier];
 				packet << identifier
@@ -401,7 +397,7 @@ void GameServer::InformWorldState(sf::TcpSocket& socket)
 void GameServer::BroadcastMessage(const std::string& message) const
 {
 	sf::Packet packet;
-	packet << static_cast<sf::Int32>(server::PacketType::kBroadcastMessage);
+	packet << static_cast<sf::Int8>(server::PacketType::kBroadcastMessage);
 	packet << message;
 	SendPackageToAll(packet);
 }
@@ -420,8 +416,8 @@ void GameServer::SendToAll(sf::Packet& packet) const
 void GameServer::UpdateClientState() const
 {
 	sf::Packet packet;
-	packet << static_cast<sf::Int32>(server::PacketType::kUpdateClientState);
-	packet << static_cast<sf::Int32>(m_player_count);
+	packet << static_cast<sf::Int8>(server::PacketType::kUpdateClientState);
+	packet << static_cast<sf::Int8>(m_player_count);
 
 	for (const auto& player : m_player_info)
 	{

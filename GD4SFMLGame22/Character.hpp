@@ -23,8 +23,8 @@ protected:
 	sf::Text m_name_text;
 	sf::Text m_team_id_text;
 	SoundPlayer& m_sounds;
-	int m_identifier{};
-	int m_team_identifier{};
+	sf::Int8 m_identifier{};
+	sf::Int8 m_team_identifier{};
 
 public:
 	
@@ -41,13 +41,13 @@ public:
 	bool IsOnPlatform(Platform* platform) const;
 	void StopMovement();
 	void MoveOutOfCollision(const sf::FloatRect& rect);
-	void SetIdentifier(int identifier);
-	void SetTeamIdentifier(int identifier);
+	void SetIdentifier(sf::Int8 identifier);
+	void SetTeamIdentifier(sf::Int8 identifier);
 	void SetName(const std::string& name);
-	sf::Int32 GetIdentifier() const;
-	sf::Int32 GetTeamIdentifier() const;
+	sf::Int8 GetIdentifier() const;
+	sf::Int8 GetTeamIdentifier() const;
 	std::string GetName() const;
-	void SetHitPoints(sf::Int32 hit_points);
+	void SetHitPoints(const sf::Int8 hit_points);
 	void SetGrounded();
 
 protected:

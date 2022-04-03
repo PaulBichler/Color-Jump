@@ -9,12 +9,13 @@ public:
 
 	void Update(sf::Time dt) override;
 	void Draw() override;
-	Character* GetCharacter(sf::Int32 identifier) const;
-	void RemoveCharacter(sf::Int32 identifier);
-	Character* AddGhostCharacterWithColor(sf::Int32 identifier, EColorType color, const sf::IntRect& int_rect, const sf::Vector2f& spawn_pos);
-	Character* AddGhostCharacter(sf::Int32 identifier);
-	void UpdatePlatform(sf::Int32 platform_id, EPlatformType platform_color) const;
-	Character* AddCharacter(sf::Int32 identifier, bool is_client_player = false) override;
+	Character* GetCharacter(const sf::Int8 identifier) const;
+	void RemoveCharacter(const sf::Int8 identifier);
+	Character* AddGhostCharacterWithColor(const sf::Int8 identifier, const EColorType color, const sf::IntRect& int_rect, const sf::Vector2f&
+	                                      spawn_pos);
+	Character* AddGhostCharacter(const sf::Int8 identifier);
+	void UpdatePlatform(const sf::Int8 platform_id, const EPlatformType platform_color) const;
+	Character* AddCharacter(const sf::Int8 identifier, const bool is_client_player = false) override;
 
 protected:
 	void SetCamera() override;

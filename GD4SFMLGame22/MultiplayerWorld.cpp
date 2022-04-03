@@ -28,7 +28,7 @@ void MultiplayerWorld::Draw()
 	World::Draw();
 }
 
-Character* MultiplayerWorld::GetCharacter(const sf::Int32 identifier) const
+Character* MultiplayerWorld::GetCharacter(const sf::Int8 identifier) const
 {
 	for (Character* character : m_players)
 	{
@@ -40,7 +40,7 @@ Character* MultiplayerWorld::GetCharacter(const sf::Int32 identifier) const
 	return nullptr;
 }
 
-void MultiplayerWorld::RemoveCharacter(const sf::Int32 identifier)
+void MultiplayerWorld::RemoveCharacter(const sf::Int8 identifier)
 {
 	Character* character = GetCharacter(identifier);
 	if (character)
@@ -50,7 +50,7 @@ void MultiplayerWorld::RemoveCharacter(const sf::Int32 identifier)
 	}
 }
 
-Character* MultiplayerWorld::AddGhostCharacterWithColor(const sf::Int32 identifier,
+Character* MultiplayerWorld::AddGhostCharacterWithColor(const sf::Int8 identifier,
                                                         const EColorType color,
                                                         const sf::IntRect& int_rect,
                                                         const sf::Vector2f& spawn_pos)
@@ -65,7 +65,7 @@ Character* MultiplayerWorld::AddGhostCharacterWithColor(const sf::Int32 identifi
 	return m_players.back();
 }
 
-Character* MultiplayerWorld::AddGhostCharacter(const sf::Int32 identifier)
+Character* MultiplayerWorld::AddGhostCharacter(const sf::Int8 identifier)
 {
 	if (identifier % 2 == 0)
 	{
@@ -79,7 +79,7 @@ Character* MultiplayerWorld::AddGhostCharacter(const sf::Int32 identifier)
 	                                  m_level_info.m_blue_player_spawn_pos);
 }
 
-void MultiplayerWorld::UpdatePlatform(const sf::Int32 platform_id, const EPlatformType platform_color) const
+void MultiplayerWorld::UpdatePlatform(const sf::Int8 platform_id, const EPlatformType platform_color) const
 {
 	// Get all platforms
 	// Set the new one to the correct color
@@ -93,7 +93,7 @@ void MultiplayerWorld::UpdatePlatform(const sf::Int32 platform_id, const EPlatfo
 	}
 }
 
-Character* MultiplayerWorld::AddCharacter(const sf::Int32 identifier, const bool is_client_player)
+Character* MultiplayerWorld::AddCharacter(const sf::Int8 identifier, const bool is_client_player)
 {
 	Character* player_character = World::AddCharacter(identifier, is_client_player);
 

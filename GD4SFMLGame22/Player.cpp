@@ -37,7 +37,7 @@ struct CharacterJumpTrigger
 			character.Jump();
 	}
 
-	int m_identifier;
+	sf::Int8 m_identifier;
 };
 
 /*
@@ -97,9 +97,9 @@ void Player::DisableAllRealtimeActions() const
 	for (const auto& action : m_action_proxies)
 	{
 		sf::Packet packet;
-		packet << static_cast<sf::Int32>(client::PacketType::kPlayerRealtimeChange);
+		packet << static_cast<sf::Int8>(client::PacketType::kPlayerRealtimeChange);
 		packet << m_identifier;
-		packet << static_cast<sf::Int32>(action.first);
+		packet << static_cast<sf::Int8>(action.first);
 		packet << false;
 		m_socket->send(packet);
 	}
@@ -115,7 +115,7 @@ bool Player::IsLocal() const
  *	Dylan Goncalves Martins (D00242562)
  *	Initialize both players keys
  */
-Player::Player(sf::TcpSocket* socket, const sf::Int32 identifier, const KeyBinding* binding)
+Player::Player(sf::TcpSocket* socket, const sf::Int8 identifier, const KeyBinding* binding)
 	: m_key_binding(binding)
 	  , m_identifier(identifier)
 	  , m_socket(socket)
@@ -141,7 +141,7 @@ void Player::HandleEvent(const sf::Event& event, CommandQueue& commands)
 			if (m_socket)
 			{
 				sf::Packet packet;
-				packet << static_cast<sf::Int32>(client::PacketType::kPlayerEvent);
+				packet << static_cast<sf::Int8>(client::PacketType::kPlayerEvent);
 				packet << m_identifier;
 				packet << static_cast<sf::Int32>(action);
 				m_socket->send(packet);
@@ -164,7 +164,7 @@ void Player::HandleEvent(const sf::Event& event, CommandQueue& commands)
 		{
 			// Send realtime change over network
 			sf::Packet packet;
-			packet << static_cast<sf::Int32>(client::PacketType::kPlayerRealtimeChange);
+			packet << static_cast<sf::Int8>(client::PacketType::kPlayerRealtimeChange);
 			packet << m_identifier;
 			packet << static_cast<sf::Int32>(action);
 			packet << (event.type == sf::Event::KeyPressed);

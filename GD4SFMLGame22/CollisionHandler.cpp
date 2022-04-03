@@ -135,7 +135,8 @@ void CollisionHandler::GroundPlayer(Character& player, Tile& tile)
 	}
 }
 
-void CollisionHandler::GroundPlayerAndChangePlatformColor(Character& player, Platform* platform, MultiplayerWorld* multiplayer_world)
+void CollisionHandler::GroundPlayerAndChangePlatformColor(Character& player, Platform* platform,
+                                                          MultiplayerWorld* multiplayer_world)
 {
 	//Ground players
 	if (platform->HandlePlayerCollisionAndChangeColor(player.GetCharacterType()))
@@ -182,7 +183,8 @@ void CollisionHandler::GroundPlayer(Character& player, Platform* platform)
 
 void CollisionHandler::IsAtTheFinishLine(const std::vector<Character*>& players,
                                          const std::function<void()>
-                                         & callback, const Platform* platform)
+                                         & callback, const Platform* platform,
+                                         const sf::Int8 team_id)
 {
 	//Check Win Condition
 	if (platform->GetPlatformType() == EPlatformType::kGoal)
@@ -190,9 +192,12 @@ void CollisionHandler::IsAtTheFinishLine(const std::vector<Character*>& players,
 		bool is_playing = false;
 		for (const auto character : players)
 		{
-			if (!character->IsOnPlatformOfType(EPlatformType::kGoal))
+			if (character->GetTeamIdentifier() == team_id)
 			{
-				is_playing = true;
+				if (!character->IsOnPlatformOfType(EPlatformType::kGoal))
+				{
+					is_playing = true;
+				}
 			}
 		}
 
@@ -253,7 +258,7 @@ bool CollisionHandler::PlatformCollision(SceneNode::Pair pair,
 		if (CollideAndChangeColors(player, platform_part, platform)) return true;
 
 		GroundPlayerAndChangePlatformColor(player, platform, multiplayer_world);
-		IsAtTheFinishLine(players, callback, platform);
+		IsAtTheFinishLine(players, callback, platform, player.GetTeamIdentifier());
 	}
 
 	if (MatchesCategories(pair, Category::Type::kGhost, Category::Type::kPlatform))

@@ -8,7 +8,7 @@
 #include "ResourceHolder.hpp"
 #include "Utility.hpp"
 
-Platform::Platform(const sf::Int32 id, const EPlatformType platform_type, TextureHolder& textures)
+Platform::Platform(const sf::Int8 id, const EPlatformType platform_type, TextureHolder& textures)
 	: m_type(platform_type),
 	  m_textures(textures),
 	  m_current_texture(nullptr),
@@ -182,7 +182,7 @@ void Platform::Update(sf::Time dt)
 	}
 }
 
-sf::Int32 Platform::GetID() const
+sf::Int8 Platform::GetID() const
 {
 	return m_id;
 }

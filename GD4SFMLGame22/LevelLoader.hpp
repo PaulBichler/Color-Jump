@@ -21,16 +21,19 @@ class LevelLoader
 {
 public:
 	virtual ~LevelLoader() = default;
-	LevelLoader(LevelManager::LevelData& level_data, TextureHolder& textures, FontHolder& fonts, SoundPlayer& sound_player);
+	LevelLoader(LevelManager::LevelData& level_data, TextureHolder& textures, FontHolder& fonts,
+	            SoundPlayer& sound_player);
 
 	LevelInfo LoadLevel();
 
 private:
-	virtual SceneNode::Ptr LoadLevelLayer(const std::string& csv_path, LevelInfo& level_info, bool is_collider_layer);
+	virtual SceneNode::Ptr LoadLevelLayer(const std::string& csv_path, LevelInfo& level_info,
+	                                      bool is_collider_layer);
 	std::vector<std::vector<int>> LevelDataToVector(const std::string& csv_path) const;
-	void CreatePlatform(LevelInfo& level_info, const ETileType tile_type, const int row, const int col, SceneNode::Ptr&
-	                    parent, const sf::Vector2f spawn_pos, int platform_id);
-	void AddPlatformParts(Platform* platform, int row, int col, SceneNode::Ptr& parent, ETileType tile_type, sf::Vector2f spawn_pos);
+	void CreatePlatform(LevelInfo& level_info, ETileType tile_type, int row, int col,
+	                    SceneNode::Ptr& parent, sf::Vector2f spawn_pos, sf::Int8 platform_id);
+	void AddPlatformParts(Platform* platform, int row, int col, SceneNode::Ptr& parent,
+	                      ETileType tile_type, sf::Vector2f spawn_pos);
 
 private:
 	LevelManager::LevelData& m_level_data;
@@ -38,4 +41,3 @@ private:
 	TileFactory m_tile_factory;
 	std::vector<std::vector<int>> m_level_data_vector;
 };
-

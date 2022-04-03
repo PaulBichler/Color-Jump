@@ -21,5 +21,5 @@ public:
 protected:
 	void UpdateCurrent(sf::Time dt, CommandQueue& commands) override;
 	sf::Vector2f m_velocity;
-	unsigned int m_hit_points;
+	sf::Int8 m_hit_points;
 };

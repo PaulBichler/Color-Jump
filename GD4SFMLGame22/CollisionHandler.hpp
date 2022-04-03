@@ -19,7 +19,7 @@ class CollisionHandler
 	                              Category::Type type2);
 	static void GroundPlayer(Character& player, Platform* platform);
 	static void IsAtTheFinishLine(const std::vector<Character*>& players,
-	                              const std::function<void()>& callback, const Platform* platform);
+	                              const std::function<void()>& callback, const Platform* platform, const sf::Int8 team_id);
 	static void ChangeVerticalPlatformColor(const Character& player, Platform* platform);
 	static void StopPlayerMovement(Character& player, const PlatformPart& platform_part,
 	                               Platform* platform);

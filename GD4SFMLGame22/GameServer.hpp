@@ -16,10 +16,10 @@ public:
 	explicit GameServer(sf::Vector2f battlefield_size);
 	~GameServer();
 	void SendPackageToAll(sf::Packet packet) const;
-	void NotifyPlayerSpawn(sf::Int32 identifier) const;
-	void NotifyPlayerRealtimeChange(sf::Int32 identifier, sf::Int32 action, bool action_enabled) const;
-	void NotifyPlayerEvent(sf::Int32 identifier, sf::Int32 action) const;
-	void NotifyPlayerSet(sf::Int32 identifier, sf::Int32 team_id, const std::string& name) const;
+	void NotifyPlayerSpawn(sf::Int8 identifier) const;
+	void NotifyPlayerRealtimeChange(sf::Int8 identifier, sf::Int32 action, bool action_enabled) const;
+	void NotifyPlayerEvent(sf::Int8 identifier, sf::Int32 action) const;
+	void NotifyPlayerSet(sf::Int8 identifier, sf::Int8 team_id, const std::string& name) const;
 
 private:
 	struct RemotePeer
@@ -27,14 +27,14 @@ private:
 		RemotePeer();
 		sf::TcpSocket m_socket;
 		sf::Time m_last_packet_time;
-		std::vector<sf::Int32> m_identifiers;
+		std::vector<sf::Int8> m_identifiers;
 		bool m_ready;
 		bool m_timed_out;
 	};
 
 	struct PlayerInfo
 	{
-		int m_team_identifier{};
+		sf::Int8 m_team_identifier{};
 		sf::Vector2f m_position;
 		std::map<sf::Int32, bool> m_realtime_actions;
 		std::string name;
@@ -49,8 +49,8 @@ private:
 	sf::Time Now() const;
 
 	void HandleIncomingPackets();
-	void NotifyPlayerPlatformChange(sf::Int32 team_id, sf::Int32 platform_id,
-	                                sf::Int32 platform_color) const;
+	void NotifyPlayerPlatformChange(sf::Int8 team_id, const sf::Int8 platform_id,
+	                                const sf::Int8 platform_color) const;
 	void HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer,
 	                          bool& detected_timeout);
 
@@ -75,9 +75,9 @@ private:
 	sf::FloatRect m_battlefield_rect;
 
 	std::size_t m_player_count;
-	std::map<sf::Int32, PlayerInfo> m_player_info;
+	std::map<sf::Int8, PlayerInfo> m_player_info;
 
 	std::vector<peer_ptr> m_peers;
-	sf::Int32 m_identifier_counter;
+	sf::Int8 m_identifier_counter;
 	bool m_waiting_thread_end;
 };

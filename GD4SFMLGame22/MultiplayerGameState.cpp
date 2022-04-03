@@ -118,23 +118,23 @@ void MultiplayerGameState::Draw()
 	}
 }
 
-void MultiplayerGameState::SendPlatformInfo(const sf::Int32 team_id, const sf::Int32 platform_id,
+void MultiplayerGameState::SendPlatformInfo(const sf::Int8 team_id, const sf::Int8 platform_id,
                                             EPlatformType platform)
 {
 	sf::Packet packet;
-	packet << static_cast<sf::Int32>(client::PacketType::kPlatformUpdate);
+	packet << static_cast<sf::Int8>(client::PacketType::kPlatformUpdate);
 	packet << team_id;
 	packet << platform_id;
-	packet << static_cast<sf::Int32>(platform);
+	packet << static_cast<sf::Int8>(platform);
 
 	m_socket.send(packet);
 }
 
-void MultiplayerGameState::SendPlayerName(const sf::Int32 identifier, const sf::Int32 team_id,
+void MultiplayerGameState::SendPlayerName(const sf::Int8 identifier, const sf::Int8 team_id,
                                           const std::string& name)
 {
 	sf::Packet packet;
-	packet << static_cast<sf::Int32>(client::PacketType::kPlayerUpdate);
+	packet << static_cast<sf::Int8>(client::PacketType::kPlayerUpdate);
 	packet << identifier;
 	packet << team_id;
 	packet << name;
@@ -172,7 +172,7 @@ bool MultiplayerGameState::Update(const sf::Time dt)
 		if (m_socket.receive(packet) == sf::Socket::Done)
 		{
 			m_time_since_last_packet = sf::seconds(0.f);
-			sf::Int32 packet_type;
+			sf::Int8 packet_type;
 			packet >> packet_type;
 			HandlePacket(packet_type, packet);
 		}
@@ -202,10 +202,10 @@ bool MultiplayerGameState::Update(const sf::Time dt)
 		if (m_tick_clock.getElapsedTime() > sf::seconds(1.f / 20.f))
 		{
 			sf::Packet position_packet;
-			position_packet << static_cast<sf::Int32>(client::PacketType::kPositionUpdate);
-			position_packet << static_cast<sf::Int32>(m_local_player_identifiers.size());
+			position_packet << static_cast<sf::Int8>(client::PacketType::kPositionUpdate);
+			position_packet << static_cast<sf::Int8>(m_local_player_identifiers.size());
 
-			for (const sf::Int32 identifier : m_local_player_identifiers)
+			for (const sf::Int8 identifier : m_local_player_identifiers)
 			{
 				if (const Character* character = m_world.GetCharacter(identifier))
 				{
@@ -282,7 +282,7 @@ void MultiplayerGameState::OnDestroy()
 	{
 		//Inform server this client is dying
 		sf::Packet packet;
-		packet << static_cast<sf::Int32>(client::PacketType::kQuit);
+		packet << static_cast<sf::Int8>(client::PacketType::kQuit);
 		m_socket.send(packet);
 	}
 }
@@ -290,7 +290,7 @@ void MultiplayerGameState::OnDestroy()
 void MultiplayerGameState::DisableAllRealtimeActions()
 {
 	m_active_state = false;
-	for (sf::Int32 identifier : m_local_player_identifiers)
+	for (const sf::Int8 identifier : m_local_player_identifiers)
 	{
 		m_players[identifier]->DisableAllRealtimeActions();
 	}
@@ -322,13 +322,13 @@ void MultiplayerGameState::UpdateBroadcastMessage(const sf::Time elapsed_time)
 
 void MultiplayerGameState::HandleClientUpdate(sf::Packet& packet)
 {
-	sf::Int32 player_count;
+	sf::Int8 player_count;
 	packet >> player_count;
 
-	for (sf::Int32 i = 0; i < player_count; ++i)
+	for (sf::Int8 i = 0; i < player_count; ++i)
 	{
 		sf::Vector2f position;
-		sf::Int32 identifier;
+		sf::Int8 identifier;
 		packet >> identifier >> position.x >> position.y;
 
 		Character* character = m_world.GetCharacter(identifier);
@@ -340,7 +340,7 @@ void MultiplayerGameState::HandleClientUpdate(sf::Packet& packet)
 		if (character && !is_local_player)
 		{
 			sf::Vector2f interpolated_position = character->getPosition() + (
-				position - character->getPosition()) * 0.1f;
+				position - character->getPosition()) * 0.5f;
 			character->setPosition(interpolated_position);
 		}
 	}
@@ -348,7 +348,7 @@ void MultiplayerGameState::HandleClientUpdate(sf::Packet& packet)
 
 void MultiplayerGameState::HandleSelfSpawn(sf::Packet& packet)
 {
-	sf::Int32 identifier;
+	sf::Int8 identifier;
 	packet >> identifier;
 
 	const auto character = m_world.AddCharacter(identifier, true);
@@ -377,7 +377,7 @@ void MultiplayerGameState::HandleBroadcast(sf::Packet& packet)
 
 void MultiplayerGameState::HandlePlayerConnect(sf::Packet& packet)
 {
-	sf::Int32 identifier;
+	sf::Int8 identifier;
 	packet >> identifier;
 
 	// Utility::Debug(std::to_string(identifier));
@@ -388,7 +388,7 @@ void MultiplayerGameState::HandlePlayerConnect(sf::Packet& packet)
 
 void MultiplayerGameState::HandlePlayerDisconnect(sf::Packet& packet)
 {
-	sf::Int32 identifier;
+	sf::Int8 identifier;
 	packet >> identifier;
 	m_world.RemoveCharacter(identifier);
 	m_players.erase(identifier);
@@ -396,12 +396,12 @@ void MultiplayerGameState::HandlePlayerDisconnect(sf::Packet& packet)
 
 void MultiplayerGameState::HandleInitialState(sf::Packet& packet)
 {
-	sf::Int32 player_count;
+	sf::Int8 player_count;
 	packet >> player_count;
-	for (sf::Int32 i = 0; i < player_count; ++i)
+	for (sf::Int8 i = 0; i < player_count; ++i)
 	{
-		sf::Int32 identifier;
-		sf::Int32 team_identifier;
+		sf::Int8 identifier;
+		sf::Int8 team_identifier;
 		sf::Vector2f position;
 		std::string name;
 		packet >> identifier >> position.x >> position.y >> team_identifier >> name;
@@ -417,7 +417,7 @@ void MultiplayerGameState::HandleInitialState(sf::Packet& packet)
 
 void MultiplayerGameState::HandleRealtimeChange(sf::Packet& packet)
 {
-	sf::Int32 identifier;
+	sf::Int8 identifier;
 	sf::Int32 action;
 	bool action_enabled;
 	packet >> identifier >> action >> action_enabled;
@@ -432,7 +432,7 @@ void MultiplayerGameState::HandleRealtimeChange(sf::Packet& packet)
 
 void MultiplayerGameState::HandlePlayerEvent(sf::Packet& packet)
 {
-	sf::Int32 identifier;
+	sf::Int8 identifier;
 	sf::Int32 action;
 	packet >> identifier >> action;
 
@@ -446,12 +446,12 @@ void MultiplayerGameState::HandlePlayerEvent(sf::Packet& packet)
 
 void MultiplayerGameState::HandleTeamSelection(sf::Packet& packet) const
 {
-	sf::Int32 player_count;
+	sf::Int8 player_count;
 	packet >> player_count;
-	for (sf::Int32 i = 0; i < player_count; ++i)
+	for (sf::Int8 i = 0; i < player_count; ++i)
 	{
-		sf::Int32 identifier;
-		sf::Int32 team_identifier;
+		sf::Int8 identifier;
+		sf::Int8 team_identifier;
 		packet >> identifier >> team_identifier;
 
 		Character* character = m_world.GetCharacter(identifier);
@@ -461,13 +461,13 @@ void MultiplayerGameState::HandleTeamSelection(sf::Packet& packet) const
 
 void MultiplayerGameState::HandleUpdatePlatformColors(sf::Packet& packet) const
 {
-	sf::Int32 team_id;
-	sf::Int32 platform_id;
-	sf::Int32 platform_color;
+	sf::Int8 team_id;
+	sf::Int8 platform_id;
+	sf::Int8 platform_color;
 
 	packet >> team_id >> platform_id >> platform_color;
 
-	for (const int identifier : m_local_player_identifiers)
+	for (const sf::Int8 identifier : m_local_player_identifiers)
 	{
 		const auto character = m_world.GetCharacter(identifier);
 
@@ -480,15 +480,15 @@ void MultiplayerGameState::HandleUpdatePlatformColors(sf::Packet& packet) const
 
 void MultiplayerGameState::HandleUpdatePlayer(sf::Packet& packet) const
 {
-	sf::Int32 identifier;
-	sf::Int32 team_id;
+	sf::Int8 identifier;
+	sf::Int8 team_id;
 	std::string name;
 	packet >> identifier >> team_id >> name;
 	m_world.GetCharacter(identifier)->SetName(name);
 	m_world.GetCharacter(identifier)->SetTeamIdentifier(team_id);
 }
 
-void MultiplayerGameState::HandlePacket(sf::Int32 packet_type, sf::Packet& packet)
+void MultiplayerGameState::HandlePacket(sf::Int8 packet_type, sf::Packet& packet)
 {
 	switch (static_cast<server::PacketType>(packet_type))
 	{

@@ -10,7 +10,7 @@ class MultiplayerGameState : public State
 public:
 	MultiplayerGameState(StateStack& stack, Context context, bool is_host);
 	void Draw() override;
-	void SendPlatformInfo(sf::Int32 team_id, const sf::Int32 platform_id, EPlatformType platform);
+	void SendPlatformInfo(const sf::Int8 team_id, const sf::Int8 platform_id, EPlatformType platform);
 	bool Update(sf::Time dt) override;
 	bool HandleEvent(const sf::Event& event) override;
 	virtual void OnActivate();
@@ -30,9 +30,9 @@ private:
 	void HandleTeamSelection(sf::Packet& packet) const;
 	void HandleUpdatePlatformColors(sf::Packet& packet) const;
 	void HandleUpdatePlayer(sf::Packet& packet) const;
-	void HandlePacket(sf::Int32 packet_type, sf::Packet& packet);
+	void HandlePacket(sf::Int8 packet_type, sf::Packet& packet);
 
-	void SendPlayerName(const sf::Int32 identifier, const sf::Int32 team_id, const std::string& name);
+	void SendPlayerName(const sf::Int8 identifier, const sf::Int8 team_id, const std::string& name);
 
 private:
 	MultiplayerWorld m_world;
@@ -43,7 +43,7 @@ private:
 	typedef std::unique_ptr<Player> PlayerPtr;
 	std::map<int, PlayerPtr> m_players;
 	
-	std::vector<sf::Int32> m_local_player_identifiers;
+	std::vector<sf::Int8> m_local_player_identifiers;
 	sf::TcpSocket m_socket;
 	bool m_connected;
 	std::unique_ptr<GameServer> m_game_server;

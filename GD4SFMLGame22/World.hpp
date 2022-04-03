@@ -28,13 +28,14 @@ public:
 	virtual void Draw();
 	CommandQueue& GetCommandQueue();
 
-	virtual Character* AddCharacter(sf::Int32 identifier, bool is_client_player = false);
+	virtual Character* AddCharacter(sf::Int8 identifier, bool is_client_player = false);
 
 private:
 	void LoadTextures();
 	void InitializeSceneLayers();
 	virtual void LoadLevel(LevelManager::LevelData current_level_data);
-	Character* AddCharacterWithColor(sf::Int32 identifier, EColorType color, sf::IntRect rect, sf::Vector2f spawn_pos);
+	Character* AddCharacterWithColor(sf::Int8 identifier, EColorType color, sf::IntRect rect,
+	                                 sf::Vector2f spawn_pos);
 	void UpdatePlatforms(sf::Time dt) const;
 
 protected:
@@ -43,7 +44,7 @@ protected:
 	virtual void HandleCollisions() = 0;
 	virtual sf::FloatRect GetBattlefieldBounds() const = 0;
 	virtual void SetCamera() = 0;
-	
+
 	sf::RenderTarget& m_target;
 	sf::RenderTexture m_scene_texture;
 	sf::View m_camera;

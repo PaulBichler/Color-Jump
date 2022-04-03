@@ -10,6 +10,11 @@ public:
 	{
 	}
 
+protected:
+	void UpdateCurrent(sf::Time dt, CommandQueue& commands) override;
+private:
+	sf::FloatRect GetBoundingRect() const override;
+public:
 	unsigned GetCategory() const override;
 };
 
