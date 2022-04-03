@@ -296,6 +296,15 @@ void MultiplayerGameState::DisableAllRealtimeActions()
 	}
 }
 
+void MultiplayerGameState::SendMission(sf::Int8 player_id)
+{
+	sf::Packet packet;
+	packet << static_cast<sf::Int8>(client::PacketType::kMission);
+	packet << player_id;
+
+	m_socket.send(packet);
+}
+
 void MultiplayerGameState::UpdateBroadcastMessage(const sf::Time elapsed_time)
 {
 	if (m_broadcasts.empty())
@@ -452,7 +461,8 @@ void MultiplayerGameState::HandlePlayerEvent(sf::Packet& packet)
 	const auto itr = m_players.find(identifier);
 	if (itr != m_players.end())
 	{
-		itr->second->HandleNetworkEvent(static_cast<PlayerAction>(action), m_world.GetCommandQueue());
+		itr->second->HandleNetworkEvent(static_cast<PlayerAction>(action),
+		                                m_world.GetCommandQueue());
 	}
 }
 
@@ -480,7 +490,7 @@ void MultiplayerGameState::HandleUpdatePlatformColors(sf::Packet& packet)
 	packet >> player_id >> platform_id >> platform_color;
 
 	const auto client_char = m_world.GetClientCharacter();
-	const auto send_char= m_world.GetCharacter(player_id);
+	const auto send_char = m_world.GetCharacter(player_id);
 
 	if (client_char->GetTeamIdentifier() == send_char->GetTeamIdentifier())
 	{
@@ -502,6 +512,22 @@ void MultiplayerGameState::HandleUpdatePlayer(sf::Packet& packet) const
 	packet >> identifier >> team_id >> name;
 	m_world.GetCharacter(identifier)->SetName(name);
 	m_world.GetCharacter(identifier)->SetTeamIdentifier(team_id);
+}
+
+void MultiplayerGameState::HandleMission(sf::Packet& packet)
+{
+	sf::Int8 team_id;
+
+	packet >> team_id;
+
+	if (team_id == m_world.GetClientCharacter()->GetTeamIdentifier())
+	{
+		RequestStackPush(StateID::kLevelWin);
+	}
+	else
+	{
+		RequestStackPush(StateID::kLevelLose);
+	}
 }
 
 void MultiplayerGameState::HandlePacket(sf::Int8 packet_type, sf::Packet& packet)
@@ -528,7 +554,7 @@ void MultiplayerGameState::HandlePacket(sf::Int8 packet_type, sf::Packet& packet
 		HandleRealtimeChange(packet);
 		break;
 	case server::PacketType::kMissionSuccess:
-		RequestStackPush(StateID::kLevelWin);
+		HandleMission(packet);
 		break;
 	case server::PacketType::kUpdateClientState:
 		HandleClientUpdate(packet);

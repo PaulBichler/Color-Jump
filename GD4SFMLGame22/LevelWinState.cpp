@@ -30,7 +30,7 @@ LevelWinState::LevelWinState(StateStack& stack, Context context)
 	{
 		//Set the next level in the level manager
 		GetContext().m_level_manager->NextLevel();
-
+	
 		RequestStackPop(); //Pop Level Lose State
 		RequestStackPop(); //Pop Game State
 		RequestStackPush(StateID::kGame); //Push Game State again to restart the level
@@ -42,16 +42,16 @@ LevelWinState::LevelWinState(StateStack& stack, Context context)
 		return GetContext().m_level_manager->DoesNextLevelExist();
 	});
 
-	//Create the Restart button
-	const auto restart_button = std::make_shared<GUI::Button>(context);
-	restart_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 150);
-	restart_button->SetText("Restart Level");
-	restart_button->SetCallback([this]()
-	{
-		RequestStackPop(); //Pop Level Win State
-		RequestStackPop(); //Pop Game State
-		RequestStackPush(StateID::kGame); //Push Game State again to restart the level
-	});
+	// //Create the Restart button
+	// const auto restart_button = std::make_shared<GUI::Button>(context);
+	// restart_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 150);
+	// restart_button->SetText("Restart Level");
+	// restart_button->SetCallback([this]()
+	// {
+	// 	RequestStackPop(); //Pop Level Win State
+	// 	RequestStackPop(); //Pop Game State
+	// 	RequestStackPush(StateID::kGame); //Push Game State again to restart the level
+	// });
 
 	//Create the Back to Main Menu button
 	const auto main_menu_button = std::make_shared<GUI::Button>(context);
@@ -64,7 +64,7 @@ LevelWinState::LevelWinState(StateStack& stack, Context context)
 	});
 
 	m_gui_container.Pack(next_level_button);
-	m_gui_container.Pack(restart_button);
+	// m_gui_container.Pack(restart_button);
 	m_gui_container.Pack(main_menu_button);
 }
 

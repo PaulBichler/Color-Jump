@@ -28,6 +28,11 @@ State::~State() = default;
 
 void State::RequestStackPush(const StateID state_id) const
 {
+	if (true)
+	{
+		
+	}
+
 	m_stack->PushState(state_id);
 }
 

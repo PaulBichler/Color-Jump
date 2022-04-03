@@ -92,7 +92,7 @@ void SinglePlayerWorld::HandleCollisions()
 
 	for (const SceneNode::Pair& pair : collision_pairs)
 	{
-		if (CollisionHandler::PlatformCollision(pair, m_win_callback))
+		if (CollisionHandler::PlatformCollision(pair, m_win_callback,m_win_callback))
 			continue;
 
 		CollisionHandler::TrapCollision(pair, m_lose_callback);

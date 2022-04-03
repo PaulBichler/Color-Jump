@@ -26,16 +26,16 @@ LevelLoseState::LevelLoseState(StateStack& stack, Context context)
 	Utility::CentreOrigin(m_lost_text);
 	m_lost_text.setPosition(0.5f * viewSize.x, 0.4f * viewSize.y);
 
-	//Create the Restart button
-	const auto restart_button = std::make_shared<GUI::Button>(context);
-	restart_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 100);
-	restart_button->SetText("Restart");
-	restart_button->SetCallback([this]()
-	{
-		RequestStackPop(); //Pop Level Lose State
-		RequestStackPop(); //Pop Game State
-		RequestStackPush(StateID::kGame); //Push Game State again to restart the level
-	});
+	// //Create the Restart button
+	// const auto restart_button = std::make_shared<GUI::Button>(context);
+	// restart_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 100);
+	// restart_button->SetText("Restart");
+	// restart_button->SetCallback([this]()
+	// {
+	// 	RequestStackPop(); //Pop Level Lose State
+	// 	RequestStackPop(); //Pop Game State
+	// 	RequestStackPush(StateID::kGame); //Push Game State again to restart the level
+	// });
 
 	//Create the Back to Main Menu button
 	const auto main_menu_button = std::make_shared<GUI::Button>(context);
@@ -47,7 +47,7 @@ LevelLoseState::LevelLoseState(StateStack& stack, Context context)
 		RequestStackPush(StateID::kMenu);
 	});
 
-	m_gui_container.Pack(restart_button);
+	// m_gui_container.Pack(restart_button);
 	m_gui_container.Pack(main_menu_button);
 }
 

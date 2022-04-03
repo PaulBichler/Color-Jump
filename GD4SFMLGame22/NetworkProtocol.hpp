@@ -33,6 +33,7 @@ namespace client
 		kQuit,
 		kGameEvent,
 		kPlatformUpdate,
-		kPlayerUpdate
+		kPlayerUpdate,
+		kMission
 	};
 }

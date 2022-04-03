@@ -16,6 +16,7 @@ public:
 	virtual void OnActivate();
 	void OnDestroy();
 	void DisableAllRealtimeActions();
+	void SendMission(sf::Int8 int8);
 
 private:
 	void UpdateBroadcastMessage(sf::Time elapsed_time);
@@ -30,6 +31,7 @@ private:
 	void HandleTeamSelection(sf::Packet& packet) const;
 	void HandleUpdatePlatformColors(sf::Packet& packet);
 	void HandleUpdatePlayer(sf::Packet& packet) const;
+	void HandleMission(sf::Packet& packet);
 	void HandlePacket(sf::Int8 packet_type, sf::Packet& packet);
 
 	void SendPlayerName(const sf::Int8 identifier, const sf::Int8 team_id, const std::string& name);

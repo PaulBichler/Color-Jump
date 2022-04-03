@@ -30,6 +30,7 @@ protected:
 
 private:
 	void OnReachedCheckpoint();
+	void OnReachedGoal() const;
 	void OnClientPlayerDeath() const;
 
 private:

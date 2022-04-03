@@ -213,6 +213,15 @@ void GameServer::NotifyPlayerPlatformChange(const sf::Int8 player_id, const sf::
 	SendPackageToAll(packet);
 }
 
+void GameServer::NotifyMission(const sf::Int8 team_id) const
+{
+	sf::Packet packet;
+	packet << static_cast<sf::Int8>(server::PacketType::kMissionSuccess);
+	packet << team_id;
+
+	SendPackageToAll(packet);
+}
+
 void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer,
                                       bool& detected_timeout)
 {
@@ -273,9 +282,6 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 			NotifyPlayerPlatformChange(player_id, platform_id, platform_color);
 		}
 		break;
-
-	case client::PacketType::kGameEvent:
-		break;
 	case client::PacketType::kPlayerUpdate:
 		{
 			sf::Int8 identifier;
@@ -289,6 +295,15 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 			NotifyPlayerSet(identifier, team_id, name);
 		}
 		break;
+
+	case client::PacketType::kMission:
+	{
+		sf::Int8 identifier;
+		packet >> identifier;
+
+		NotifyMission(identifier);
+	}
+	break;
 	default:
 		break;
 	}

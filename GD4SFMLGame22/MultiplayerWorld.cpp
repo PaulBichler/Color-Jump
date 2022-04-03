@@ -1,6 +1,7 @@
 #include "MultiplayerWorld.hpp"
 #include "CollisionHandler.hpp"
 #include "GhostCharacter.hpp"
+#include "MultiplayerGameState.hpp"
 #include "PlatformPart.hpp"
 #include "Utility.hpp"
 
@@ -85,11 +86,8 @@ Character* MultiplayerWorld::AddGhostCharacter(const sf::Int8 identifier)
 }
 
 void MultiplayerWorld::UpdatePlatform(const sf::Int8 platform_id,
-                                      const EPlatformType platform_color) const
+                                      const EPlatformType platform_color)
 {
-	// Get all platforms
-	// Set the new one to the correct color
-
 	for (auto& platform : m_level_info.platforms)
 	{
 		if (platform->GetID() == platform_id)
@@ -196,7 +194,7 @@ void MultiplayerWorld::HandleCollisions()
 
 	for (const SceneNode::Pair& pair : collision_pairs)
 	{
-		if (CollisionHandler::PlatformCollision(pair, [this] { OnReachedCheckpoint(); }, this))
+		if (CollisionHandler::PlatformCollision(pair, [this] { OnReachedCheckpoint(); }, [this] { OnReachedGoal(); }, this))
 			continue;
 
 		CollisionHandler::TrapCollision(pair, [this] { OnClientPlayerDeath(); });
@@ -235,6 +233,11 @@ void MultiplayerWorld::OnReachedCheckpoint()
 {
 	m_checkoint = m_client_player->GetCurrentPlatform();
 	m_checkoint->SetType(EPlatformType::kCheckpointActivated);
+}
+
+void MultiplayerWorld::OnReachedGoal() const
+{
+	m_state->SendMission(GetClientCharacter()->GetTeamIdentifier());
 }
 
 void MultiplayerWorld::OnClientPlayerDeath() const

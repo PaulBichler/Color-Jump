@@ -18,7 +18,8 @@ class CollisionHandler
 	static bool MatchesCategories(SceneNode::Pair& collision, Category::Type type1,
 	                              Category::Type type2);
 	static void GroundPlayer(Character& player, Platform* platform);
-	static void IsAtTheFinishLine(const Character* player_1, const Character* player_2, const std::function<void()>& callback, const Platform* platform);
+	static void IsAtTheFinishLine(const Character* player_1, const Character* player_2, const std::function<void()>&
+	                              checkpoint_callback, const std::function<void()>& win_callback, const Platform* platform);
 	static void ChangeVerticalPlatformColor(const Character& player, Platform* platform);
 	static void StopPlayerMovement(Character& player, const PlatformPart& platform_part,
 	                               Platform* platform);
@@ -31,11 +32,10 @@ class CollisionHandler
 	                    Platform* platform);
 
 public:
-	static bool TileCollision(SceneNode::Pair pair);
 	static void GroundPlayerAndChangePlatformColor(Character& player, Platform* platform, MultiplayerWorld* multiplayer_world = nullptr);
 	static bool PlatformCollision(SceneNode::Pair pair,
-	                              const std::function<void()>& callback,
-	                              MultiplayerWorld* multiplayer_world = nullptr);
+	                              const std::function<void()>& checkpoint_callback,
+	                              const std::function<void()>& win_callback, MultiplayerWorld* multiplayer_world = nullptr);
 	static void GetGroundRayCasts(std::set<SceneNode::Pair>& pairs, SceneNode::Pair pair,
 	                              Category::Type category);
 	static void PlayerGroundRayCast(const std::set<SceneNode::Pair>& pairs);

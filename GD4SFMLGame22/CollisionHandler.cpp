@@ -182,7 +182,8 @@ void CollisionHandler::GroundPlayer(Character& player, Platform* platform)
 }
 
 void CollisionHandler::IsAtTheFinishLine(const Character* player_1, const Character* player_2,
-                                         const std::function<void()>& callback, 
+                                         const std::function<void()>& checkpoint_callback,
+                                         const std::function<void()>& win_callback,
 										 const Platform* platform)
 {
 	const EPlatformType platform_type = platform->GetPlatformType();
@@ -190,21 +191,25 @@ void CollisionHandler::IsAtTheFinishLine(const Character* player_1, const Charac
 	//Check Win Condition
 	if (platform_type == EPlatformType::kCheckpoint)
 	{
-		/*if (player_1 == nullptr || player_2 == nullptr)
-			return;*/
-
-		const bool player_1_check = player_1->IsOnPlatformOfType(platform_type);
-		/*const bool player_2_check = player_2->IsOnPlatformOfType(platform_type);*/
-
-		if (player_1_check)
+		if (player_1->IsOnPlatformOfType(platform_type))
 		{
-			callback();
+			checkpoint_callback();
 		}
 	}
 
 	if(platform_type == EPlatformType::kGoal)
 	{
-		
+		if (player_1 == nullptr || player_2 == nullptr)
+			return;
+
+
+		const bool player_1_check = player_1->IsOnPlatformOfType(platform_type);
+		const bool player_2_check = player_2->IsOnPlatformOfType(platform_type);
+
+		if (player_1_check && player_2_check)
+		{
+			win_callback();
+		}
 	}
 }
 
@@ -245,7 +250,8 @@ bool CollisionHandler::CollideAndChangeColors(Character& player, const PlatformP
 }
 
 bool CollisionHandler::PlatformCollision(SceneNode::Pair pair,
-                                         const std::function<void()>& callback,
+                                         const std::function<void()>& checkpoint_callback,
+                                         const std::function<void()>& win_callback,
                                          MultiplayerWorld* multiplayer_world)
 {
 	if (MatchesCategories(pair, Category::Type::kPlayer, Category::Type::kPlatform))
@@ -257,7 +263,7 @@ bool CollisionHandler::PlatformCollision(SceneNode::Pair pair,
 		if (CollideAndChangeColors(player, platform_part, platform)) return true;
 
 		GroundPlayerAndChangePlatformColor(player, platform, multiplayer_world);
-		IsAtTheFinishLine(&player, multiplayer_world->GetTeammate(), callback, platform);
+		IsAtTheFinishLine(&player, multiplayer_world->GetTeammate(), checkpoint_callback, win_callback, platform);
 	}
 	return false;
 }
