@@ -44,6 +44,7 @@ void World::Update(const sf::Time dt)
 	m_sceneGraph.Update(dt, m_command_queue);
 
 	UpdatePlatforms(dt);
+	DestroyEntitiesOutsideView();
 }
 
 //Written by Paul Bichler (D00242563)
@@ -83,6 +84,8 @@ void World::LoadTextures()
 	m_textures.Load(Textures::kVImpactRedPlatform, "Media/Textures/VRedImpactPlatform.png");
 	m_textures.Load(Textures::kVImpactBluePlatform, "Media/Textures/VBlueImpactPlatform.png");
 	m_textures.Load(Textures::kVImpactGreenPlatform, "Media/Textures/VGreenPlatform.png");
+
+	m_textures.Load(Textures::kActivatedCheckpointPlatform, "Media/Textures/CheckpointPlatformActivated.png");
 
 	m_textures.Load(Textures::kParticle, "Media/Textures/Particle.png");
 	m_textures.Load(Textures::kJumpSmoke, "Media/Textures/Explosion.png");

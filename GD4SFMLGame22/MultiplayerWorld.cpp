@@ -7,10 +7,11 @@
 MultiplayerWorld::MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds,
                                    FontHolder& fonts, MultiplayerGameState* state)
 	: World(output_target, sounds, fonts),
+	  m_checkoint(nullptr),
 	  m_client_player(nullptr),
+	  m_team_mate(nullptr),
 	  m_state(state)
 {
-	m_reached_goal_callback = [this] { OnReachedGoal(); };
 }
 
 void MultiplayerWorld::Update(const sf::Time dt)
@@ -89,11 +90,15 @@ void MultiplayerWorld::UpdatePlatform(const sf::Int8 platform_id,
 	// Get all platforms
 	// Set the new one to the correct color
 
-	for (const auto& platform : m_level_info.platforms)
+	for (auto& platform : m_level_info.platforms)
 	{
 		if (platform->GetID() == platform_id)
 		{
 			platform->SetType(platform_color);
+
+			//Initialize the first checkpoint (spawn platform)
+			if (m_checkoint == nullptr)
+				m_checkoint = platform.get();
 		}
 	}
 }
@@ -191,8 +196,10 @@ void MultiplayerWorld::HandleCollisions()
 
 	for (const SceneNode::Pair& pair : collision_pairs)
 	{
-		if (CollisionHandler::PlatformCollision(pair, m_reached_goal_callback, this))
+		if (CollisionHandler::PlatformCollision(pair, [this] { OnReachedCheckpoint(); }, this))
 			continue;
+
+		CollisionHandler::TrapCollision(pair, [this] { OnClientPlayerDeath(); });
 
 		//Get All Ground Ray Casts for player one and two
 		CollisionHandler::GetGroundRayCasts(player_pair, pair, Category::kRay);
@@ -206,7 +213,37 @@ sf::FloatRect MultiplayerWorld::GetBattlefieldBounds() const
 	return {};
 }
 
-void MultiplayerWorld::OnReachedGoal()
+void MultiplayerWorld::DestroyEntitiesOutsideView()
 {
-	Utility::Debug("Checkpoint Reached!");
+	Command command;
+	command.category = Category::Type::kPlayer;
+	command.action = DerivedAction<Entity>([this](Entity& e, sf::Time)
+	{
+		if (e.getPosition().y > m_camera.getCenter().y + m_camera.getSize().y / 2)
+		{
+			if (&e == static_cast<Entity*>(m_client_player))
+			{
+				OnClientPlayerDeath();
+			}
+		}
+	});
+
+	m_command_queue.Push(command);
+}
+
+void MultiplayerWorld::OnReachedCheckpoint()
+{
+	m_checkoint = m_client_player->GetCurrentPlatform();
+	m_checkoint->SetType(EPlatformType::kCheckpointActivated);
+}
+
+void MultiplayerWorld::OnClientPlayerDeath() const
+{
+	m_client_player->StopMovement();
+	const auto& parts = m_checkoint->GetParts();
+	PlatformPart* part = parts[parts.size() / 2];
+	sf::Vector2f position = part->getPosition();
+	position.y += m_client_player->GetSize().height;
+	position.x += part->GetSize().width / 2;
+	m_client_player->setPosition(position);
 }

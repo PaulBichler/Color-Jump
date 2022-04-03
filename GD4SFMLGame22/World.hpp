@@ -27,23 +27,22 @@ public:
 	virtual void Update(sf::Time dt);
 	virtual void Draw();
 	CommandQueue& GetCommandQueue();
-
 	virtual Character* AddCharacter(sf::Int8 identifier, bool is_client_player = false);
 
 private:
 	void LoadTextures();
 	void InitializeSceneLayers();
 	virtual void LoadLevel(LevelManager::LevelData current_level_data);
-	Character* AddCharacterWithColor(sf::Int8 identifier, EColorType color, sf::IntRect rect,
-	                                 sf::Vector2f spawn_pos);
+	Character* AddCharacterWithColor(sf::Int8 identifier, EColorType color, sf::IntRect rect, sf::Vector2f spawn_pos);
 	void UpdatePlatforms(sf::Time dt) const;
 
 protected:
 	sf::FloatRect GetViewBounds() const;
-
 	virtual void HandleCollisions() = 0;
 	virtual sf::FloatRect GetBattlefieldBounds() const = 0;
-	
+	virtual void DestroyEntitiesOutsideView() = 0;
+
+protected:
 	sf::RenderTarget& m_target;
 	sf::RenderTexture m_scene_texture;
 	sf::View m_camera;
@@ -53,10 +52,8 @@ protected:
 	SceneNode m_sceneGraph;
 	std::array<SceneNode*, static_cast<int>(Layers::kLayerCount)> m_scene_layers;
 	CommandQueue m_command_queue;
-
 	sf::FloatRect m_world_bounds;
 	BloomEffect m_bloom_effect;
-
 	LevelInfo m_level_info;
 	std::vector<Character*> m_players;
 };

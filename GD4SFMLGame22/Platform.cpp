@@ -142,14 +142,13 @@ void Platform::SetType(const EPlatformType type)
 			SetType(EPlatformType::kHorizontalRed);
 		}
 		break;
-	case EPlatformType::kNormal:
-	case EPlatformType::kHorizontalImpact:
-	case EPlatformType::kVerticalImpact:
-	case EPlatformType::kVerticalPulse:
-	case EPlatformType::kGoal:
-	case EPlatformType::kCheckpoint:
+	case EPlatformType::kCheckpointActivated:
+		{
+			SetTextureOnParts(m_textures.Get(Textures::kActivatedCheckpointPlatform));
+		}
 		break;
-	default: break;
+	default: 
+		break;
 	}
 }
 
@@ -187,6 +186,11 @@ void Platform::Update(sf::Time dt)
 sf::Int8 Platform::GetID() const
 {
 	return m_id;
+}
+
+std::vector<PlatformPart*>& Platform::GetParts()
+{
+	return m_platform_parts;
 }
 
 //Written by Paul Bichler (D00242563)

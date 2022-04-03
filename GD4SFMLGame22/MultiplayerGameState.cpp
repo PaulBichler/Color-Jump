@@ -452,8 +452,7 @@ void MultiplayerGameState::HandlePlayerEvent(sf::Packet& packet)
 	const auto itr = m_players.find(identifier);
 	if (itr != m_players.end())
 	{
-		itr->second->HandleNetworkEvent(static_cast<PlayerAction>(action),
-		                                m_world.GetCommandQueue());
+		itr->second->HandleNetworkEvent(static_cast<PlayerAction>(action), m_world.GetCommandQueue());
 	}
 }
 

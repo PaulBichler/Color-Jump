@@ -17,5 +17,6 @@ enum class EPlatformType
 	kHorizontalPulse = kHorizontalPulsePlatformPart,
 	kVerticalPulse = kVerticalPulsePlatformPart,
 	kGoal = kFinishPlatformPart,
-	kCheckpoint = kCheckpointPlatformPart
+	kCheckpoint = kCheckpointPlatformPart,
+	kCheckpointActivated = -kCheckpointPlatformPart
 };

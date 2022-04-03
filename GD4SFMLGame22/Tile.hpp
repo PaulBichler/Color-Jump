@@ -14,6 +14,7 @@ public:
 	unsigned GetCategory() const override;
 	sf::FloatRect GetBoundingRect() const override;
 	virtual bool HandleCollision(EColorType color);
+	sf::IntRect GetSize() const;
 
 protected:
 	ETileType m_type;

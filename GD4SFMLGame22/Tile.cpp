@@ -73,3 +73,8 @@ bool Tile::HandleCollision(const EColorType color)
 
 	return true;
 }
+
+sf::IntRect Tile::GetSize() const
+{
+	return m_sprite.getTextureRect();
+}

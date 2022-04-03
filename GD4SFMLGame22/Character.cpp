@@ -258,6 +258,11 @@ void Character::SetGrounded()
 	setPosition(getPosition().x, getPosition().y - 2);
 }
 
+sf::IntRect Character::GetSize() const
+{
+	return m_sprite.getTextureRect();
+}
+
 void Character::UpdateCurrent(const sf::Time dt, CommandQueue& commands)
 {
 	Entity::UpdateCurrent(dt, commands);

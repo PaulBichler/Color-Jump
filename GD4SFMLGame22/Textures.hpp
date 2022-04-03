@@ -13,5 +13,6 @@ enum class Textures
 	kVImpactRedPlatform,
 	kVImpactBluePlatform,
 	kVImpactGreenPlatform,
+	kActivatedCheckpointPlatform,
 	kJumpSmoke
 };
