@@ -501,7 +501,7 @@ void MultiplayerGameState::HandleUpdatePlatformColors(sf::Packet& packet)
 			m_world.SetTeammate(send_char);
 		}
 
-		m_world.UpdatePlatform(, platform_id, static_cast<EPlatformType>(platform_color));
+		m_world.UpdatePlatform(send_char->GetIdentifier(), platform_id, static_cast<EPlatformType>(platform_color));
 	}
 }
 
