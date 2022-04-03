@@ -217,7 +217,8 @@ void CollisionHandler::ChangeVerticalPlatformColor(const Character& player, Plat
 	}
 }
 
-void CollisionHandler::StopPlayerMovement(Character& player, const PlatformPart& platform_part, Platform* platform)
+void CollisionHandler::StopPlayerMovement(Character& player, const PlatformPart& platform_part,
+                                          Platform* platform)
 {
 	//Checks if platform is collidable with player
 	if (IsPlayerAtHisPlatform(player, platform))
@@ -244,7 +245,6 @@ bool CollisionHandler::CollideAndChangeColors(Character& player, const PlatformP
 }
 
 bool CollisionHandler::PlatformCollision(SceneNode::Pair pair,
-                                         const std::vector<Character*>& players,
                                          const std::function<void()>& callback,
                                          MultiplayerWorld* multiplayer_world)
 {
@@ -282,8 +282,8 @@ bool CollisionHandler::IsPlayerAtHisPlatform(const Character& player, const Plat
 		return true;
 	}
 
-	if (platform->GetPlatformType() == EPlatformType::kHorizontalImpact
-		|| platform->GetPlatformType() == EPlatformType::kVerticalImpact)
+	if (platform_type == EPlatformType::kHorizontalImpact
+		|| platform_type == EPlatformType::kVerticalImpact)
 	{
 		return true;
 	}
@@ -311,7 +311,7 @@ void CollisionHandler::GetGroundRayCasts(std::set<SceneNode::Pair>& pairs,
                                          const SceneNode::Pair pair,
                                          const Category::Type category)
 {
-	if (pair.first->GetCategory() == category || pair.second->GetCategory() == category)
+	if ((pair.first->GetCategory() & category) != 0 || (pair.second->GetCategory() & category) != 0)
 	{
 		pairs.insert(std::minmax(pair.first, pair.second));
 	}

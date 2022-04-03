@@ -43,7 +43,7 @@ GameServer::~GameServer()
 
 void GameServer::SendPackageToAll(sf::Packet packet) const
 {
-	for (std::size_t i = 0; i < m_connected_players; ++i)
+	for (sf::Int8 i = 0; i < m_connected_players; ++i)
 	{
 		if (m_peers[i]->m_ready)
 		{
@@ -269,6 +269,7 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 
 			packet >> player_id >> platform_id >> platform_color;
 
+			m_player_info[player_id].m_platform_colors.try_emplace(platform_id, platform_color);
 			NotifyPlayerPlatformChange(player_id, platform_id, platform_color);
 		}
 		break;
@@ -308,6 +309,28 @@ void GameServer::HandleIncomingConnections()
 		sf::Packet packet;
 		packet << static_cast<sf::Int8>(server::PacketType::kSpawnSelf);
 		packet << m_identifier_counter;
+
+		if (m_identifier_counter % 2 == 0)
+		{
+			const sf::Int8 connected_players = m_identifier_counter - 1;
+			const auto& platform_colors = m_player_info[connected_players].m_platform_colors;
+
+			const auto size = static_cast<sf::Int8>(platform_colors.size());
+			packet << size;
+
+			for (const auto& platform_color : platform_colors)
+			{
+				packet << platform_color.first << platform_color.second;
+			}
+		}
+		else
+		{
+			constexpr sf::Int8 int8 = 0;
+			packet << int8;
+		}
+
+		
+
 
 		m_peers[m_connected_players]->m_identifiers.emplace_back(m_identifier_counter);
 
@@ -373,9 +396,9 @@ void GameServer::InformWorldState(sf::TcpSocket& socket)
 {
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(server::PacketType::kInitialState);
-	packet << static_cast<sf::Int8>(m_player_count);
+	packet << m_player_count;
 
-	for (std::size_t i = 0; i < m_connected_players; ++i)
+	for (sf::Int8 i = 0; i < m_connected_players; ++i)
 	{
 		if (m_peers[i]->m_ready)
 		{
@@ -417,7 +440,7 @@ void GameServer::UpdateClientState() const
 {
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(server::PacketType::kUpdateClientState);
-	packet << static_cast<sf::Int8>(m_player_count);
+	packet << m_player_count;
 
 	for (const auto& player : m_player_info)
 	{

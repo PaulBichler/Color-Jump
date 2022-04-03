@@ -22,10 +22,10 @@ namespace GUI
 			m_text.setFillColor(sf::Color::White);
 			break;
 		case ButtonType::Selected: 
-			m_text.setFillColor(sf::Color::Blue);
+			m_text.setFillColor(sf::Color(231,150,53));
 			break;
 		case ButtonType::Pressed: 
-			m_text.setFillColor(sf::Color::Yellow);
+			m_text.setFillColor(sf::Color(122, 193, 67));
 			break;
 		case ButtonType::ButtonCount: break;
 		}

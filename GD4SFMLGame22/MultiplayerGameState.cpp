@@ -349,7 +349,20 @@ void MultiplayerGameState::HandleClientUpdate(sf::Packet& packet)
 void MultiplayerGameState::HandleSelfSpawn(sf::Packet& packet)
 {
 	sf::Int8 identifier;
-	packet >> identifier;
+	sf::Int8 size;
+	packet >> identifier >> size;
+
+	std::map<sf::Int8, sf::Int8> colors;
+
+	for (int i = 0; i < size; ++i)
+	{
+		sf::Int8 id;
+		sf::Int8 color;
+
+		packet >> id >> color;
+
+		colors.try_emplace(id, color);
+	}
 
 	const auto character = m_world.AddCharacter(identifier, true);
 	m_players[identifier].reset(new Player(&m_socket, identifier, GetContext().m_keys1));
@@ -358,6 +371,8 @@ void MultiplayerGameState::HandleSelfSpawn(sf::Packet& packet)
 
 	SendPlayerName(identifier, character->GetTeamIdentifier(),
 	               GetContext().m_player_data_manager->GetData().m_player_name);
+
+	m_world.UpdatePlatformColors(colors);
 }
 
 void MultiplayerGameState::HandleBroadcast(sf::Packet& packet)
@@ -404,12 +419,14 @@ void MultiplayerGameState::HandleInitialState(sf::Packet& packet)
 		sf::Int8 team_identifier;
 		sf::Vector2f position;
 		std::string name;
+
 		packet >> identifier >> position.x >> position.y >> team_identifier >> name;
 
 		Character* character = m_world.AddGhostCharacter(identifier);
 		character->setPosition(position);
 		character->SetTeamIdentifier(team_identifier);
 		character->SetName(name);
+		
 
 		m_players[identifier].reset(new Player(&m_socket, identifier, nullptr));
 	}

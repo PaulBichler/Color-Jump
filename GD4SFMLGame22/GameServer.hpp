@@ -36,8 +36,8 @@ private:
 	{
 		sf::Int8 m_team_identifier{};
 		sf::Vector2f m_position;
-		std::map<sf::Int8, bool> m_realtime_actions;
 		std::string name;
+		std::map<sf::Int8, sf::Int8> m_platform_colors;
 	};
 
 	using peer_ptr = std::unique_ptr<RemotePeer>;
@@ -68,13 +68,13 @@ private:
 	bool m_listening_state;
 	sf::Time m_client_timeout;
 
-	std::size_t m_max_connected_players;
-	std::size_t m_connected_players;
+	sf::Int8 m_max_connected_players;
+	sf::Int8 m_connected_players;
 
 	float m_world_height;
 	sf::FloatRect m_battlefield_rect;
 
-	std::size_t m_player_count;
+	sf::Int8 m_player_count;
 	std::map<sf::Int8, PlayerInfo> m_player_info;
 
 	std::vector<peer_ptr> m_peers;
