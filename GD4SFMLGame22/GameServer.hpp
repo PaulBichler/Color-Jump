@@ -19,7 +19,7 @@ public:
 	void NotifyPlayerSpawn(sf::Int32 identifier) const;
 	void NotifyPlayerRealtimeChange(sf::Int32 identifier, sf::Int32 action, bool action_enabled) const;
 	void NotifyPlayerEvent(sf::Int32 identifier, sf::Int32 action) const;
-	void NotifyPlayerNameSet(sf::Int32 identifier, std::string name) const;
+	void NotifyPlayerSet(sf::Int32 identifier, sf::Int32 team_id, const std::string& name) const;
 
 private:
 	struct RemotePeer

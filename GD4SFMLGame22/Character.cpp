@@ -51,6 +51,8 @@ Character::Character(const EColorType type, const TextureHolder& textures, const
 
 	m_name_text.setFont(fonts.Get(Fonts::Main));
 	m_name_text.setCharacterSize(15.f);
+	m_team_id_text.setFont(fonts.Get(Fonts::Main));
+	m_team_id_text.setCharacterSize(15.f);
 
 	Utility::Debug("Character created.");
 	Utility::CentreOrigin(m_sprite);
@@ -199,6 +201,11 @@ void Character::SetIdentifier(const int identifier)
 void Character::SetTeamIdentifier(const int identifier)
 {
 	m_team_identifier = identifier;
+
+	m_team_id_text.setString(std::to_string(identifier));
+	const sf::FloatRect bounds = m_team_id_text.getLocalBounds();
+	m_team_id_text.setOrigin(std::floor(bounds.left + bounds.width / 2.f),
+	                         m_sprite.getOrigin().y - 5.0f);
 }
 
 void Character::SetName(const std::string& name)
@@ -206,7 +213,8 @@ void Character::SetName(const std::string& name)
 	m_name = name;
 	m_name_text.setString(name);
 	const sf::FloatRect bounds = m_name_text.getLocalBounds();
-	m_name_text.setOrigin(std::floor(bounds.left + bounds.width / 2.f), (m_sprite.getOrigin().y + m_sprite.getTextureRect().height / 2.f) - 5.f);
+	m_name_text.setOrigin(std::floor(bounds.left + bounds.width / 2.f),
+	                      m_sprite.getOrigin().y + m_sprite.getTextureRect().height / 2.f - 5.f);
 }
 
 sf::Int32 Character::GetIdentifier() const
@@ -272,6 +280,7 @@ void Character::DrawCurrent(sf::RenderTarget& target, const sf::RenderStates sta
 {
 	target.draw(m_sprite, states);
 	target.draw(m_name_text, states);
+	target.draw(m_team_id_text, states);
 
 	if (m_show_jump_animation)
 		target.draw(m_jump_smoke_animation, states);

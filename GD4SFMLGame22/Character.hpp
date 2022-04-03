@@ -21,6 +21,7 @@ protected:
 	bool m_can_jump;
 	
 	sf::Text m_name_text;
+	sf::Text m_team_id_text;
 	SoundPlayer& m_sounds;
 	int m_identifier{};
 	int m_team_identifier{};

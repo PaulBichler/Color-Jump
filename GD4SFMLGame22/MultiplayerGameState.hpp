@@ -29,10 +29,10 @@ private:
 	void HandlePlayerEvent(sf::Packet& packet);
 	void HandleTeamSelection(sf::Packet& packet) const;
 	void HandleUpdatePlatformColors(sf::Packet& packet) const;
-	void HandleUpdatePlayerName(sf::Packet& packet) const;
+	void HandleUpdatePlayer(sf::Packet& packet) const;
 	void HandlePacket(sf::Int32 packet_type, sf::Packet& packet);
 
-	void SendPlayerName(sf::Int32 identifier, const std::string& name);
+	void SendPlayerName(const sf::Int32 identifier, const sf::Int32 team_id, const std::string& name);
 
 private:
 	MultiplayerWorld m_world;

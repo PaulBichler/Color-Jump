@@ -63,7 +63,8 @@ void GameServer::NotifyPlayerSpawn(const sf::Int32 identifier) const
 }
 
 //This is the same as PlayerEvent, but for real-time actions. This means that we are changing an ongoing state to either true or false, so we add a Boolean value to the parameters
-void GameServer::NotifyPlayerRealtimeChange(const sf::Int32 identifier, const sf::Int32 action, const bool action_enabled) const
+void GameServer::NotifyPlayerRealtimeChange(const sf::Int32 identifier, const sf::Int32 action,
+                                            const bool action_enabled) const
 {
 	sf::Packet packet;
 	//First thing for every packet is what type of packet it is
@@ -90,12 +91,15 @@ void GameServer::NotifyPlayerEvent(const sf::Int32 identifier, const sf::Int32 a
 	SendPackageToAll(packet);
 }
 
-void GameServer::NotifyPlayerNameSet(sf::Int32 identifier, const std::string name) const
+void GameServer::NotifyPlayerSet(const sf::Int32 identifier, const sf::Int32 team_id,
+                                     const std::string
+                                     & name) const
 {
 	sf::Packet packet;
 	//First thing for every packet is what type of packet it is
-	packet << static_cast<sf::Int32>(server::PacketType::kUpdatePlayerName);
+	packet << static_cast<sf::Int32>(server::PacketType::kUpdatePlayer);
 	packet << identifier;
+	packet << team_id;
 	packet << name;
 
 	SendPackageToAll(packet);
@@ -254,11 +258,9 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 			for (sf::Int32 i = 0; i < num_player; ++i)
 			{
 				sf::Int32 identifier;
-				sf::Int32 team_identifier;
 				sf::Vector2f position;
-				packet >> identifier >> position.x >> position.y >> team_identifier;
+				packet >> identifier >> position.x >> position.y;
 				m_player_info[identifier].m_position = position;
-				m_player_info[identifier].m_team_identifier = team_identifier;
 			}
 		}
 		break;
@@ -277,15 +279,17 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 
 	case client::PacketType::kGameEvent:
 		break;
-	case client::PacketType::kPlayerNameSet:
+	case client::PacketType::kPlayerUpdate:
 		{
 			sf::Int32 identifier;
+			sf::Int32 team_id;
 			std::string name;
-			packet >> identifier >> name;
+			packet >> identifier >> team_id >> name;
 			name = name.substr(0, 20);
 			m_player_info[identifier].name = name;
+			m_player_info[identifier].m_team_identifier = team_id;
 
-			NotifyPlayerNameSet(identifier, name);
+			NotifyPlayerSet(identifier, team_id, name);
 		}
 		break;
 	default:
@@ -303,7 +307,6 @@ void GameServer::HandleIncomingConnections()
 	if (m_listener_socket.accept(m_peers[m_connected_players]->m_socket) == sf::TcpListener::Done)
 	{
 		//Order the new client to spawn its player 1
-		m_player_info[m_identifier_counter].m_team_identifier = 0;
 		m_player_info[m_identifier_counter].m_position = sf::Vector2f(0, 0);
 
 		sf::Packet packet;
@@ -384,10 +387,10 @@ void GameServer::InformWorldState(sf::TcpSocket& socket)
 			{
 				const PlayerInfo player_info = m_player_info[identifier];
 				packet << identifier
-						<< player_info.m_position.x
-						<< player_info.m_position.y
-						<< player_info.m_team_identifier
-						<< player_info.name;
+					<< player_info.m_position.x
+					<< player_info.m_position.y
+					<< player_info.m_team_identifier
+					<< player_info.name;
 			}
 		}
 	}

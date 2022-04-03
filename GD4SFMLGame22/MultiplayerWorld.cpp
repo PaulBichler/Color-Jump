@@ -93,7 +93,7 @@ void MultiplayerWorld::UpdatePlatform(const sf::Int32 platform_id, const EPlatfo
 	}
 }
 
-Character* MultiplayerWorld::AddCharacter(sf::Int32 identifier, bool is_client_player)
+Character* MultiplayerWorld::AddCharacter(const sf::Int32 identifier, const bool is_client_player)
 {
 	Character* player_character = World::AddCharacter(identifier, is_client_player);
 
