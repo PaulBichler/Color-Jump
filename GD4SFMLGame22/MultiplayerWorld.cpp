@@ -4,7 +4,8 @@
 #include "PlatformPart.hpp"
 #include "Utility.hpp"
 
-MultiplayerWorld::MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds, FontHolder& fonts, MultiplayerGameState* state)
+MultiplayerWorld::MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds,
+                                   FontHolder& fonts, MultiplayerGameState* state)
 	: World(output_target, sounds, fonts),
 	  m_checkoint(nullptr),
 	  m_client_player(nullptr),
@@ -17,7 +18,7 @@ void MultiplayerWorld::Update(const sf::Time dt)
 {
 	World::Update(dt);
 
-	if(m_client_player != nullptr)
+	if (m_client_player != nullptr)
 	{
 		sf::Vector2f camera_pos = m_camera.getCenter();
 		camera_pos.x = m_client_player->getPosition().x;
@@ -58,7 +59,8 @@ Character* MultiplayerWorld::AddGhostCharacterWithColor(const sf::Int8 identifie
                                                         const sf::IntRect& int_rect,
                                                         const sf::Vector2f& spawn_pos)
 {
-	std::unique_ptr<GhostCharacter> player(new GhostCharacter(color, m_textures, m_fonts, int_rect, m_sounds));
+	std::unique_ptr<GhostCharacter> player(
+		new GhostCharacter(color, m_textures, m_fonts, int_rect, m_sounds));
 	player->setPosition(spawn_pos);
 	player->SetIdentifier(identifier);
 	player->SetTeamIdentifier((identifier + 1) / 2);
@@ -82,7 +84,8 @@ Character* MultiplayerWorld::AddGhostCharacter(const sf::Int8 identifier)
 	                                  m_level_info.m_blue_player_spawn_pos);
 }
 
-void MultiplayerWorld::UpdatePlatform(const sf::Int8 platform_id, const EPlatformType platform_color)
+void MultiplayerWorld::UpdatePlatform(const sf::Int8 platform_id,
+                                      const EPlatformType platform_color) const
 {
 	// Get all platforms
 	// Set the new one to the correct color
@@ -105,7 +108,10 @@ Character* MultiplayerWorld::AddCharacter(const sf::Int8 identifier, const bool 
 	Character* player_character = World::AddCharacter(identifier, is_client_player);
 
 	if (is_client_player)
+	{
 		m_client_player = player_character;
+		UpdateCharacters(player_character->GetTeamIdentifier());
+	}
 
 	return player_character;
 }
@@ -137,7 +143,8 @@ Character* MultiplayerWorld::GetTeammate() const
 	return m_team_mate;
 }
 
-void MultiplayerWorld::UpdatePlatformColors(const std::map<sf::Int8, sf::Int8>& platform_colors) const
+void MultiplayerWorld::UpdatePlatformColors(
+	const std::map<sf::Int8, sf::Int8>& platform_colors) const
 {
 	for (auto& value : platform_colors)
 	{
@@ -148,6 +155,25 @@ void MultiplayerWorld::UpdatePlatformColors(const std::map<sf::Int8, sf::Int8>& 
 				platform->SetType(static_cast<EPlatformType>(value.second));
 			}
 		}
+	}
+}
+
+void MultiplayerWorld::UpdateCharacters(const sf::Int8 team_id) const
+{
+	for (Character* player : m_players)
+	{
+		if (player->GetTeamIdentifier() != team_id)
+		{
+			player->SetColor();
+		}
+	}
+}
+
+void MultiplayerWorld::UpdateCharacters() const
+{
+	if (GetClientCharacter() != nullptr)
+	{
+		UpdateCharacters(GetClientCharacter()->GetTeamIdentifier());
 	}
 }
 
