@@ -132,6 +132,20 @@ Character* MultiplayerWorld::GetTeammate() const
 	return m_team_mate;
 }
 
+void MultiplayerWorld::UpdatePlatformColors(const std::map<sf::Int8, sf::Int8>& platform_colors) const
+{
+	for (auto& value : platform_colors)
+	{
+		for (const auto& platform : m_level_info.platforms)
+		{
+			if (platform->GetID() == value.first)
+			{
+				platform->SetType(static_cast<EPlatformType>(value.second));
+			}
+		}
+	}
+}
+
 void MultiplayerWorld::HandleCollisions()
 {
 	std::set<SceneNode::Pair> collision_pairs;
@@ -147,23 +161,18 @@ void MultiplayerWorld::HandleCollisions()
 		return character_cond || ray_cond;
 	});
 
-	std::map<Character*, std::set<SceneNode::Pair>> player_pairs;
-
-	for (auto players : m_players)
-	{
-		player_pairs.insert(std::pair<Character*, std::set<SceneNode::Pair>>(players, std::set<SceneNode::Pair>()));
-	}
+	std::set<SceneNode::Pair> player_pair;
 
 	for (const SceneNode::Pair& pair : collision_pairs)
 	{
-		if (CollisionHandler::PlatformCollision(pair, m_players, m_reached_goal_callback, this))
+		if (CollisionHandler::PlatformCollision(pair, m_reached_goal_callback, this))
 			continue;
 
 		//Get All Ground Ray Casts for player one and two
-		CollisionHandler::GetGroundRayCasts(player_pairs, pair, Category::kRay);
+		CollisionHandler::GetGroundRayCasts(player_pair, pair, Category::kRay);
 	}
 
-	CollisionHandler::PlayerGroundRayCast(player_pairs);
+	CollisionHandler::PlayerGroundRayCast(player_pair);
 }
 
 sf::FloatRect MultiplayerWorld::GetBattlefieldBounds() const

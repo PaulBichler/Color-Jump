@@ -19,6 +19,7 @@ public:
 	void SetPlatformOnCharacter(Character* character, sf::Int8 platform_id) const;
 	void SetTeammate(Character* character);
 	Character* GetTeammate() const;
+	void UpdatePlatformColors(const std::map<sf::Int8, sf::Int8>& platform_colors) const;
 
 protected:
 	void HandleCollisions() override;

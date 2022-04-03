@@ -34,7 +34,6 @@ public:
 	static bool TileCollision(SceneNode::Pair pair);
 	static void GroundPlayerAndChangePlatformColor(Character& player, Platform* platform, MultiplayerWorld* multiplayer_world = nullptr);
 	static bool PlatformCollision(SceneNode::Pair pair,
-	                              const std::vector<Character*>& players,
 	                              const std::function<void()>& callback,
 	                              MultiplayerWorld* multiplayer_world = nullptr);
 	static void GetGroundRayCasts(std::set<SceneNode::Pair>& pairs, SceneNode::Pair pair,
