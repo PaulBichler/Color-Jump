@@ -43,8 +43,7 @@ protected:
 
 	virtual void HandleCollisions() = 0;
 	virtual sf::FloatRect GetBattlefieldBounds() const = 0;
-	virtual void SetCamera() = 0;
-
+	
 	sf::RenderTarget& m_target;
 	sf::RenderTexture m_scene_texture;
 	sf::View m_camera;

@@ -80,9 +80,9 @@ SceneNode::Ptr LevelLoader::LoadLevelLayer(const std::string& csv_path, LevelInf
 			case kVerticalBluePlatformPart:
 			case kVerticalRedPlatformPart:
 			case kFinishPlatformPart:
+			case kCheckpointPlatformPart:
 				//Construct a platform (the platform type is determined by the tile type)
 				{
-					
 					//Construct a platform (the platform type is determined by the tile type)
 					CreatePlatform(level_info, tile_type, row, col, level_parent, spawn_pos, platform_id++);
 				}

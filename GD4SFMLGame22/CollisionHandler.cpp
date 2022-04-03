@@ -186,8 +186,10 @@ void CollisionHandler::IsAtTheFinishLine(const std::vector<Character*>& players,
                                          & callback, const Platform* platform,
                                          const sf::Int8 team_id)
 {
+	EPlatformType platform_type = platform->GetPlatformType();
+
 	//Check Win Condition
-	if (platform->GetPlatformType() == EPlatformType::kGoal)
+	if (platform_type == EPlatformType::kGoal || platform_type == EPlatformType::kCheckpoint)
 	{
 		bool is_playing = false;
 		for (const auto character : players)
@@ -217,8 +219,7 @@ void CollisionHandler::ChangeVerticalPlatformColor(const Character& player, Plat
 	}
 }
 
-void CollisionHandler::StopPlayerMovement(Character& player, const PlatformPart& platform_part,
-                                          Platform* platform)
+void CollisionHandler::StopPlayerMovement(Character& player, const PlatformPart& platform_part, Platform* platform)
 {
 	//Checks if platform is collidable with player
 	if (IsPlayerAtHisPlatform(player, platform))

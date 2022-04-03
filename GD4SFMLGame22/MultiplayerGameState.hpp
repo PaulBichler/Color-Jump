@@ -27,7 +27,7 @@ private:
 	void HandleInitialState(sf::Packet& packet);
 	void HandleRealtimeChange(sf::Packet& packet);
 	void HandlePlayerEvent(sf::Packet& packet);
-	void HandleTeamSelection(sf::Packet& packet) const;
+	void HandleTeamSelection(sf::Packet& packet);
 	void HandleUpdatePlatformColors(sf::Packet& packet) const;
 	void HandleUpdatePlayer(sf::Packet& packet) const;
 	void HandlePacket(sf::Int8 packet_type, sf::Packet& packet);

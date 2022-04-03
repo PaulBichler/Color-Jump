@@ -19,5 +19,6 @@ enum ETileType
 	kHorizontalPulsePlatformPart = 16,
 	kVerticalPulsePlatformPart = -4,
 	kFinishPlatformPart = 18,
+	kCheckpointPlatformPart = 14,
 	kSpikes = 12
 };

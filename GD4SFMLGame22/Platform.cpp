@@ -147,6 +147,8 @@ void Platform::SetType(const EPlatformType type)
 	case EPlatformType::kVerticalImpact:
 	case EPlatformType::kVerticalPulse:
 	case EPlatformType::kGoal:
+	case EPlatformType::kCheckpoint:
+		break;
 	default: break;
 	}
 }

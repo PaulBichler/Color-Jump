@@ -425,8 +425,7 @@ void MultiplayerGameState::HandleRealtimeChange(sf::Packet& packet)
 	const auto itr = m_players.find(identifier);
 	if (itr != m_players.end())
 	{
-		itr->second->HandleNetworkRealtimeChange(static_cast<PlayerAction>(action),
-		                                         action_enabled);
+		itr->second->HandleNetworkRealtimeChange(static_cast<PlayerAction>(action), action_enabled);
 	}
 }
 
@@ -444,7 +443,7 @@ void MultiplayerGameState::HandlePlayerEvent(sf::Packet& packet)
 	}
 }
 
-void MultiplayerGameState::HandleTeamSelection(sf::Packet& packet) const
+void MultiplayerGameState::HandleTeamSelection(sf::Packet& packet)
 {
 	sf::Int8 player_count;
 	packet >> player_count;
@@ -456,6 +455,7 @@ void MultiplayerGameState::HandleTeamSelection(sf::Packet& packet) const
 
 		Character* character = m_world.GetCharacter(identifier);
 		character->SetTeamIdentifier(team_identifier);
+		m_world.AddCharacterToTeam(character, team_identifier);
 	}
 }
 

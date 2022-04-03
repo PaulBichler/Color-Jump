@@ -16,14 +16,19 @@ public:
 	Character* AddGhostCharacter(const sf::Int8 identifier);
 	void UpdatePlatform(const sf::Int8 platform_id, const EPlatformType platform_color) const;
 	Character* AddCharacter(const sf::Int8 identifier, const bool is_client_player = false) override;
+	void AddCharacterToTeam(Character* character, sf::Int8 team_id);
+	void RemoveCharacterFromTeam(Character* character, sf::Int8 team_id);
 
 protected:
-	void SetCamera() override;
 	void HandleCollisions() override;
 	sf::FloatRect GetBattlefieldBounds() const override;
 
 private:
+	void OnReachedGoal();
+
+private:
 	Character* m_client_player;
+	std::map<int, std::vector<Character*>> m_teams;
 	std::function<void()> m_lose_callback;
 	std::function<void()> m_reached_goal_callback;
 

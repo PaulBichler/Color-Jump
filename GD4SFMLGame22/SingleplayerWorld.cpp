@@ -35,10 +35,6 @@ void SinglePlayerWorld::SetWinCallback(const std::function<void()>& callback)
 	m_win_callback = callback;
 }
 
-void SinglePlayerWorld::SetCamera()
-{
-}
-
 //Written by Paul Bichler (D00242563)
 //Returns camera bounds + a small area at the top to prevent players from dying when jumping out of the camera bounds.
 sf::FloatRect SinglePlayerWorld::GetBattlefieldBounds() const

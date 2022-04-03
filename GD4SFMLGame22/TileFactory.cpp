@@ -69,8 +69,7 @@ TileFactory::TileFactory(TextureHolder& textures, FontHolder& fonts, const sf::V
 }
 
 //Written by Paul Bichler (D00242563)
-PlatformPart* TileFactory::CreatePlatformPart(const ETileType tile_type, sf::Vector2f spawn_pos,
-                                              Platform* parent) const
+PlatformPart* TileFactory::CreatePlatformPart(const ETileType tile_type, sf::Vector2f spawn_pos, Platform* parent) const
 {
 	const sf::IntRect sub_rect = GetSubRect(tile_type, spawn_pos);
 

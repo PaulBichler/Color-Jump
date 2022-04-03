@@ -24,8 +24,7 @@ World::World(sf::RenderTarget& output_target, SoundPlayer& sounds, FontHolder& f
 
 	LoadTextures();
 	InitializeSceneLayers();
-	m_camera.setCenter(m_camera.getSize().x / 2.f,
-	                   m_world_bounds.height - m_camera.getSize().y / 2.f);
+	m_camera.setCenter(m_camera.getSize().x / 2.f, m_world_bounds.height - m_camera.getSize().y / 2.f);
 }
 
 void World::Update(const sf::Time dt)

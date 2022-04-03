@@ -9,6 +9,7 @@ MultiplayerWorld::MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer&
 	  m_client_player(nullptr),
 	  m_state(state)
 {
+	m_reached_goal_callback = [this] { OnReachedGoal(); };
 }
 
 void MultiplayerWorld::Update(const sf::Time dt)
@@ -43,6 +44,7 @@ Character* MultiplayerWorld::GetCharacter(const sf::Int8 identifier) const
 void MultiplayerWorld::RemoveCharacter(const sf::Int8 identifier)
 {
 	Character* character = GetCharacter(identifier);
+	RemoveCharacterFromTeam(character, character->GetTeamIdentifier());
 	if (character)
 	{
 		character->Destroy();
@@ -103,8 +105,17 @@ Character* MultiplayerWorld::AddCharacter(const sf::Int8 identifier, const bool 
 	return player_character;
 }
 
-void MultiplayerWorld::SetCamera()
+void MultiplayerWorld::AddCharacterToTeam(Character* character, sf::Int8 team_id)
 {
+	m_teams[team_id].emplace_back(character);
+}
+
+void MultiplayerWorld::RemoveCharacterFromTeam(Character* character, sf::Int8 team_identifier)
+{
+	const auto begin = m_teams[team_identifier].begin();
+	const auto end = m_teams[team_identifier].end();
+	const auto erasePos = std::find(begin, end, character);
+	m_teams[team_identifier].erase(erasePos);
 }
 
 void MultiplayerWorld::HandleCollisions()
@@ -126,8 +137,7 @@ void MultiplayerWorld::HandleCollisions()
 
 	for (auto players : m_players)
 	{
-		player_pairs.insert(
-			std::pair<Character*, std::set<SceneNode::Pair>>(players, std::set<SceneNode::Pair>()));
+		player_pairs.insert(std::pair<Character*, std::set<SceneNode::Pair>>(players, std::set<SceneNode::Pair>()));
 	}
 
 	for (const SceneNode::Pair& pair : collision_pairs)
@@ -145,4 +155,9 @@ void MultiplayerWorld::HandleCollisions()
 sf::FloatRect MultiplayerWorld::GetBattlefieldBounds() const
 {
 	return {};
+}
+
+void MultiplayerWorld::OnReachedGoal()
+{
+
 }
