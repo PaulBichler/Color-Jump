@@ -23,12 +23,13 @@ MenuState::MenuState(StateStack& stack, Context context)
 
 	m_background_sprite.setTexture(texture);
 
-	std::shared_ptr<GUI::Button> play_button;
+	//todo coop play button removed, because coop mode is currently broken
+	/*std::shared_ptr<GUI::Button> play_button;
 	CreateButton(context, play_button, 100, 250, "Play", [this]
 	{
 		RequestStackPop();
 		RequestStackPush(StateID::kGame);
-	});
+	});*/
 
 	std::shared_ptr<GUI::Button> host_button;
 	CreateButton(context, host_button, 100, 300, "Host", [this]
@@ -56,7 +57,7 @@ MenuState::MenuState(StateStack& stack, Context context)
 		RequestStackPop();
 	});
 
-	m_gui_container.Pack(play_button);
+	/*m_gui_container.Pack(play_button);*/
 	m_gui_container.Pack(host_button);
 	m_gui_container.Pack(join_button);
 	m_gui_container.Pack(settings_button);
