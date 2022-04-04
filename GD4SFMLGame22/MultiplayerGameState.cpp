@@ -72,10 +72,11 @@ MultiplayerGameState::MultiplayerGameState(StateStack& stack, const Context cont
 	}
 	else
 	{
-		ip = GetAddressFromFile();
+		/*ip = GetAddressFromFile();*/
+		ip = context.m_player_data_manager->GetData().m_ip_address;
 	}
 
-	if (sf::TcpSocket::Done == m_socket.connect(ip, SERVER_PORT, sf::seconds(60.f)))
+	if (sf::TcpSocket::Done == m_socket.connect(ip, SERVER_PORT, sf::seconds(10.f)))
 	{
 		m_connected = true;
 	}

@@ -11,5 +11,6 @@ enum class StateID
 	kLevelLose,
 	kHostGame,
 	kJoinGame,
-	kNetworkPause
+	kNetworkPause,
+	kIpSelect
 };

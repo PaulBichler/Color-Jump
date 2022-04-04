@@ -13,6 +13,8 @@ void PlayerDataManager::Save() const
 
 	out << m_player_data.m_player_name
 		<< "\n"
+		<< m_player_data.m_ip_address
+		<< "\n"
 		<< std::to_string(static_cast<int>(PlayerAction::kMoveLeft)) << "," << std::to_string(m_player_data.m_player1_keybindings.GetAssignedKey(PlayerAction::kMoveLeft)) << ";"
 		<< std::to_string(static_cast<int>(PlayerAction::kMoveRight)) << "," << std::to_string(m_player_data.m_player1_keybindings.GetAssignedKey(PlayerAction::kMoveRight)) << ";"
 		<< std::to_string(static_cast<int>(PlayerAction::kMoveUp)) << "," << std::to_string(m_player_data.m_player1_keybindings.GetAssignedKey(PlayerAction::kMoveUp)) << ";"
@@ -35,10 +37,16 @@ void PlayerDataManager::Load()
 	}
 
 	std::string line;
+
+	//Load Name
 	std::getline(in, line);
 	m_player_data.m_player_name = line.substr(0, 20.f);
 
+	//Load Ip Address
+	std::getline(in, line);
+	m_player_data.m_ip_address = line.substr(0, 25.f);
 
+	//Load Key Bindings
 	for(int i = 0; i < 2; i++)
 	{
 		std::getline(in, line);

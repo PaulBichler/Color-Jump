@@ -198,6 +198,9 @@
     <ClCompile Include="PlayerDataManager.cpp">
       <Filter>Source Files\Player</Filter>
     </ClCompile>
+    <ClCompile Include="IpSelectState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Textures.hpp">
@@ -400,6 +403,9 @@
     </ClInclude>
     <ClInclude Include="PlayerDataManager.hpp">
       <Filter>Header Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="IpSelectState.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
