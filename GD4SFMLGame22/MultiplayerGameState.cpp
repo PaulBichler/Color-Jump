@@ -185,7 +185,7 @@ void MultiplayerGameState::SendTeamDeath(sf::Int8 team_id)
 	packet << static_cast<sf::Int8>(client::PacketType::kTeamDeath);
 	packet << team_id;
 
-	m_socket.send(packet);
+	m_context.m_socket->send(packet);
 }
 
 void MultiplayerGameState::SendCheckpointReached(sf::Int8 team_id, sf::Int8 platform_id)
@@ -195,7 +195,7 @@ void MultiplayerGameState::SendCheckpointReached(sf::Int8 team_id, sf::Int8 plat
 	packet << team_id;
 	packet << platform_id;
 
-	m_socket.send(packet);
+	m_context.m_socket->send(packet);
 }
 
 void MultiplayerGameState::SendClientDisconnect(sf::Int8 identifier)
@@ -204,7 +204,7 @@ void MultiplayerGameState::SendClientDisconnect(sf::Int8 identifier)
 	packet << static_cast<sf::Int8>(client::PacketType::kQuit);
 	packet << identifier;
 
-	m_socket.send(packet);
+	m_context.m_socket->send(packet);
 }
 
 void MultiplayerGameState::UpdateBroadcastMessage(const sf::Time elapsed_time)
@@ -282,10 +282,6 @@ void MultiplayerGameState::HandleSelfSpawn(sf::Packet& packet)
 	character->SetName(name);
 	m_players[identifier].reset(new Player(m_context.m_socket, identifier, GetContext().m_keys1));
 	m_local_player_identifier = identifier;
-
-
-	
-
 }
 
 void MultiplayerGameState::HandleBroadcast(sf::Packet& packet)

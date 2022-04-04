@@ -222,15 +222,15 @@ void GameServer::NotifyTeamChange(const sf::Int8 identifier, const sf::Int8 team
 
 void GameServer::NotifyGameStart()
 {
-	packet << static_cast<sf::Int8>(server::PacketType::kStartGame);
 	sf::Packet packet;
+	packet << static_cast<sf::Int8>(server::PacketType::kStartGame);
 	SendToAll(packet);
 
-	{
 	for (const auto& peer : m_peers)
+	{
 		packet.clear();
-		peer->m_socket.send(packet);
 		CreateSpawnSelfPacket(packet, peer->m_identifier);
+		peer->m_socket.send(packet);
 	}
 }
 
@@ -244,7 +244,8 @@ void GameServer::NotifyTeamCheckpointSet(sf::Int8 team_id, sf::Int8 platform_id)
 	SendPackageToAll(packet);
 }
 
-void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer, bool& detected_timeout)
+void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer,
+                                      bool& detected_timeout)
 {
 	sf::Int8 packet_type;
 	packet >> packet_type;
@@ -336,7 +337,7 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 	}
 }
 
-void GameServer::CreateSpawnSelfPacket(sf::Packet& packet, sf::Int8 id)
+void GameServer::CreateSpawnSelfPacket(sf::Packet& packet, const sf::Int8 id)
 {
 	packet << static_cast<sf::Int8>(server::PacketType::kSpawnSelf);
 
@@ -357,8 +358,6 @@ void GameServer::CreateSpawnSelfPacket(sf::Packet& packet, sf::Int8 id)
 	packet << id;
 	packet << m_player_info[id].m_team_identifier;
 	packet << m_player_info[id].name;
-
-	
 }
 
 void GameServer::HandleIncomingConnections()

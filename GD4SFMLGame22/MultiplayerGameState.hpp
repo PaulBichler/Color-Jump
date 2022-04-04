@@ -28,7 +28,7 @@ private:
 	void HandleInitialState(sf::Packet& packet);
 	void HandleUpdatePlatformColors(sf::Packet& packet);
 	void HandleUpdatePlayer(sf::Packet& packet) const;
-	void HandleMission(sf::Packet& packet);
+	void HandleMission(sf::Packet& packet) const;
 	void HandleTeamRespawn(sf::Packet& packet) const;
 	void HandleTeamCheckpointSet(sf::Packet& packet);
 	void HandlePacket(sf::Int8 packet_type, sf::Packet& packet);
