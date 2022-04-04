@@ -167,7 +167,8 @@
     <ClCompile Include="GameServer.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="GhostCharacter.cpp" />
-    <ClCompile Include="IpSelectState.cpp" />
+    <ClCompile Include="HostSettingsState.cpp" />
+    <ClCompile Include="JoinSettingsState.cpp" />
     <ClCompile Include="KeyBinding.cpp" />
     <ClCompile Include="Label.cpp" />
     <ClCompile Include="LevelLoader.cpp" />
@@ -226,7 +227,8 @@
     <ClInclude Include="GameServer.hpp" />
     <ClInclude Include="GameState.hpp" />
     <ClInclude Include="GhostCharacter.hpp" />
-    <ClInclude Include="IpSelectState.hpp" />
+    <ClInclude Include="HostSettingsState.hpp" />
+    <ClInclude Include="JoinSettingsState.hpp" />
     <ClInclude Include="KeyBinding.hpp" />
     <ClInclude Include="Label.hpp" />
     <ClInclude Include="Layers.hpp" />

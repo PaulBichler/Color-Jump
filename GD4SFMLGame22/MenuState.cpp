@@ -34,14 +34,13 @@ MenuState::MenuState(StateStack& stack, Context context)
 	std::shared_ptr<GUI::Button> host_button;
 	CreateButton(context, host_button, 100, 300, "Host", [this]
 	{
-		RequestStackPop();
-		RequestStackPush(StateID::kHostGame);
+		RequestStackPush(StateID::kHostSettings);
 	});
 
 	std::shared_ptr<GUI::Button> join_button;
 	CreateButton(context, join_button, 100, 350, "Join", [this]
 	{
-		RequestStackPush(StateID::kIpSelect);
+		RequestStackPush(StateID::kJoinSettings);
 	});
 
 	std::shared_ptr<GUI::Button> settings_button;
