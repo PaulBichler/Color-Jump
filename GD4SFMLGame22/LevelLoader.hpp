@@ -15,6 +15,15 @@ struct LevelInfo
 	sf::Vector2f m_red_player_spawn_pos;
 
 	std::vector<std::unique_ptr<Platform>> platforms;
+
+	Platform* GetPlatformWithID(const sf::Int8 platform_id) const
+	{
+		for (const auto& platform : platforms)
+			if (platform->GetID() == platform_id)
+				return platform.get();
+
+		return nullptr;
+	}
 };
 
 class LevelLoader

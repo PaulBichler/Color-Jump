@@ -76,9 +76,11 @@ void StateStack::ApplyPendingChanges()
 				m_stack.emplace_back(CreateState(change.m_state_id));
 				break;
 			case Action::Pop:
+				m_stack.back()->OnStackPopped();
 				m_stack.pop_back();
 				break;
 			case Action::Clear:
+				for (const auto& state : m_stack) state->OnStackPopped();
 				m_stack.clear();
 				break;
 		}

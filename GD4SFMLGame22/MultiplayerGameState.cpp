@@ -6,6 +6,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <thread>
 #include <SFML/Network/Packet.hpp>
 #include "GameServer.hpp"
 #include "NetworkProtocol.hpp"
@@ -25,6 +26,17 @@ MultiplayerGameState::MultiplayerGameState(StateStack& stack, const Context cont
 
 	//Play game theme
 	context.m_music->Play(MusicThemes::kMissionTheme);
+}
+
+void MultiplayerGameState::OnStackPopped()
+{
+	//This state is popped --> disconnect the player
+	SendClientDisconnect(m_world.GetClientCharacter()->GetIdentifier());
+
+	//SendClientDisconnect send a packet to the socket through a threaded operation.
+	//Since this instance is destroyed immediately after this method is called, we need to wait
+	//a bit to make sure the thread can finish.
+	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
 void MultiplayerGameState::Draw()
@@ -125,6 +137,12 @@ bool MultiplayerGameState::Update(const sf::Time dt)
 
 bool MultiplayerGameState::HandleEvent(const sf::Event& event)
 {
+	if (event.type == sf::Event::Closed)
+	{
+		//window is closed (disconnect the client)
+		SendClientDisconnect(m_world.GetClientCharacter()->GetIdentifier());
+	}
+
 	//Game input handling
 	CommandQueue& commands = m_world.GetCommandQueue();
 
@@ -159,6 +177,34 @@ void MultiplayerGameState::SendMission(const sf::Int8 player_id)
 	packet << player_id;
 
 	m_context.m_socket->send(packet);
+}
+
+void MultiplayerGameState::SendTeamDeath(sf::Int8 team_id)
+{
+	sf::Packet packet;
+	packet << static_cast<sf::Int8>(client::PacketType::kTeamDeath);
+	packet << team_id;
+
+	m_socket.send(packet);
+}
+
+void MultiplayerGameState::SendCheckpointReached(sf::Int8 team_id, sf::Int8 platform_id)
+{
+	sf::Packet packet;
+	packet << static_cast<sf::Int8>(client::PacketType::kCheckpointReached);
+	packet << team_id;
+	packet << platform_id;
+
+	m_socket.send(packet);
+}
+
+void MultiplayerGameState::SendClientDisconnect(sf::Int8 identifier)
+{
+	sf::Packet packet;
+	packet << static_cast<sf::Int8>(client::PacketType::kQuit);
+	packet << identifier;
+
+	m_socket.send(packet);
 }
 
 void MultiplayerGameState::UpdateBroadcastMessage(const sf::Time elapsed_time)
@@ -333,7 +379,6 @@ void MultiplayerGameState::HandleUpdatePlayer(sf::Packet& packet) const
 void MultiplayerGameState::HandleMission(sf::Packet& packet) const
 {
 	sf::Int8 team_id;
-
 	packet >> team_id;
 
 	if (team_id == m_world.GetClientCharacter()->GetTeamIdentifier())
@@ -343,6 +388,30 @@ void MultiplayerGameState::HandleMission(sf::Packet& packet) const
 	else
 	{
 		RequestStackPush(StateID::kLevelLose);
+	}
+}
+
+void MultiplayerGameState::HandleTeamRespawn(sf::Packet& packet) const
+{
+	sf::Int8 team_id;
+	packet >> team_id;
+
+	if(m_world.GetClientCharacter()->GetTeamIdentifier() == team_id)
+	{
+		m_world.RespawnClientCharacter();
+	}
+}
+
+void MultiplayerGameState::HandleTeamCheckpointSet(sf::Packet& packet)
+{
+	sf::Int8 team_id;
+	sf::Int8 platform_id;
+	packet >> team_id;
+	packet >> platform_id;
+
+	if (m_world.GetClientCharacter()->GetTeamIdentifier() == team_id)
+	{
+		m_world.SetCheckpointToPlatformWithID(platform_id);
 	}
 }
 
@@ -377,6 +446,12 @@ void MultiplayerGameState::HandlePacket(sf::Int8 packet_type, sf::Packet& packet
 		break;
 	case server::PacketType::kUpdatePlayer:
 		HandleUpdatePlayer(packet);
+		break;
+	case server::PacketType::kRespawnTeam:
+		HandleTeamRespawn(packet);
+		break;
+	case server::PacketType::kSetTeamCheckpoint:
+		HandleTeamCheckpointSet(packet);
 		break;
 	default:
 		break;

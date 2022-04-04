@@ -5,10 +5,9 @@
 #include "PlatformPart.hpp"
 #include "Utility.hpp"
 
-MultiplayerWorld::MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds,
-                                   FontHolder& fonts, MultiplayerGameState* state)
+MultiplayerWorld::MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer& sounds, FontHolder& fonts, MultiplayerGameState* state)
 	: World(output_target, sounds, fonts),
-	  m_checkoint(nullptr),
+	  m_checkpoint(nullptr),
 	  m_client_player(nullptr),
 	  m_team_mate(nullptr),
 	  m_state(state)
@@ -60,8 +59,7 @@ Character* MultiplayerWorld::AddGhostCharacterWithColor(const sf::Int8 identifie
                                                         const sf::IntRect& int_rect,
                                                         const sf::Vector2f& spawn_pos)
 {
-	std::unique_ptr<GhostCharacter> player(
-		new GhostCharacter(color, m_textures, m_fonts, int_rect, m_sounds));
+	std::unique_ptr<GhostCharacter> player(new GhostCharacter(color, m_textures, m_fonts, int_rect, m_sounds));
 	player->setPosition(spawn_pos);
 	player->SetIdentifier(identifier);
 	player->SetTeamIdentifier((identifier + 1) / 2);
@@ -85,8 +83,7 @@ Character* MultiplayerWorld::AddGhostCharacter(const sf::Int8 identifier)
 	                                  m_level_info.m_blue_player_spawn_pos);
 }
 
-void MultiplayerWorld::UpdatePlatform(const sf::Int8 id,const sf::Int8 platform_id,
-                                      const EPlatformType platform_color)
+void MultiplayerWorld::UpdatePlatform(const sf::Int8 id, const sf::Int8 platform_id, const EPlatformType platform_color)
 {
 	for (auto& platform : m_level_info.platforms)
 	{
@@ -105,8 +102,8 @@ void MultiplayerWorld::UpdatePlatform(const sf::Int8 id,const sf::Int8 platform_
 			}
 
 			//Initialize the first checkpoint (spawn platform)
-			if (m_checkoint == nullptr)
-				m_checkoint = platform.get();
+			if (m_checkpoint == nullptr)
+				m_checkpoint = platform.get();
 		}
 	}
 }
@@ -151,8 +148,7 @@ Character* MultiplayerWorld::GetTeammate() const
 	return m_team_mate;
 }
 
-void MultiplayerWorld::UpdatePlatformColors(
-	const std::map<sf::Int8, sf::Int8>& platform_colors) const
+void MultiplayerWorld::UpdatePlatformColors(const std::map<sf::Int8, sf::Int8>& platform_colors) const
 {
 	for (auto& value : platform_colors)
 	{
@@ -182,6 +178,35 @@ void MultiplayerWorld::UpdateCharacters() const
 	if (GetClientCharacter() != nullptr)
 	{
 		UpdateCharacters(GetClientCharacter()->GetTeamIdentifier());
+	}
+}
+
+void MultiplayerWorld::RespawnClientCharacter() const
+{
+	//Reset the position of the player to the position of the last checkpoint
+	m_client_player->StopMovement();
+	const auto& parts = m_checkpoint->GetParts();
+	PlatformPart* part = parts[parts.size() / 2];
+	sf::Vector2f position = part->getPosition();
+	position.y -= m_client_player->GetSize().height - 15.f;
+	position.x += part->GetSize().width / 2;
+	m_client_player->setPosition(position);
+
+	//Reset all platforms to their initial type
+	for (auto& platform : m_level_info.platforms)
+	{
+		platform->ResetToInitialType();
+	}
+}
+
+void MultiplayerWorld::SetCheckpointToPlatformWithID(const sf::Int8 platform_id)
+{
+	Platform* new_checkpoint = m_level_info.GetPlatformWithID(platform_id);
+
+	if(new_checkpoint != nullptr)
+	{
+		m_checkpoint = new_checkpoint;
+		m_checkpoint->SetType(EPlatformType::kCheckpointActivated);
 	}
 }
 
@@ -239,10 +264,15 @@ void MultiplayerWorld::DestroyEntitiesOutsideView()
 	m_command_queue.Push(command);
 }
 
-void MultiplayerWorld::OnReachedCheckpoint()
+void MultiplayerWorld::OnReachedCheckpoint() const
 {
-	m_checkoint = m_client_player->GetCurrentPlatform();
-	m_checkoint->SetType(EPlatformType::kCheckpointActivated);
+	Platform* current_platform = m_client_player->GetCurrentPlatform();
+
+	if(current_platform == m_team_mate->GetCurrentPlatform() && current_platform != m_checkpoint)
+		m_state->SendCheckpointReached(m_client_player->GetTeamIdentifier(), current_platform->GetID());
+
+	/*m_checkpoint = m_client_player->GetCurrentPlatform();
+	m_checkpoint->SetType(EPlatformType::kCheckpointActivated);*/
 }
 
 void MultiplayerWorld::OnReachedGoal() const
@@ -252,11 +282,5 @@ void MultiplayerWorld::OnReachedGoal() const
 
 void MultiplayerWorld::OnClientPlayerDeath() const
 {
-	m_client_player->StopMovement();
-	const auto& parts = m_checkoint->GetParts();
-	PlatformPart* part = parts[parts.size() / 2];
-	sf::Vector2f position = part->getPosition();
-	position.y += m_client_player->GetSize().height;
-	position.x += part->GetSize().width / 2;
-	m_client_player->setPosition(position);
+	m_state->SendTeamDeath(m_client_player->GetTeamIdentifier());
 }

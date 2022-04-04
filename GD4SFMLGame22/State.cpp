@@ -27,6 +27,12 @@ State::State(StateStack& stack, const Context context) : m_stack(&stack), m_cont
 State::~State() = default;
 
 
+void State::OnStackPopped()
+{
+	//Does nothing. Can be overridden in child classes to do something if the state is popped.
+	//(This is needed because certain operations can't be done in the destructor)
+}
+
 void State::RequestStackPush(const StateID state_id) const
 {
 	if (true)

@@ -8,10 +8,14 @@ class MultiplayerGameState : public State
 {
 public:
 	MultiplayerGameState(StateStack& stack, Context context);
+	void OnStackPopped() override;
 	void Draw() override;
 	void SendPlatformInfo(sf::Int8 player_id, sf::Int8 platform_id, EPlatformType platform) const;
 	bool Update(sf::Time dt) override;
 	bool HandleEvent(const sf::Event& event) override;
+	void SendTeamDeath(sf::Int8 team_id);
+	void SendCheckpointReached(sf::Int8 team_id, sf::Int8 platform_id);
+	void SendClientDisconnect(sf::Int8 identifier);
 	void SendMission(sf::Int8 player_id);
 
 private:
@@ -24,7 +28,9 @@ private:
 	void HandleInitialState(sf::Packet& packet);
 	void HandleUpdatePlatformColors(sf::Packet& packet);
 	void HandleUpdatePlayer(sf::Packet& packet) const;
-	void HandleMission(sf::Packet& packet) const;
+	void HandleMission(sf::Packet& packet);
+	void HandleTeamRespawn(sf::Packet& packet) const;
+	void HandleTeamCheckpointSet(sf::Packet& packet);
 	void HandlePacket(sf::Int8 packet_type, sf::Packet& packet);
 
 	void SendPlayerName(sf::Int8 identifier, sf::Int8 team_id, const std::string& name) const;

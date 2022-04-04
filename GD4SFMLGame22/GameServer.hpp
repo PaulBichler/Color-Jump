@@ -18,6 +18,7 @@ public:
 	void SendPackageToAll(sf::Packet packet) const;
 	void NotifyPlayerSpawn(sf::Int8 identifier) const;
 	void NotifyPlayerSet(sf::Int8 identifier, sf::Int8 team_id, const std::string& name) const;
+	void NotifyTeamRespawn(sf::Int8 team_id) const;
 
 private:
 	struct RemotePeer
@@ -50,6 +51,7 @@ private:
 	void NotifyPlayerPlatformChange(sf::Int8 player_id, const sf::Int8 platform_id,
 	                                const sf::Int8 platform_color) const;
 	void NotifyMission(sf::Int8 team_id) const;
+	void NotifyTeamCheckpointSet(sf::Int8 team_id, sf::Int8 platform_id) const;
 	void NotifyTeamChange(sf::Int8 identifier, sf::Int8 team_id);
 	void NotifyGameStart();
 	void HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer,
@@ -63,6 +65,7 @@ private:
 	void BroadcastMessage(const std::string& message) const;
 	void SendToAll(sf::Packet& packet) const;
 	void UpdateClientState() const;
+
 private:
 	sf::Thread m_thread;
 	sf::Clock m_clock;
