@@ -161,13 +161,6 @@ bool MultiplayerGameState::Update(const sf::Time dt)
 			}
 		}
 
-		//Always handle the network input
-		CommandQueue& commands = m_world.GetCommandQueue();
-		for (const auto& pair : m_players)
-		{
-			pair.second->HandleRealtimeNetworkInput(commands);
-		}
-
 		//Handle messages from the server that may have arrived
 		sf::Packet packet;
 		if (m_socket.receive(packet) == sf::Socket::Done)
@@ -248,7 +241,6 @@ bool MultiplayerGameState::HandleEvent(const sf::Event& event)
 			//If escape is pressed, show the pause screen
 			if (event.key.code == sf::Keyboard::Escape)
 			{
-				DisableAllRealtimeActions();
 				RequestStackPush(StateID::kNetworkPause);
 			}
 		}
@@ -285,15 +277,6 @@ void MultiplayerGameState::OnDestroy()
 		sf::Packet packet;
 		packet << static_cast<sf::Int8>(client::PacketType::kQuit);
 		m_socket.send(packet);
-	}
-}
-
-void MultiplayerGameState::DisableAllRealtimeActions()
-{
-	m_active_state = false;
-	for (const sf::Int8 identifier : m_local_player_identifiers)
-	{
-		m_players[identifier]->DisableAllRealtimeActions();
 	}
 }
 
@@ -458,34 +441,6 @@ void MultiplayerGameState::HandleInitialState(sf::Packet& packet)
 	}
 }
 
-void MultiplayerGameState::HandleRealtimeChange(sf::Packet& packet)
-{
-	sf::Int8 identifier;
-	sf::Int8 action;
-	bool action_enabled;
-	packet >> identifier >> action >> action_enabled;
-
-	const auto itr = m_players.find(identifier);
-	if (itr != m_players.end())
-	{
-		itr->second->HandleNetworkRealtimeChange(static_cast<PlayerAction>(action), action_enabled);
-	}
-}
-
-void MultiplayerGameState::HandlePlayerEvent(sf::Packet& packet)
-{
-	sf::Int8 identifier;
-	sf::Int8 action;
-	packet >> identifier >> action;
-
-	const auto itr = m_players.find(identifier);
-	if (itr != m_players.end())
-	{
-		itr->second->HandleNetworkEvent(static_cast<PlayerAction>(action),
-		                                m_world.GetCommandQueue());
-	}
-}
-
 void MultiplayerGameState::HandleTeamSelection(sf::Packet& packet) const
 {
 	sf::Int8 player_count;
@@ -594,17 +549,11 @@ void MultiplayerGameState::HandlePacket(sf::Int8 packet_type, sf::Packet& packet
 	case server::PacketType::kInitialState:
 		HandleInitialState(packet);
 		break;
-	case server::PacketType::kPlayerRealtimeChange:
-		HandleRealtimeChange(packet);
-		break;
 	case server::PacketType::kMissionSuccess:
 		HandleMission(packet);
 		break;
 	case server::PacketType::kUpdateClientState:
 		HandleClientUpdate(packet);
-		break;
-	case server::PacketType::kPlayerEvent:
-		HandlePlayerEvent(packet);
 		break;
 	case server::PacketType::kUpdatePlatformColors:
 		HandleUpdatePlatformColors(packet);

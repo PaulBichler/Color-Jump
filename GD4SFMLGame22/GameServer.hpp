@@ -17,8 +17,6 @@ public:
 	~GameServer();
 	void SendPackageToAll(sf::Packet packet) const;
 	void NotifyPlayerSpawn(sf::Int8 identifier) const;
-	void NotifyPlayerRealtimeChange(sf::Int8 identifier, sf::Int8 action, bool action_enabled) const;
-	void NotifyPlayerEvent(sf::Int8 identifier, sf::Int8 action) const;
 	void NotifyPlayerSet(sf::Int8 identifier, sf::Int8 team_id, const std::string& name) const;
 	void NotifyTeamRespawn(sf::Int8 team_id) const;
 
