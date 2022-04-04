@@ -33,16 +33,16 @@ LevelPauseState::LevelPauseState(StateStack& stack, Context context)
 		RequestStackPop(); //Pop Level Pause State
 	});
 
-	//Create Restart Button
-	const auto restart_button = std::make_shared<GUI::Button>(context);
-	restart_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 150);
-	restart_button->SetText("Restart");
-	restart_button->SetCallback([this]()
-	{
-		RequestStackPop(); //Pop Level Pause State
-		RequestStackPop(); //Pop Game State
-		RequestStackPush(StateID::kGame); //Push Game State again to restart the level
-	});
+	// //Create Restart Button
+	// const auto restart_button = std::make_shared<GUI::Button>(context);
+	// restart_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 150);
+	// restart_button->SetText("Restart");
+	// restart_button->SetCallback([this]()
+	// {
+	// 	RequestStackPop(); //Pop Level Pause State
+	// 	RequestStackPop(); //Pop Game State
+	// 	RequestStackPush(StateID::kGame); //Push Game State again to restart the level
+	// });
 
 	//Create Back to Main Menu Button
 	const auto main_menu_button = std::make_shared<GUI::Button>(context);
@@ -55,7 +55,7 @@ LevelPauseState::LevelPauseState(StateStack& stack, Context context)
 	});
 
 	m_gui_container.Pack(resume_button);
-	m_gui_container.Pack(restart_button);
+	// m_gui_container.Pack(restart_button);
 	m_gui_container.Pack(main_menu_button);
 }
 

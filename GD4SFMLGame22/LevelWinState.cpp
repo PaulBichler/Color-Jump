@@ -23,24 +23,24 @@ LevelWinState::LevelWinState(StateStack& stack, Context context)
 	m_lost_text.setPosition(0.5f * viewSize.x, 0.4f * viewSize.y);
 
 	//Create the Next Level button
-	const auto next_level_button = std::make_shared<GUI::Button>(context);
-	next_level_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 100);
-	next_level_button->SetText("Next Level");
-	next_level_button->SetCallback([this]()
-	{
-		//Set the next level in the level manager
-		GetContext().m_level_manager->NextLevel();
-	
-		RequestStackPop(); //Pop Level Lose State
-		RequestStackPop(); //Pop Game State
-		RequestStackPush(StateID::kGame); //Push Game State again to restart the level
-	});
+	// const auto next_level_button = std::make_shared<GUI::Button>(context);
+	// next_level_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 100);
+	// next_level_button->SetText("Next Level");
+	// next_level_button->SetCallback([this]()
+	// {
+	// 	//Set the next level in the level manager
+	// 	GetContext().m_level_manager->NextLevel();
+	//
+	// 	RequestStackPop(); //Pop Level Lose State
+	// 	RequestStackPop(); //Pop Game State
+	// 	RequestStackPush(StateID::kGame); //Push Game State again to restart the level
+	// });
 
 	//The next level button should not be drawn when no last level exists
-	next_level_button->SetDrawPredicate([this]
-	{
-		return GetContext().m_level_manager->DoesNextLevelExist();
-	});
+	// next_level_button->SetDrawPredicate([this]
+	// {
+	// 	return GetContext().m_level_manager->DoesNextLevelExist();
+	// });
 
 	// //Create the Restart button
 	// const auto restart_button = std::make_shared<GUI::Button>(context);
@@ -63,7 +63,7 @@ LevelWinState::LevelWinState(StateStack& stack, Context context)
 		RequestStackPush(StateID::kMenu);
 	});
 
-	m_gui_container.Pack(next_level_button);
+	// m_gui_container.Pack(next_level_button);
 	// m_gui_container.Pack(restart_button);
 	m_gui_container.Pack(main_menu_button);
 }
