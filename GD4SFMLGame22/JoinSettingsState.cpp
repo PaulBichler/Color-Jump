@@ -43,9 +43,8 @@ JoinSettingsState::JoinSettingsState(StateStack& stack, Context context)
 	connect_button->SetText("Connect");
 	connect_button->SetCallback([this, context]
 	{
-		RequestStackPop(); //Pop this State
 		RequestStackPop(); //Pop Menu State
-		RequestStackPush(StateID::kJoinGame);
+		RequestStackPush(StateID::kLobbyClient);
 	});
 
 	m_gui_container.Pack(connect_button);

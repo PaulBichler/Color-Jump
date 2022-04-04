@@ -197,6 +197,33 @@ void GameServer::NotifyMission(const sf::Int8 team_id) const
 	SendPackageToAll(packet);
 }
 
+void GameServer::NotifyTeamChange(const sf::Int8 identifier, const sf::Int8 team_id)
+{
+	sf::Packet packet;
+	packet << static_cast<sf::Int8>(server::PacketType::kTeamSelection);
+	packet << identifier;
+	packet << team_id;
+
+	m_player_info[identifier].m_team_identifier = team_id;
+
+
+	SendPackageToAll(packet);
+}
+
+void GameServer::NotifyGameStart()
+{
+	sf::Packet packet;
+	packet << static_cast<sf::Int8>(server::PacketType::kStartGame);
+	SendToAll(packet);
+
+	for (const auto& peer : m_peers)
+	{
+		packet.clear();
+		CreateSpawnSelfPacket(packet, peer->m_identifier);
+		peer->m_socket.send(packet);
+	}
+}
+
 void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer,
                                       bool& detected_timeout)
 {
@@ -214,16 +241,10 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 
 	case client::PacketType::kPositionUpdate:
 		{
-			sf::Int8 num_player;
-			packet >> num_player;
-
-			for (sf::Int8 i = 0; i < num_player; ++i)
-			{
-				sf::Int8 identifier;
-				sf::Vector2f position;
-				packet >> identifier >> position.x >> position.y;
-				m_player_info[identifier].m_position = position;
-			}
+			sf::Int8 identifier;
+			sf::Vector2f position;
+			packet >> identifier >> position.x >> position.y;
+			m_player_info[identifier].m_position = position;
 		}
 		break;
 
@@ -254,16 +275,53 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 		break;
 
 	case client::PacketType::kMission:
-	{
-		sf::Int8 identifier;
-		packet >> identifier;
+		{
+			sf::Int8 identifier;
+			packet >> identifier;
 
-		NotifyMission(identifier);
-	}
-	break;
+			NotifyMission(identifier);
+		}
+		break;
+	case client::PacketType::kChoseTeam:
+		{
+			sf::Int8 identifier;
+			sf::Int8 team_id;
+			packet >> identifier >> team_id;
+
+			NotifyTeamChange(identifier, team_id);
+		}
+		break;
+	case client::PacketType::kStartNetworkGame:
+		NotifyGameStart();
+		break;
 	default:
 		break;
 	}
+}
+
+void GameServer::CreateSpawnSelfPacket(sf::Packet& packet, sf::Int8 id)
+{
+	packet << static_cast<sf::Int8>(server::PacketType::kSpawnSelf);
+
+	packet << static_cast<sf::Int8>(m_player_info.size() - 1);
+
+	for (const auto& player_info : m_player_info)
+	{
+		if (player_info.first == id)
+		{
+			continue;
+		}
+
+		packet << player_info.first;
+		packet << player_info.second.m_team_identifier;
+		packet << player_info.second.name;
+	}
+
+	packet << id;
+	packet << m_player_info[id].m_team_identifier;
+	packet << m_player_info[id].name;
+
+	
 }
 
 void GameServer::HandleIncomingConnections()
@@ -301,12 +359,8 @@ void GameServer::HandleIncomingConnections()
 			packet << int8;
 		}
 
-		
+		m_peers[m_connected_players]->m_identifier = m_identifier_counter;
 
-
-		m_peers[m_connected_players]->m_identifiers.emplace_back(m_identifier_counter);
-
-		BroadcastMessage("New player");
 		InformWorldState(m_peers[m_connected_players]->m_socket);
 		NotifyPlayerSpawn(m_identifier_counter++);
 
@@ -334,17 +388,13 @@ void GameServer::HandleDisconnections()
 	{
 		if ((*itr)->m_timed_out)
 		{
-			//Inform everyone of a disconnection, erase
-			for (const sf::Int8 identifier : (*itr)->m_identifiers)
-			{
-				SendToAll(
-					sf::Packet() << static_cast<sf::Int8>(server::PacketType::kPlayerDisconnect) <<
-					identifier);
-				m_player_info.erase(identifier);
-			}
+			SendToAll(
+				sf::Packet() << static_cast<sf::Int8>(server::PacketType::kPlayerDisconnect) <<
+				(*itr)->m_identifier);
+			m_player_info.erase((*itr)->m_identifier);
 
 			m_connected_players--;
-			m_player_count -= (*itr)->m_identifiers.size();
+			m_player_count -= 1;
 
 			itr = m_peers.erase(itr);
 
@@ -374,15 +424,12 @@ void GameServer::InformWorldState(sf::TcpSocket& socket)
 	{
 		if (m_peers[i]->m_ready)
 		{
-			for (const sf::Int8 identifier : m_peers[i]->m_identifiers)
-			{
-				const PlayerInfo player_info = m_player_info[identifier];
-				packet << identifier
-					<< player_info.m_position.x
-					<< player_info.m_position.y
-					<< player_info.m_team_identifier
-					<< player_info.name;
-			}
+			const PlayerInfo player_info = m_player_info[m_peers[i]->m_identifier];
+			packet << m_peers[i]->m_identifier
+				<< player_info.m_position.x
+				<< player_info.m_position.y
+				<< player_info.m_team_identifier
+				<< player_info.name;
 		}
 	}
 

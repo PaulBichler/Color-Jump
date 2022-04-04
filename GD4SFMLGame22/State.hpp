@@ -7,6 +7,7 @@
 
 #include <memory>
 
+#include "GameServer.hpp"
 #include "KeyBinding.hpp"
 #include "LevelManager.hpp"
 #include "MusicPlayer.hpp"
@@ -21,25 +22,26 @@ namespace sf
 class StateStack;
 class Player;
 
+struct Context
+{
+	Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, MusicPlayer& music, SoundPlayer& sounds, LevelManager& level_manager, PlayerDataManager& player_data_manager, KeyBinding& keys1, KeyBinding& keys2);
+	sf::RenderWindow* m_window;
+	TextureHolder* m_textures;
+	FontHolder* m_fonts;
+	MusicPlayer* m_music;
+	SoundPlayer* m_sounds;
+	LevelManager* m_level_manager;
+	PlayerDataManager* m_player_data_manager;
+	KeyBinding* m_keys1;
+	KeyBinding* m_keys2;
+	GameServer* m_game_server;
+	sf::TcpSocket* m_socket;
+};
+
 class State
 {
 public:
 	typedef std::unique_ptr<State> Ptr;
-
-	struct Context
-	{
-		Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, MusicPlayer& music, SoundPlayer& sounds, LevelManager& level_manager, PlayerDataManager& player_data_manager, KeyBinding& keys1, KeyBinding& keys2);
-		sf::RenderWindow* m_window;
-		TextureHolder* m_textures;
-		FontHolder* m_fonts;
-		MusicPlayer* m_music;
-		SoundPlayer* m_sounds;
-		LevelManager* m_level_manager;
-		PlayerDataManager* m_player_data_manager;
-		KeyBinding* m_keys1;
-		KeyBinding* m_keys2;
-	};
-
 public:
 	State(StateStack& stack, Context context);
 	virtual ~State();
@@ -55,7 +57,7 @@ protected:
 	Context GetContext() const;
 	
 
-private:
+protected:
 	StateStack* m_stack;
 	Context m_context;
 };

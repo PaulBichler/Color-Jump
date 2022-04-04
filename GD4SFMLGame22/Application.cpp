@@ -4,7 +4,7 @@
 #include "StateID.hpp"
 #include "TitleState.hpp"
 #include "GameState.hpp"
-#include "HostSettingsState.hpp"
+#include "LobbyState.hpp"
 #include "JoinSettingsState.hpp"
 #include "LevelLoseState.hpp"
 #include "LevelWinState.hpp"
@@ -21,7 +21,7 @@ Application::Application()
 	: m_window(sf::VideoMode(1344, 960), "States", sf::Style::Close)
 	  , m_key_binding_1(1)
 	  , m_key_binding_2(2)
-	  , m_stack(State::Context(m_window, m_textures, m_fonts, m_music, m_sounds, m_level_manager, m_player_data_manager, m_player_data_manager.GetData().m_player1_keybindings, m_player_data_manager.GetData().m_player2_keybindings))
+	  , m_stack(Context(m_window, m_textures, m_fonts, m_music, m_sounds, m_level_manager, m_player_data_manager, m_player_data_manager.GetData().m_player1_keybindings, m_player_data_manager.GetData().m_player2_keybindings))
 	  , m_statistics_num_frames(0)
 {
 	m_window.setKeyRepeatEnabled(false);
@@ -115,10 +115,10 @@ void Application::RegisterStates()
 	m_stack.RegisterState<TitleState>(StateID::kTitle);
 	m_stack.RegisterState<MenuState>(StateID::kMenu);
 	m_stack.RegisterState<GameState>(StateID::kGame);
-	m_stack.RegisterState<MultiplayerGameState>(StateID::kHostGame, true);
-	m_stack.RegisterState<MultiplayerGameState>(StateID::kJoinGame, false);
+	m_stack.RegisterState<MultiplayerGameState>(StateID::kNetworkGame);
 	m_stack.RegisterState<JoinSettingsState>(StateID::kJoinSettings);
-	m_stack.RegisterState<HostSettingsState>(StateID::kHostSettings);
+	m_stack.RegisterState<LobbyState>(StateID::kLobbyHost, true);
+	m_stack.RegisterState<LobbyState>(StateID::kLobbyClient, false);
 	m_stack.RegisterState<LevelPauseState>(StateID::kNetworkPause);
 	m_stack.RegisterState<LevelPauseState>(StateID::kPause);
 	m_stack.RegisterState<SettingsState>(StateID::kSettings);

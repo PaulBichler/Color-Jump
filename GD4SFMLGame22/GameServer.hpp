@@ -25,7 +25,7 @@ private:
 		RemotePeer();
 		sf::TcpSocket m_socket;
 		sf::Time m_last_packet_time;
-		std::vector<sf::Int8> m_identifiers;
+		sf::Int8 m_identifier{};
 		bool m_ready;
 		bool m_timed_out;
 	};
@@ -50,8 +50,11 @@ private:
 	void NotifyPlayerPlatformChange(sf::Int8 player_id, const sf::Int8 platform_id,
 	                                const sf::Int8 platform_color) const;
 	void NotifyMission(sf::Int8 team_id) const;
+	void NotifyTeamChange(sf::Int8 identifier, sf::Int8 team_id);
+	void NotifyGameStart();
 	void HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer,
 	                          bool& detected_timeout);
+	void CreateSpawnSelfPacket(sf::Packet& packet, sf::Int8 id);
 
 	void HandleIncomingConnections();
 	void HandleDisconnections();

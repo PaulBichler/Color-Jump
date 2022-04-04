@@ -6,16 +6,6 @@
 #include "Utility.hpp"
 #include "Button.hpp"
 
-void MenuState::CreateButton(Context context, std::shared_ptr<GUI::Button>& play_button,
-                             const int x, const int y, const std::string& label,
-                             const GUI::Button::Callback& callback) const
-{
-	play_button = std::make_shared<GUI::Button>(context);
-	play_button->setPosition(static_cast<float>(x), static_cast<float>(y));
-	play_button->SetText(label);
-	play_button->SetCallback(callback);
-}
-
 MenuState::MenuState(StateStack& stack, Context context)
 	: State(stack, context)
 {
@@ -32,25 +22,27 @@ MenuState::MenuState(StateStack& stack, Context context)
 	});*/
 
 	std::shared_ptr<GUI::Button> host_button;
-	CreateButton(context, host_button, 100, 300, "Host", [this]
+	Utility::CreateButton(context, host_button, 100, 300, "Host", [this]
 	{
-		RequestStackPush(StateID::kHostSettings);
+		RequestStackPop();
+		RequestStackPush(StateID::kLobbyHost);
 	});
 
 	std::shared_ptr<GUI::Button> join_button;
-	CreateButton(context, join_button, 100, 350, "Join", [this]
+	Utility::CreateButton(context, join_button, 100, 350, "Join", [this]
 	{
+		RequestStackPop();
 		RequestStackPush(StateID::kJoinSettings);
 	});
 
 	std::shared_ptr<GUI::Button> settings_button;
-	CreateButton(context, settings_button, 100, 400, "Settings", [this]
+	Utility::CreateButton(context, settings_button, 100, 400, "Settings", [this]
 	{
 		RequestStackPush(StateID::kSettings);
 	});
 
 	std::shared_ptr<GUI::Button> exit_button;
-	CreateButton(context, exit_button, 100, 450, "Exit", [this]
+	Utility::CreateButton(context, exit_button, 100, 450, "Exit", [this]
 	{
 		RequestStackPop();
 	});

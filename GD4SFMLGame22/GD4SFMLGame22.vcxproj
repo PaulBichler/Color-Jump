@@ -167,7 +167,7 @@
     <ClCompile Include="GameServer.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="GhostCharacter.cpp" />
-    <ClCompile Include="HostSettingsState.cpp" />
+    <ClCompile Include="LobbyState.cpp" />
     <ClCompile Include="JoinSettingsState.cpp" />
     <ClCompile Include="KeyBinding.cpp" />
     <ClCompile Include="Label.cpp" />
@@ -227,7 +227,7 @@
     <ClInclude Include="GameServer.hpp" />
     <ClInclude Include="GameState.hpp" />
     <ClInclude Include="GhostCharacter.hpp" />
-    <ClInclude Include="HostSettingsState.hpp" />
+    <ClInclude Include="LobbyState.hpp" />
     <ClInclude Include="JoinSettingsState.hpp" />
     <ClInclude Include="KeyBinding.hpp" />
     <ClInclude Include="Label.hpp" />

@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-StateStack::StateStack(State::Context context)
+StateStack::StateStack(Context context)
 :m_context(context)
 {
 }

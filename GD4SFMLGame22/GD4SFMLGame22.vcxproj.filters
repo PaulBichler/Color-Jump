@@ -201,7 +201,7 @@
     <ClCompile Include="JoinSettingsState.cpp">
       <Filter>Source Files\GameStates</Filter>
     </ClCompile>
-    <ClCompile Include="HostSettingsState.cpp">
+    <ClCompile Include="LobbyState.cpp">
       <Filter>Source Files\GameStates</Filter>
     </ClCompile>
   </ItemGroup>
@@ -410,7 +410,7 @@
     <ClInclude Include="JoinSettingsState.hpp">
       <Filter>Header Files\GameStates</Filter>
     </ClInclude>
-    <ClInclude Include="HostSettingsState.hpp">
+    <ClInclude Include="LobbyState.hpp">
       <Filter>Header Files\GameStates</Filter>
     </ClInclude>
   </ItemGroup>

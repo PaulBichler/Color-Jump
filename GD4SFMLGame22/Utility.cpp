@@ -23,6 +23,25 @@ namespace
 	auto random_engine = CreateRandomEngine();
 }
 
+void Utility::CreateButton(Context context, std::shared_ptr<GUI::Button>& play_button, const int x,
+                           const int y,
+                           const std::string& label, const GUI::Button::Callback& callback,
+                           const bool toggle, const std::function<bool()>& predicate)
+{
+	play_button = std::make_shared<GUI::Button>(context);
+	play_button->setPosition(static_cast<float>(x), static_cast<float>(y));
+	play_button->SetText(label);
+	play_button->SetToggle(toggle);
+	if (callback != nullptr)
+	{
+		play_button->SetCallback(callback);
+	}
+	if (predicate != nullptr)
+	{
+		play_button->SetDrawPredicate(predicate);
+	}
+}
+
 int Utility::RandomInt(const int exclusive_max)
 {
 	const std::uniform_int_distribution<> dist(0, exclusive_max - 1);
@@ -194,4 +213,26 @@ float Utility::ToDegrees(const float angle)
 void Utility::Debug(const std::string& message)
 {
 	std::cout << message << std::endl;
+}
+
+void Utility::CreateButton(const Context context, std::shared_ptr<GUI::Button>& button, const int x,
+                           const int y,
+                           const std::string& label, const GUI::Button::Callback& callback,
+                           const std::function<bool()>& predicate)
+{
+	CreateButton(context, button, x, y, label, callback, false, predicate);
+}
+
+void Utility::CreateButton(const Context context, std::shared_ptr<GUI::Button>& button, const int x,
+                           const int y,
+                           const std::string& label, const bool toggle)
+{
+	CreateButton(context, button, x, y, label, nullptr, toggle, nullptr);
+}
+
+void Utility::CreateLabel(const Context context, std::shared_ptr<GUI::Label>& label, const int x,
+                          const int y, const std::string& label_text, const int text_size)
+{
+	label = std::make_shared<GUI::Label>(label_text, *context.m_fonts, text_size);
+	label->setPosition(static_cast<float>(x), static_cast<float>(y));
 }

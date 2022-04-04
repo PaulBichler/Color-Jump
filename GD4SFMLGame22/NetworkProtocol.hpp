@@ -16,7 +16,9 @@ namespace server
 		kUpdateClientState,
 		kMissionSuccess,
 		kUpdatePlatformColors,
-		kUpdatePlayer
+		kUpdatePlayer,
+		kTeamSelection,
+		kStartGame
 	};
 }
 
@@ -27,9 +29,10 @@ namespace client
 	{
 		kPositionUpdate,
 		kQuit,
-		kGameEvent,
 		kPlatformUpdate,
 		kPlayerUpdate,
-		kMission
+		kMission,
+		kChoseTeam,
+		kStartNetworkGame
 	};
 }
