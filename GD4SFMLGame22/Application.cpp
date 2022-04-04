@@ -4,7 +4,8 @@
 #include "StateID.hpp"
 #include "TitleState.hpp"
 #include "GameState.hpp"
-#include "IpSelectState.hpp"
+#include "HostSettingsState.hpp"
+#include "JoinSettingsState.hpp"
 #include "LevelLoseState.hpp"
 #include "LevelWinState.hpp"
 #include "MenuState.hpp"
@@ -116,7 +117,8 @@ void Application::RegisterStates()
 	m_stack.RegisterState<GameState>(StateID::kGame);
 	m_stack.RegisterState<MultiplayerGameState>(StateID::kHostGame, true);
 	m_stack.RegisterState<MultiplayerGameState>(StateID::kJoinGame, false);
-	m_stack.RegisterState<IpSelectState>(StateID::kIpSelect);
+	m_stack.RegisterState<JoinSettingsState>(StateID::kJoinSettings);
+	m_stack.RegisterState<HostSettingsState>(StateID::kHostSettings);
 	m_stack.RegisterState<LevelPauseState>(StateID::kNetworkPause);
 	m_stack.RegisterState<LevelPauseState>(StateID::kPause);
 	m_stack.RegisterState<SettingsState>(StateID::kSettings);

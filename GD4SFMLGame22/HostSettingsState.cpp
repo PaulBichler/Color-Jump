@@ -1,13 +1,9 @@
-#include "IpSelectState.hpp"
+#include "HostSettingsState.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
-#include "Button.hpp"
-#include "Label.hpp"
-
-IpSelectState::IpSelectState(StateStack& stack, Context context)
+HostSettingsState::HostSettingsState(StateStack& stack, Context context)
 	: State(stack, context),
-	m_player_input_ip(context.m_player_data_manager->GetData().m_ip_address),
 	m_player_input_name(context.m_player_data_manager->GetData().m_player_name)
 {
 	const sf::Texture& texture = context.m_textures->Get(Textures::kTitleScreen);
@@ -25,27 +21,16 @@ IpSelectState::IpSelectState(StateStack& stack, Context context)
 	m_gui_container.Pack(m_change_name_button);
 	m_gui_container.Pack(m_current_name_label);
 
-	//Ip Input
-	m_change_ip_button = std::make_shared<GUI::Button>(context);
-	m_change_ip_button->SetText("Change IP Address");
-	m_change_ip_button->SetToggle(true);
-	m_change_ip_button->setPosition(80.f, 300.f);
-
-	m_current_ip_label = std::make_shared<GUI::Label>(m_player_input_ip, *context.m_fonts, 20);
-	m_current_ip_label->setPosition(310.f, 315.f);
-
-	m_gui_container.Pack(m_change_ip_button);
-	m_gui_container.Pack(m_current_ip_label);
-
-	//Connect Button
+	//Host Button
 	const auto connect_button = std::make_shared<GUI::Button>(context);
 	connect_button->setPosition(80.f, 400.f);
-	connect_button->SetText("Connect");
+	connect_button->SetText("Host Server");
 	connect_button->SetCallback([this, context]
-	{
-		RequestStackPop();
-		RequestStackPush(StateID::kJoinGame);
-	});
+		{
+			RequestStackPop(); //Pop this State
+			RequestStackPop(); //Pop Menu State
+			RequestStackPush(StateID::kHostGame);
+		});
 
 	m_gui_container.Pack(connect_button);
 
@@ -54,53 +39,28 @@ IpSelectState::IpSelectState(StateStack& stack, Context context)
 	back_button->setPosition(80.f, 450.f);
 	back_button->SetText("Back");
 	back_button->SetCallback([this, context]
-	{
-		RequestStackPop();
-	});
+		{
+			RequestStackPop();
+		});
 
 	m_gui_container.Pack(back_button);
 }
 
-void IpSelectState::Draw()
+void HostSettingsState::Draw()
 {
 	sf::RenderWindow& window = *GetContext().m_window;
 	window.draw(m_background_sprite);
 	window.draw(m_gui_container);
 }
 
-bool IpSelectState::Update(sf::Time dt)
+bool HostSettingsState::Update(sf::Time dt)
 {
 	return true;
 }
 
-bool IpSelectState::HandleEvent(const sf::Event& event)
+bool HostSettingsState::HandleEvent(const sf::Event& event)
 {
-	if (m_change_ip_button->IsActive())
-	{
-		//Ip Input
-		if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Return)
-		{
-			m_change_ip_button->Deactivate();
-			GetContext().m_player_data_manager->GetData().m_ip_address = m_player_input_ip;
-			GetContext().m_player_data_manager->Save();
-		}
-		else if (event.type == sf::Event::TextEntered)
-		{
-			if (event.text.unicode == '\b')
-			{
-				if (!m_player_input_ip.empty())
-					m_player_input_ip.erase(m_player_input_ip.size() - 1, 1);
-			}
-			else if (event.text.unicode != '\n' && event.text.unicode != '\r')
-			{
-				m_player_input_ip += event.text.unicode;
-				m_player_input_ip = m_player_input_ip.substr(0, 25);
-			}
-
-			m_current_ip_label->SetText(m_player_input_ip);
-		}
-	}
-	else if (m_change_name_button->IsActive())
+	if (m_change_name_button->IsActive())
 	{
 		//Name Input
 		if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Return)

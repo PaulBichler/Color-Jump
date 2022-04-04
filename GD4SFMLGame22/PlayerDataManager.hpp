@@ -10,7 +10,7 @@ public:
 
 	struct PlayerData
 	{
-		PlayerData() : m_player_name("Player"), m_ip_address("127.0.0.1"), m_player1_keybindings(1), m_player2_keybindings(2) { }
+		PlayerData() : m_player_name("Handsome Player"), m_ip_address("127.0.0.1"), m_player1_keybindings(1), m_player2_keybindings(2) { }
 		std::string m_player_name;
 		std::string m_ip_address;
 		KeyBinding m_player1_keybindings;

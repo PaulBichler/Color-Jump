@@ -198,8 +198,11 @@
     <ClCompile Include="PlayerDataManager.cpp">
       <Filter>Source Files\Player</Filter>
     </ClCompile>
-    <ClCompile Include="IpSelectState.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="JoinSettingsState.cpp">
+      <Filter>Source Files\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="HostSettingsState.cpp">
+      <Filter>Source Files\GameStates</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -404,8 +407,11 @@
     <ClInclude Include="PlayerDataManager.hpp">
       <Filter>Header Files\Player</Filter>
     </ClInclude>
-    <ClInclude Include="IpSelectState.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="JoinSettingsState.hpp">
+      <Filter>Header Files\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="HostSettingsState.hpp">
+      <Filter>Header Files\GameStates</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
