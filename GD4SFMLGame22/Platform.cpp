@@ -10,6 +10,7 @@
 
 Platform::Platform(const sf::Int8 id, const EPlatformType platform_type, TextureHolder& textures)
 	: m_type(platform_type),
+	  m_initial_type(platform_type),
 	  m_textures(textures),
 	  m_current_texture(nullptr),
 	  m_current_pulse_cooldown(2.f),
@@ -147,9 +148,24 @@ void Platform::SetType(const EPlatformType type)
 			SetTextureOnParts(m_textures.Get(Textures::kActivatedCheckpointPlatform));
 		}
 		break;
+	case EPlatformType::kHorizontalImpact:
+		{
+			SetTextureOnParts(m_textures.Get(Textures::kHImpactBlankPlatform));
+		}
+		break;
+	case EPlatformType::kVerticalImpact:
+		{
+			SetTextureOnParts(m_textures.Get(Textures::kVImpactBlankPlatform));
+		}
+		break;
 	default: 
 		break;
 	}
+}
+
+void Platform::ResetToInitialType()
+{
+	SetType(m_initial_type);
 }
 
 //Written by Paul Bichler (D00242563)

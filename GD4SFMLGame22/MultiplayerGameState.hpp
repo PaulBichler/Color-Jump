@@ -16,7 +16,9 @@ public:
 	virtual void OnActivate();
 	void OnDestroy();
 	void DisableAllRealtimeActions();
-	void SendMission(sf::Int8 int8);
+	void SendMission(sf::Int8 player_id);
+	void SendTeamDeath(sf::Int8 team_id);
+	void SendCheckpointReached(sf::Int8 team_id, sf::Int8 platform_id);
 
 private:
 	void UpdateBroadcastMessage(sf::Time elapsed_time);
@@ -32,6 +34,8 @@ private:
 	void HandleUpdatePlatformColors(sf::Packet& packet);
 	void HandleUpdatePlayer(sf::Packet& packet) const;
 	void HandleMission(sf::Packet& packet);
+	void HandleTeamRespawn(sf::Packet& packet) const;
+	void HandleTeamCheckpointSet(sf::Packet& packet);
 	void HandlePacket(sf::Int8 packet_type, sf::Packet& packet);
 
 	void SendPlayerName(const sf::Int8 identifier, const sf::Int8 team_id, const std::string& name);

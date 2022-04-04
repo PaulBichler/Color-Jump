@@ -18,7 +18,9 @@ namespace server
 		kUpdateClientState,
 		kMissionSuccess,
 		kUpdatePlatformColors,
-		kUpdatePlayer
+		kUpdatePlayer,
+		kRespawnTeam,
+		kSetTeamCheckpoint
 	};
 }
 
@@ -34,6 +36,8 @@ namespace client
 		kGameEvent,
 		kPlatformUpdate,
 		kPlayerUpdate,
-		kMission
+		kMission,
+		kTeamDeath,
+		kCheckpointReached
 	};
 }

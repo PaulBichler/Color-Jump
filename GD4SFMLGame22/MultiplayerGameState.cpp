@@ -132,8 +132,7 @@ void MultiplayerGameState::SendPlatformInfo(const sf::Int8 player_id, const sf::
 	m_socket.send(packet);
 }
 
-void MultiplayerGameState::SendPlayerName(const sf::Int8 identifier, const sf::Int8 team_id,
-                                          const std::string& name)
+void MultiplayerGameState::SendPlayerName(const sf::Int8 identifier, const sf::Int8 team_id, const std::string& name)
 {
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(client::PacketType::kPlayerUpdate);
@@ -303,6 +302,25 @@ void MultiplayerGameState::SendMission(sf::Int8 player_id)
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(client::PacketType::kMission);
 	packet << player_id;
+
+	m_socket.send(packet);
+}
+
+void MultiplayerGameState::SendTeamDeath(sf::Int8 team_id)
+{
+	sf::Packet packet;
+	packet << static_cast<sf::Int8>(client::PacketType::kTeamDeath);
+	packet << team_id;
+
+	m_socket.send(packet);
+}
+
+void MultiplayerGameState::SendCheckpointReached(sf::Int8 team_id, sf::Int8 platform_id)
+{
+	sf::Packet packet;
+	packet << static_cast<sf::Int8>(client::PacketType::kCheckpointReached);
+	packet << team_id;
+	packet << platform_id;
 
 	m_socket.send(packet);
 }
@@ -532,6 +550,30 @@ void MultiplayerGameState::HandleMission(sf::Packet& packet)
 	}
 }
 
+void MultiplayerGameState::HandleTeamRespawn(sf::Packet& packet) const
+{
+	sf::Int8 team_id;
+	packet >> team_id;
+
+	if(m_world.GetClientCharacter()->GetTeamIdentifier() == team_id)
+	{
+		m_world.RespawnClientCharacter();
+	}
+}
+
+void MultiplayerGameState::HandleTeamCheckpointSet(sf::Packet& packet)
+{
+	sf::Int8 team_id;
+	sf::Int8 platform_id;
+	packet >> team_id;
+	packet >> platform_id;
+
+	if (m_world.GetClientCharacter()->GetTeamIdentifier() == team_id)
+	{
+		m_world.SetCheckpointToPlatformWithID(platform_id);
+	}
+}
+
 void MultiplayerGameState::HandlePacket(sf::Int8 packet_type, sf::Packet& packet)
 {
 	switch (static_cast<server::PacketType>(packet_type))
@@ -569,6 +611,12 @@ void MultiplayerGameState::HandlePacket(sf::Int8 packet_type, sf::Packet& packet
 		break;
 	case server::PacketType::kUpdatePlayer:
 		HandleUpdatePlayer(packet);
+		break;
+	case server::PacketType::kRespawnTeam:
+		HandleTeamRespawn(packet);
+		break;
+	case server::PacketType::kSetTeamCheckpoint:
+		HandleTeamCheckpointSet(packet);
 		break;
 	default:
 		break;

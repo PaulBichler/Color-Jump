@@ -20,6 +20,7 @@ public:
 	void NotifyPlayerRealtimeChange(sf::Int8 identifier, sf::Int8 action, bool action_enabled) const;
 	void NotifyPlayerEvent(sf::Int8 identifier, sf::Int8 action) const;
 	void NotifyPlayerSet(sf::Int8 identifier, sf::Int8 team_id, const std::string& name) const;
+	void NotifyTeamRespawn(sf::Int8 team_id) const;
 
 private:
 	struct RemotePeer
@@ -52,6 +53,7 @@ private:
 	void NotifyPlayerPlatformChange(sf::Int8 player_id, const sf::Int8 platform_id,
 	                                const sf::Int8 platform_color) const;
 	void NotifyMission(sf::Int8 team_id) const;
+	void NotifyTeamCheckpointSet(sf::Int8 team_id, sf::Int8 platform_id) const;
 	void HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer,
 	                          bool& detected_timeout);
 
@@ -62,6 +64,7 @@ private:
 	void BroadcastMessage(const std::string& message) const;
 	void SendToAll(sf::Packet& packet) const;
 	void UpdateClientState() const;
+
 private:
 	sf::Thread m_thread;
 	sf::Clock m_clock;

@@ -101,6 +101,16 @@ void GameServer::NotifyPlayerSet(const sf::Int8 identifier, const sf::Int8 team_
 	SendPackageToAll(packet);
 }
 
+void GameServer::NotifyTeamRespawn(sf::Int8 team_id) const
+{
+	sf::Packet packet;
+	//First thing for every packet is what type of packet it is
+	packet << static_cast<sf::Int8>(server::PacketType::kRespawnTeam);
+	packet << team_id;
+
+	SendPackageToAll(packet);
+}
+
 void GameServer::SetListening(const bool enable)
 {
 	//Check if the server listening socket is already listening
@@ -222,6 +232,16 @@ void GameServer::NotifyMission(const sf::Int8 team_id) const
 	SendPackageToAll(packet);
 }
 
+void GameServer::NotifyTeamCheckpointSet(sf::Int8 team_id, sf::Int8 platform_id) const
+{
+	sf::Packet packet;
+	packet << static_cast<sf::Int8>(server::PacketType::kSetTeamCheckpoint);
+	packet << team_id;
+	packet << platform_id;
+
+	SendPackageToAll(packet);
+}
+
 void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer,
                                       bool& detected_timeout)
 {
@@ -304,6 +324,24 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 		NotifyMission(identifier);
 	}
 	break;
+	case client::PacketType::kTeamDeath:
+		{
+			sf::Int8 team_id;
+			packet >> team_id;
+
+			NotifyTeamRespawn(team_id);
+		}
+		break;
+	case client::PacketType::kCheckpointReached:
+		{
+			sf::Int8 team_id;
+			sf::Int8 platform_id;
+			packet >> team_id;
+			packet >> platform_id;
+
+			NotifyTeamCheckpointSet(team_id, platform_id);
+		}
+		break;
 	default:
 		break;
 	}

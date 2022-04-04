@@ -22,6 +22,8 @@ public:
 	void UpdatePlatformColors(const std::map<sf::Int8, sf::Int8>& platform_colors) const;
 	void UpdateCharacters(sf::Int8 team_id) const;
 	void UpdateCharacters() const;
+	void RespawnClientCharacter() const;
+	void SetCheckpointToPlatformWithID(sf::Int8 platform_id);
 
 protected:
 	void HandleCollisions() override;
@@ -29,17 +31,16 @@ protected:
 	void DestroyEntitiesOutsideView() override;
 
 private:
-	void OnReachedCheckpoint();
+	void OnReachedCheckpoint() const;
 	void OnReachedGoal() const;
 	void OnClientPlayerDeath() const;
 
 private:
-	Platform* m_checkoint;
+	Platform* m_checkpoint;
 	Character* m_client_player;
 	Character* m_team_mate;
 	std::function<void()> m_lose_callback;
 
 public:
 	MultiplayerGameState* m_state;
-	std::vector<Platform*> m_platforms;
 };

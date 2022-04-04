@@ -14,6 +14,7 @@ public:
 	bool HandlePlayerCollisionAndChangeColor(EColorType color_type);
 	virtual bool HandlePlayerCollision(EColorType color_type);
 	void SetType(EPlatformType type);
+	void ResetToInitialType();
 
 	void Update(sf::Time dt);
 	sf::Int8 GetID() const;
@@ -21,6 +22,7 @@ public:
 
 protected:
 	EPlatformType m_type;
+	EPlatformType m_initial_type;
 	TextureHolder& m_textures;
 	std::vector<PlatformPart*> m_platform_parts;
 	sf::Texture* m_current_texture;
