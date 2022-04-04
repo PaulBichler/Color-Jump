@@ -225,6 +225,12 @@ bool MultiplayerGameState::Update(const sf::Time dt)
 
 bool MultiplayerGameState::HandleEvent(const sf::Event& event)
 {
+	//window is closed (disconnect the client)
+	if (event.type == sf::Event::Closed)
+	{
+		SendClientDisconnect(m_world.GetClientCharacter()->GetIdentifier());
+	}
+
 	//Game input handling
 	CommandQueue& commands = m_world.GetCommandQueue();
 
@@ -304,6 +310,15 @@ void MultiplayerGameState::SendCheckpointReached(sf::Int8 team_id, sf::Int8 plat
 	packet << static_cast<sf::Int8>(client::PacketType::kCheckpointReached);
 	packet << team_id;
 	packet << platform_id;
+
+	m_socket.send(packet);
+}
+
+void MultiplayerGameState::SendClientDisconnect(sf::Int8 identifier)
+{
+	sf::Packet packet;
+	packet << static_cast<sf::Int8>(client::PacketType::kQuit);
+	packet << identifier;
 
 	m_socket.send(packet);
 }
@@ -492,7 +507,6 @@ void MultiplayerGameState::HandleUpdatePlayer(sf::Packet& packet) const
 void MultiplayerGameState::HandleMission(sf::Packet& packet)
 {
 	sf::Int8 team_id;
-
 	packet >> team_id;
 
 	if (team_id == m_world.GetClientCharacter()->GetTeamIdentifier())

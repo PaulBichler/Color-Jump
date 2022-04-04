@@ -18,6 +18,7 @@ public:
 	void SendMission(sf::Int8 player_id);
 	void SendTeamDeath(sf::Int8 team_id);
 	void SendCheckpointReached(sf::Int8 team_id, sf::Int8 platform_id);
+	void SendClientDisconnect(sf::Int8 identifier);
 
 private:
 	void UpdateBroadcastMessage(sf::Time elapsed_time);

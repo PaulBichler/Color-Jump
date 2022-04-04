@@ -217,8 +217,7 @@ void GameServer::NotifyTeamCheckpointSet(sf::Int8 team_id, sf::Int8 platform_id)
 	SendPackageToAll(packet);
 }
 
-void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer,
-                                      bool& detected_timeout)
+void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer, bool& detected_timeout)
 {
 	sf::Int8 packet_type;
 	packet >> packet_type;
