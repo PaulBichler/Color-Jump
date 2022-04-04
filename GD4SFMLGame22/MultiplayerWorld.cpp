@@ -83,8 +83,7 @@ Character* MultiplayerWorld::AddGhostCharacter(const sf::Int8 identifier)
 	                                  m_level_info.m_blue_player_spawn_pos);
 }
 
-void MultiplayerWorld::UpdatePlatform(const sf::Int8 id,const sf::Int8 platform_id,
-                                      const EPlatformType platform_color)
+void MultiplayerWorld::UpdatePlatform(const sf::Int8 id, const sf::Int8 platform_id, const EPlatformType platform_color)
 {
 	for (auto& platform : m_level_info.platforms)
 	{

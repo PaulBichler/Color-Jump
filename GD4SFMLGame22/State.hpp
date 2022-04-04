@@ -46,14 +46,13 @@ public:
 	virtual void Draw() = 0;
 	virtual bool Update(sf::Time dt) = 0;
 	virtual bool HandleEvent(const sf::Event& event) = 0;
+	virtual void OnStackPopped();
 	void RequestStackPush(StateID state_id) const;
+
 protected:
-	
 	void RequestStackPop() const;
 	void RequestStackClear() const;
-
 	Context GetContext() const;
-	
 
 private:
 	StateStack* m_stack;

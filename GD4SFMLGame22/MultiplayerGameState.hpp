@@ -3,12 +3,12 @@
 #include "Player.hpp"
 #include "GameServer.hpp"
 #include "MultiplayerWorld.hpp"
-#include "NetworkProtocol.hpp"
 
 class MultiplayerGameState : public State
 {
 public:
 	MultiplayerGameState(StateStack& stack, Context context, bool is_host);
+	void OnStackPopped() override;
 	void Draw() override;
 	void SendPlatformInfo(const sf::Int8 player_id, const sf::Int8 platform_id, EPlatformType platform);
 	bool Update(sf::Time dt) override;

@@ -7,8 +7,10 @@
 
 #include <fstream>
 #include <iostream>
+#include <thread>
 #include <SFML/Network/Packet.hpp>
 #include "GameServer.hpp"
+#include "NetworkProtocol.hpp"
 
 sf::IpAddress GetAddressFromFile()
 {
@@ -30,8 +32,7 @@ sf::IpAddress GetAddressFromFile()
 	return local_address;
 }
 
-MultiplayerGameState::MultiplayerGameState(StateStack& stack, const Context context,
-                                           const bool is_host)
+MultiplayerGameState::MultiplayerGameState(StateStack& stack, const Context context, const bool is_host)
 	: State(stack, context)
 	  , m_world(*context.m_window, *context.m_sounds, *context.m_fonts, this)
 	  , m_window(*context.m_window)
@@ -93,6 +94,17 @@ MultiplayerGameState::MultiplayerGameState(StateStack& stack, const Context cont
 
 	//Play game theme
 	context.m_music->Play(MusicThemes::kMissionTheme);
+}
+
+void MultiplayerGameState::OnStackPopped()
+{
+	//This state is popped --> disconnect the player
+	SendClientDisconnect(m_world.GetClientCharacter()->GetIdentifier());
+
+	//SendClientDisconnect send a packet to the socket through a threaded operation.
+	//Since this instance is destroyed immediately after this method is called, we need to wait
+	//a bit to make sure the thread can finish.
+	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
 void MultiplayerGameState::Draw()
@@ -225,9 +237,9 @@ bool MultiplayerGameState::Update(const sf::Time dt)
 
 bool MultiplayerGameState::HandleEvent(const sf::Event& event)
 {
-	//window is closed (disconnect the client)
 	if (event.type == sf::Event::Closed)
 	{
+		//window is closed (disconnect the client)
 		SendClientDisconnect(m_world.GetClientCharacter()->GetIdentifier());
 	}
 
