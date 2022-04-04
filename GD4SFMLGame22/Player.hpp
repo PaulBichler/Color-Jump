@@ -16,18 +16,8 @@ public:
 	Player(sf::TcpSocket* socket, sf::Int8 identifier, const KeyBinding* binding);
 	void HandleEvent(const sf::Event& event, CommandQueue& commands);
 	void HandleRealtimeInput(CommandQueue& commands);
-	void HandleRealtimeNetworkInput(CommandQueue& commands);
 	std::map<PlayerAction, Command>::mapped_type GetAction(PlayerAction action);
-
-	//React to events or realtime state changes received over the network
-	void HandleNetworkEvent(PlayerAction action, CommandQueue& commands);
-	void HandleNetworkRealtimeChange(PlayerAction action, bool action_enabled);
-
-
-	void SetMissionStatus(MissionStatus status);
-	MissionStatus GetMissionStatus() const;
-
-	void DisableAllRealtimeActions() const;
+	
 	bool IsLocal() const;
 
 private:
@@ -38,13 +28,4 @@ private:
 	std::map<PlayerAction, bool> m_action_proxies;
 	sf::Int8 m_identifier;
 	sf::TcpSocket* m_socket;
-	MissionStatus m_current_mission_status;
-};
-
-#pragma once
-enum class MissionStatus
-{
-	kMissionRunning,
-	kMissionSuccess,
-	kMissionFailure
 };

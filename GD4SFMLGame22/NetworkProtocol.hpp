@@ -10,8 +10,6 @@ namespace server
 	{
 		kBroadcastMessage,
 		kInitialState,
-		kPlayerEvent,
-		kPlayerRealtimeChange,
 		kPlayerConnect,
 		kPlayerDisconnect,
 		kSpawnSelf,
@@ -27,8 +25,6 @@ namespace client
 	//Messages sent from the Client
 	enum class PacketType
 	{
-		kPlayerEvent,
-		kPlayerRealtimeChange,
 		kPositionUpdate,
 		kQuit,
 		kGameEvent,

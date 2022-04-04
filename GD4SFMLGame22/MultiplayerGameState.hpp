@@ -15,7 +15,6 @@ public:
 	bool HandleEvent(const sf::Event& event) override;
 	virtual void OnActivate();
 	void OnDestroy();
-	void DisableAllRealtimeActions();
 	void SendMission(sf::Int8 int8);
 
 private:
@@ -26,8 +25,6 @@ private:
 	void HandlePlayerConnect(sf::Packet& packet);
 	void HandlePlayerDisconnect(sf::Packet& packet);
 	void HandleInitialState(sf::Packet& packet);
-	void HandleRealtimeChange(sf::Packet& packet);
-	void HandlePlayerEvent(sf::Packet& packet);
 	void HandleTeamSelection(sf::Packet& packet) const;
 	void HandleUpdatePlatformColors(sf::Packet& packet);
 	void HandleUpdatePlayer(sf::Packet& packet) const;
