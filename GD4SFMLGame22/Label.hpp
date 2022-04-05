@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 
 #include "Component.hpp"
@@ -15,6 +16,7 @@ namespace GUI
 		virtual bool IsSelectable() const override;
 		void SetText(const std::string& text);
 		void HandleEvent(const sf::Event& event) override;
+		sf::Text& GetText();
 
 	private:
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

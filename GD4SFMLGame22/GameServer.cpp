@@ -17,7 +17,7 @@ GameServer::RemotePeer::RemotePeer() : m_ready(false), m_timed_out(false)
 GameServer::GameServer(const sf::Vector2f battlefield_size)
 	: m_thread(&GameServer::ExecutionThread, this)
 	  , m_listening_state(false)
-	  , m_client_timeout(sf::seconds(60.f))
+	  , m_client_timeout(sf::seconds(2.f))
 	  , m_max_connected_players(15)
 	  , m_connected_players(0)
 	  , m_world_height(5000.f)
@@ -27,6 +27,7 @@ GameServer::GameServer(const sf::Vector2f battlefield_size)
 	  , m_peers(1)
 	  , m_identifier_counter(1)
 	  , m_waiting_thread_end(false)
+	  , m_game_started(false)
 {
 	m_listener_socket.setBlocking(false);
 	m_peers[0].reset(new RemotePeer());
@@ -52,36 +53,39 @@ void GameServer::SendPackageToAll(sf::Packet packet) const
 	}
 }
 
-void GameServer::NotifyPlayerSpawn(const sf::Int8 identifier) const
+void GameServer::NotifyPlayerSpawn(const sf::Int8 id) const
 {
 	sf::Packet packet;
 	//First thing for every packet is what type of packet it is
 	packet << static_cast<sf::Int8>(server::PacketType::kPlayerConnect);
-	packet << identifier;
+	packet << id;
+
+	Debug("Spawn player " + std::to_string(id));
 
 	SendPackageToAll(packet);
 }
 
-void GameServer::NotifyPlayerSet(const sf::Int8 identifier, const sf::Int8 team_id,
-                                 const std::string
-                                 & name) const
+void GameServer::NotifyPlayerNameChange(const sf::Int8 identifier, const std::string& name) const
 {
 	sf::Packet packet;
 	//First thing for every packet is what type of packet it is
 	packet << static_cast<sf::Int8>(server::PacketType::kUpdatePlayer);
 	packet << identifier;
-	packet << team_id;
 	packet << name;
 
+	Debug("Update player info.");
+	
 	SendPackageToAll(packet);
 }
 
-void GameServer::NotifyTeamRespawn(sf::Int8 team_id) const
+void GameServer::NotifyTeamRespawn(const sf::Int8 team_id) const
 {
 	sf::Packet packet;
 	//First thing for every packet is what type of packet it is
 	packet << static_cast<sf::Int8>(server::PacketType::kRespawnTeam);
 	packet << team_id;
+
+	Debug("Respawn team " + std::to_string(team_id));
 
 	SendPackageToAll(packet);
 }
@@ -103,6 +107,15 @@ void GameServer::SetListening(const bool enable)
 	}
 }
 
+void GameServer::LobbyTick() const
+{
+	sf::Packet packet;
+	packet << static_cast<sf::Int8>(server::PacketType::kLobbyUpdate);
+	Debug("Lobby Update");
+
+	SendToAll(packet);
+}
+
 
 void GameServer::ExecutionThread()
 {
@@ -110,9 +123,11 @@ void GameServer::ExecutionThread()
 
 	const sf::Time frame_rate = sf::seconds(1.f / 60.f);
 	sf::Time frame_time = sf::Time::Zero;
-	const sf::Time tick_rate = sf::seconds(1.f / 24.f);
-	sf::Time tick_time = sf::Time::Zero;
-	sf::Clock frame_clock, tick_clock;
+	const sf::Time game_tick_rate = sf::seconds(1.f / 20.f);
+	sf::Time game_tick_time = sf::Time::Zero;
+	const sf::Time lobby_tick_rate = sf::seconds(1.f / 2.f);
+	sf::Time lobby_tick_time = sf::Time::Zero;
+	sf::Clock frame_clock, game_tick_clock, lobby_tick_clock;
 
 	while (!m_waiting_thread_end)
 	{
@@ -122,8 +137,11 @@ void GameServer::ExecutionThread()
 		frame_time += frame_clock.getElapsedTime();
 		frame_clock.restart();
 
-		tick_time += tick_clock.getElapsedTime();
-		tick_clock.restart();
+		game_tick_time += game_tick_clock.getElapsedTime();
+		game_tick_clock.restart();
+
+		lobby_tick_time += lobby_tick_clock.getElapsedTime();
+		lobby_tick_clock.restart();
 
 		//Fixed update step
 		while (frame_time >= frame_rate)
@@ -132,10 +150,22 @@ void GameServer::ExecutionThread()
 		}
 
 		//Fixed tick step
-		while (tick_time >= tick_rate)
+		while (game_tick_time >= game_tick_rate)
 		{
-			Tick();
-			tick_time -= tick_rate;
+			if (m_game_started)
+			{
+				Tick();
+			}
+			game_tick_time -= game_tick_rate;
+		}
+
+		while (lobby_tick_time >= lobby_tick_rate)
+		{
+			if (!m_game_started)
+			{
+				LobbyTick();
+			}
+			lobby_tick_time -= lobby_tick_rate;
 		}
 
 		//sleep
@@ -195,6 +225,8 @@ void GameServer::NotifyPlayerPlatformChange(const sf::Int8 player_id, const sf::
 	packet << platform_id;
 	packet << platform_color;
 
+	Debug("Platform changes for " + std::to_string(player_id));
+
 	SendPackageToAll(packet);
 }
 
@@ -203,6 +235,8 @@ void GameServer::NotifyMission(const sf::Int8 team_id) const
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(server::PacketType::kMissionSuccess);
 	packet << team_id;
+
+	Debug("Mission completed");
 
 	SendPackageToAll(packet);
 }
@@ -214,14 +248,16 @@ void GameServer::NotifyTeamChange(const sf::Int8 identifier, const sf::Int8 team
 	packet << identifier;
 	packet << team_id;
 
-	m_player_info[identifier].m_team_identifier = team_id;
+	m_player_info[identifier].m_team_id = team_id;
 
+	Debug("Team changes");
 
 	SendPackageToAll(packet);
 }
 
 void GameServer::NotifyGameStart()
 {
+	m_game_started = true;
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(server::PacketType::kStartGame);
 	SendToAll(packet);
@@ -232,14 +268,19 @@ void GameServer::NotifyGameStart()
 		CreateSpawnSelfPacket(packet, peer->m_identifier);
 		peer->m_socket.send(packet);
 	}
+
+	Debug("Start game on all sockets");
+	SetListening(false);
 }
 
-void GameServer::NotifyTeamCheckpointSet(sf::Int8 team_id, sf::Int8 platform_id) const
+void GameServer::NotifyTeamCheckpointSet(const sf::Int8 team_id, const sf::Int8 platform_id) const
 {
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(server::PacketType::kSetTeamCheckpoint);
 	packet << team_id;
 	packet << platform_id;
+
+	Debug("New checkpoint set for team: " + std::to_string(team_id));
 
 	SendPackageToAll(packet);
 }
@@ -282,15 +323,13 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 		break;
 	case client::PacketType::kPlayerUpdate:
 		{
-			sf::Int8 identifier;
-			sf::Int8 team_id;
+			sf::Int8 id;
 			std::string name;
-			packet >> identifier >> team_id >> name;
+			packet >> id >> name;
 			name = name.substr(0, 20);
-			m_player_info[identifier].name = name;
-			m_player_info[identifier].m_team_identifier = team_id;
+			m_player_info[id].name = name;
 
-			NotifyPlayerSet(identifier, team_id, name);
+			NotifyPlayerNameChange(id, name);
 		}
 		break;
 
@@ -351,12 +390,12 @@ void GameServer::CreateSpawnSelfPacket(sf::Packet& packet, const sf::Int8 id)
 		}
 
 		packet << player_info.first;
-		packet << player_info.second.m_team_identifier;
+		packet << player_info.second.m_team_id;
 		packet << player_info.second.name;
 	}
 
 	packet << id;
-	packet << m_player_info[id].m_team_identifier;
+	packet << m_player_info[id].m_team_id;
 	packet << m_player_info[id].name;
 }
 
@@ -376,31 +415,15 @@ void GameServer::HandleIncomingConnections()
 		packet << static_cast<sf::Int8>(server::PacketType::kSpawnSelf);
 		packet << m_identifier_counter;
 
-		if (m_identifier_counter % 2 == 0)
-		{
-			const sf::Int8 connected_players = m_identifier_counter - 1;
-			const auto& platform_colors = m_player_info[connected_players].m_platform_colors;
-
-			const auto size = static_cast<sf::Int8>(platform_colors.size());
-			packet << size;
-
-			for (const auto& platform_color : platform_colors)
-			{
-				packet << platform_color.first << platform_color.second;
-			}
-		}
-		else
-		{
-			constexpr sf::Int8 int8 = 0;
-			packet << int8;
-		}
-
 		m_peers[m_connected_players]->m_identifier = m_identifier_counter;
 
 		InformWorldState(m_peers[m_connected_players]->m_socket);
 		NotifyPlayerSpawn(m_identifier_counter++);
 
 		m_peers[m_connected_players]->m_socket.send(packet);
+
+		Debug("Send self spawn package to " + std::to_string(m_identifier_counter - 1) + ".");
+
 		m_peers[m_connected_players]->m_ready = true;
 		m_peers[m_connected_players]->m_last_packet_time = Now();
 
@@ -440,8 +463,6 @@ void GameServer::HandleDisconnections()
 				m_peers.emplace_back(std::make_unique<RemotePeer>());
 				SetListening(true);
 			}
-
-			BroadcastMessage("A player has disconnected");
 		}
 		else
 		{
@@ -460,24 +481,15 @@ void GameServer::InformWorldState(sf::TcpSocket& socket)
 	{
 		if (m_peers[i]->m_ready)
 		{
-			const PlayerInfo player_info = m_player_info[m_peers[i]->m_identifier];
-			packet << m_peers[i]->m_identifier
-				<< player_info.m_position.x
-				<< player_info.m_position.y
-				<< player_info.m_team_identifier
-				<< player_info.name;
+			sf::Int8 identifier = m_peers[i]->m_identifier;
+			const PlayerInfo player_info = m_player_info[identifier];
+			packet << identifier << player_info.m_team_id << player_info.name;
 		}
 	}
 
-	socket.send(packet);
-}
+	Debug("Inform world state to connecting socket.");
 
-void GameServer::BroadcastMessage(const std::string& message) const
-{
-	sf::Packet packet;
-	packet << static_cast<sf::Int8>(server::PacketType::kBroadcastMessage);
-	packet << message;
-	SendPackageToAll(packet);
+	socket.send(packet);
 }
 
 void GameServer::SendToAll(sf::Packet& packet) const
@@ -503,5 +515,13 @@ void GameServer::UpdateClientState() const
 		packet << player.first << player_info.m_position.x << player_info.m_position.y;
 	}
 
+	Debug("Update all clients.");
+
 	SendToAll(packet);
+}
+
+
+void GameServer::Debug(const std::string& message)
+{
+	Utility::Debug("Server: " + message);
 }

@@ -8,7 +8,6 @@ namespace server
 	//These are packets that come from the Server
 	enum class PacketType
 	{
-		kBroadcastMessage,
 		kInitialState,
 		kPlayerConnect,
 		kPlayerDisconnect,
@@ -20,7 +19,8 @@ namespace server
 		kRespawnTeam,
 		kSetTeamCheckpoint,
 		kTeamSelection,
-		kStartGame
+		kStartGame,
+		kLobbyUpdate
 	};
 }
 

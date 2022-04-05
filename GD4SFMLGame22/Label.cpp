@@ -25,6 +25,11 @@ namespace GUI
 	{
 	}
 
+	sf::Text& Label::GetText()
+	{
+		return m_text;
+	}
+
 	void Label::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		states.transform *= getTransform();

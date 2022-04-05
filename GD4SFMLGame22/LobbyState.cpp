@@ -8,9 +8,10 @@
 
 void LobbyState::CreateUI(const Context context)
 {
-	const int y1 = context.m_window->getSize().y / 2;
-	const int x1 = context.m_window->getSize().x / 2;
-	Utility::CreateLabel(context, m_failed_connection_text, x1, y1, "Attempting to connect...", 35);
+	int y = context.m_window->getSize().y / 2;
+	int x = context.m_window->getSize().x / 2;
+	Utility::CreateLabel(context, m_failed_connection_text, x, y, "Attempting to connect...", 35);
+	Utility::CentreOrigin(m_failed_connection_text->GetText());
 	m_gui_fail_container.Pack(m_failed_connection_text);
 
 	Utility::CreateButton(context, m_change_name_button, 80, 850, "Change Name", true);
@@ -46,8 +47,8 @@ void LobbyState::CreateUI(const Context context)
 	for (int i = 1; i <= 8; ++i)
 	{
 		std::shared_ptr<GUI::Button> team_button;
-		const int y = 150 + 150 * ((i - 1 - (i - 1) % 2) / 2);
-		const int x = i % 2 == 0 ? 900 : 500;
+		y = 150 + 150 * ((i - 1 - (i - 1) % 2) / 2);
+		x = i % 2 == 0 ? 900 : 500;
 		auto label = "Team " + std::to_string(i);
 		Utility::CreateButton(context, back_button, x, y, label, [this, i]
 		{
@@ -60,7 +61,14 @@ void LobbyState::CreateUI(const Context context)
 LobbyState::LobbyState(StateStack& stack, Context context, const bool is_host)
 	: State(stack, context)
 	  , m_player_input_name(context.m_player_data_manager->GetData().m_player_name)
+	  , m_connected(false)
 	  , m_is_host(is_host)
+	  , m_unpaired_y_pos(200)
+	  , m_player(-1)
+	  , m_time_since_last_packet(sf::seconds(0.f))
+	  , m_client_timeout(sf::seconds(2.f))
+	  , m_lobby_time(sf::seconds(0))
+	  , m_send_time(sf::seconds(0.5f))
 {
 	CreateUI(context);
 
@@ -94,9 +102,9 @@ LobbyState::LobbyState(StateStack& stack, Context context, const bool is_host)
 	}
 }
 
-bool LobbyState::TeamHasPlace(const sf::Int8 i)
+bool LobbyState::TeamHasPlace(const sf::Int8 id)
 {
-	if (m_team_selections[i].size() < 2)
+	if (m_team_selections[id].size() < 2)
 	{
 		return true;
 	}
@@ -162,26 +170,50 @@ void LobbyState::Draw()
 	if (m_connected)
 	{
 		window.clear(sf::Color(0, 37, 97));
-		window.draw(m_background_sprite);
 		window.draw(m_gui_container);
 	}
 	else
 	{
+		window.clear(sf::Color(0, 37, 97));
 		window.draw(m_gui_fail_container);
 	}
 }
 
-bool LobbyState::Update(sf::Time dt)
+void LobbyState::NotifyServerOfExistence() const
+{
+	sf::Packet packet;
+	m_context.m_socket->send(packet);
+}
+
+bool LobbyState::Update(const sf::Time dt)
 {
 	if (m_connected)
 	{
+		if (m_lobby_time > m_send_time)
+		{
+			m_lobby_time = sf::seconds(0.f);
+			NotifyServerOfExistence();
+		}
+
 		//Handle messages from the server that may have arrived
 		sf::Packet packet;
 		if (m_context.m_socket->receive(packet) == sf::Socket::Done)
 		{
+			m_time_since_last_packet = sf::seconds(0.f);
 			sf::Int8 packet_type;
 			packet >> packet_type;
 			HandlePacket(packet_type, packet);
+		}
+		else
+		{
+			if (m_time_since_last_packet > m_client_timeout)
+			{
+				m_connected = false;
+				m_failed_connection_text->SetText("Lost connection to the server");
+				Utility::CentreOrigin(m_failed_connection_text->GetText());
+
+				m_failed_connection_clock.restart();
+			}
 		}
 	}
 	//Failed to connect and waited for more than 5 seconds: Back to menu
@@ -190,6 +222,9 @@ bool LobbyState::Update(sf::Time dt)
 		RequestStackClear();
 		RequestStackPush(StateID::kMenu);
 	}
+
+	m_time_since_last_packet += dt;
+	m_lobby_time += dt;
 	return true;
 }
 
@@ -203,6 +238,11 @@ bool LobbyState::HandleEvent(const sf::Event& event)
 			m_change_name_button->Deactivate();
 			GetContext().m_player_data_manager->GetData().m_player_name = m_player_input_name;
 			GetContext().m_player_data_manager->Save();
+
+			m_players[m_player]->SetText(m_player_input_name);
+
+			SendPlayerName(m_player, m_player_input_name);
+
 		}
 		else if (event.type == sf::Event::TextEntered)
 		{
@@ -285,17 +325,27 @@ void LobbyState::HandlePlayerConnect(sf::Packet& packet)
 
 void LobbyState::HandlePlayerDisconnect(sf::Packet& packet)
 {
+	sf::Int8 id;
+	packet >> id;
+
+	auto& team_selection = m_team_selections[m_player_team_selection[id]];
+	const auto remove = std::remove(team_selection.begin(), team_selection.end(), id);
+	team_selection.erase(remove, team_selection.end());
+
+	const auto remove_team_selection = m_team_selections.find(id);
+	m_team_selections.erase(remove_team_selection, m_team_selections.end());
+
+	const auto remove_player = m_players.find(id);
+	m_players.erase(remove_player, m_players.end());
 }
 
 void LobbyState::HandleUpdatePlayer(sf::Packet& packet)
 {
 	sf::Int8 identifier;
-	sf::Int8 team_id;
 	std::string name;
 
-	packet >> identifier >> team_id >> name;
-
-	m_player_team_selection[identifier] = team_id;
+	packet >> identifier >> name;
+	
 	m_players[identifier]->SetText(name);
 }
 
@@ -307,10 +357,9 @@ void LobbyState::HandleInitialState(sf::Packet& packet)
 	{
 		sf::Int8 identifier;
 		sf::Int8 team_identifier;
-		sf::Vector2f position;
 		std::string name;
 
-		packet >> identifier >> position.x >> position.y >> team_identifier >> name;
+		packet >> identifier >> team_identifier >> name;
 
 		AddPlayer(identifier, name);
 
@@ -324,13 +373,11 @@ void LobbyState::HandleInitialState(sf::Packet& packet)
 	}
 }
 
-void LobbyState::SendPlayerName(const sf::Int8 identifier, const sf::Int8 team_id,
-                                const std::string& name)
+void LobbyState::SendPlayerName(const sf::Int8 identifier, const std::string& name) const
 {
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(client::PacketType::kPlayerUpdate);
 	packet << identifier;
-	packet << team_id;
 	packet << name;
 
 	m_context.m_socket->send(packet);
@@ -355,6 +402,5 @@ void LobbyState::HandleSpawnSelf(sf::Packet& packet)
 
 	Utility::Debug("Player connected.");
 	AddPlayer(identifier, GetContext().m_player_data_manager->GetData().m_player_name);
-	SendPlayerName(identifier, 0,
-	               GetContext().m_player_data_manager->GetData().m_player_name);
+	SendPlayerName(identifier, GetContext().m_player_data_manager->GetData().m_player_name);
 }

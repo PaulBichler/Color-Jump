@@ -1,7 +1,8 @@
 #pragma once
+#include "Container.hpp"
+#include "Label.hpp"
 #include "State.hpp"
 #include "Player.hpp"
-#include "GameServer.hpp"
 #include "MultiplayerWorld.hpp"
 
 class MultiplayerGameState : public State
@@ -19,13 +20,10 @@ public:
 	void SendMission(sf::Int8 player_id);
 
 private:
-	void UpdateBroadcastMessage(sf::Time elapsed_time);
 	void HandleClientUpdate(sf::Packet& packet);
 	void HandleSelfSpawn(sf::Packet& packet);
-	void HandleBroadcast(sf::Packet& packet);
 	void HandlePlayerConnect(sf::Packet& packet);
 	void HandlePlayerDisconnect(sf::Packet& packet);
-	void HandleInitialState(sf::Packet& packet);
 	void HandleUpdatePlatformColors(sf::Packet& packet);
 	void HandleUpdatePlayer(sf::Packet& packet) const;
 	void HandleMission(sf::Packet& packet) const;
@@ -33,27 +31,20 @@ private:
 	void HandleTeamCheckpointSet(sf::Packet& packet);
 	void HandlePacket(sf::Int8 packet_type, sf::Packet& packet);
 
-	void SendPlayerName(sf::Int8 identifier, sf::Int8 team_id, const std::string& name) const;
+	void SendPlayerName(sf::Int8 identifier, const std::string& name) const;
 
 private:
 	MultiplayerWorld m_world;
-
-	sf::RenderWindow& m_window;
+	bool m_connected;
 
 	using PlayerPtr = std::unique_ptr<Player>;
 	std::map<int, PlayerPtr> m_players;
 
-	sf::Int8 m_local_player_identifier;
+	sf::Int8 m_local_player_identifier{};
 	sf::Clock m_tick_clock;
 
-	std::vector<std::string> m_broadcasts;
-	sf::Text m_broadcast_text;
-	sf::Time m_broadcast_elapsed_time;
-
-	sf::Text m_player_invitation_text;
-	sf::Time m_player_invitation_time;
-
-	sf::Text m_failed_connection_text;
+	GUI::Label::Ptr m_failed_connection_text;
+	GUI::Container m_gui_fail_container;
 	sf::Clock m_failed_connection_clock;
 
 	bool m_has_focus;

@@ -16,8 +16,8 @@ public:
 	explicit GameServer(sf::Vector2f battlefield_size);
 	~GameServer();
 	void SendPackageToAll(sf::Packet packet) const;
-	void NotifyPlayerSpawn(sf::Int8 identifier) const;
-	void NotifyPlayerSet(sf::Int8 identifier, sf::Int8 team_id, const std::string& name) const;
+	void NotifyPlayerSpawn(sf::Int8 id) const;
+	void NotifyPlayerNameChange(const sf::Int8 identifier, const std::string& name) const;
 	void NotifyTeamRespawn(sf::Int8 team_id) const;
 
 private:
@@ -33,7 +33,7 @@ private:
 
 	struct PlayerInfo
 	{
-		sf::Int8 m_team_identifier{};
+		sf::Int8 m_team_id{};
 		sf::Vector2f m_position;
 		std::string name;
 		std::map<sf::Int8, sf::Int8> m_platform_colors;
@@ -43,6 +43,7 @@ private:
 
 private:
 	void SetListening(bool enable);
+	void LobbyTick() const;
 	void ExecutionThread();
 	void Tick() const;
 	sf::Time Now() const;
@@ -62,9 +63,9 @@ private:
 	void HandleDisconnections();
 
 	void InformWorldState(sf::TcpSocket& socket);
-	void BroadcastMessage(const std::string& message) const;
 	void SendToAll(sf::Packet& packet) const;
 	void UpdateClientState() const;
+	static void Debug(const std::string& message);
 
 private:
 	sf::Thread m_thread;
@@ -85,4 +86,5 @@ private:
 	std::vector<peer_ptr> m_peers;
 	sf::Int8 m_identifier_counter;
 	bool m_waiting_thread_end;
+	bool m_game_started;
 };
