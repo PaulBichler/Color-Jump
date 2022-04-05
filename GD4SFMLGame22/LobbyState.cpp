@@ -27,12 +27,10 @@ void LobbyState::CreateUI(Context& context)
 	std::shared_ptr<GUI::Button> start_game;
 	Utility::CreateButton(context, start_game, 600, 850, "Start game", [this]
 	{
-		sf::Packet packet;
-		packet << static_cast<sf::Int8>(client::PacketType::kStartNetworkGame);
-		m_context.m_socket->send(packet);
+		SendStartGame();
 	}, [this]
 	{
-		return m_is_host;
+		return m_is_host && m_team_selections[m_player_team_selection[m_player]].size() == 2;
 	});
 	m_gui_container.Pack(start_game);
 
@@ -287,9 +285,16 @@ void LobbyState::HandleTeamSelection(sf::Packet& packet)
 
 void LobbyState::HandleGameStart()
 {
-	m_game_started = true;
+	if(m_team_selections[m_player_team_selection[m_player]].size() == 2)
+	{
+		m_game_started = true;
+		RequestStackPop();
+		RequestStackPush(StateID::kNetworkGame);
+		return;
+	}
+
 	RequestStackPop();
-	RequestStackPush(StateID::kNetworkGame);
+	RequestStackPush(StateID::kMenu);
 }
 
 void LobbyState::HandlePacket(sf::Int8 packet_type, sf::Packet& packet)
@@ -386,6 +391,13 @@ void LobbyState::SendPlayerName(const sf::Int8 identifier, const std::string& na
 	packet << identifier;
 	packet << name;
 
+	m_context.m_socket->send(packet);
+}
+
+void LobbyState::SendStartGame() const
+{
+	sf::Packet packet;
+	packet << static_cast<sf::Int8>(client::PacketType::kStartNetworkGame);
 	m_context.m_socket->send(packet);
 }
 

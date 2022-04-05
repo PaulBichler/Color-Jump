@@ -17,7 +17,7 @@ public:
 	~GameServer();
 	void SendPackageToAll(sf::Packet packet) const;
 	void NotifyPlayerSpawn(sf::Int8 id) const;
-	void NotifyPlayerNameChange(const sf::Int8 identifier, const std::string& name) const;
+	void NotifyPlayerNameChange(sf::Int8 identifier, const std::string& name) const;
 	void NotifyTeamRespawn(sf::Int8 team_id) const;
 
 private:
@@ -49,14 +49,12 @@ private:
 	sf::Time Now() const;
 
 	void HandleIncomingPackets();
-	void NotifyPlayerPlatformChange(sf::Int8 player_id, const sf::Int8 platform_id,
-	                                const sf::Int8 platform_color) const;
+	void NotifyPlayerPlatformChange(sf::Int8 player_id, sf::Int8 platform_id, sf::Int8 platform_color) const;
 	void NotifyMission(sf::Int8 team_id) const;
 	void NotifyTeamCheckpointSet(sf::Int8 team_id, sf::Int8 platform_id) const;
 	void NotifyTeamChange(sf::Int8 identifier, sf::Int8 team_id);
 	void NotifyGameStart();
-	void HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer,
-	                          bool& detected_timeout);
+	void HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer, bool& detected_timeout);
 	void CreateSpawnSelfPacket(sf::Packet& packet, sf::Int8 id);
 
 	void HandleIncomingConnections();

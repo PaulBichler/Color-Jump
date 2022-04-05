@@ -29,6 +29,7 @@ private:
 	void HandleUpdatePlayer(sf::Packet& packet);
 	void HandleInitialState(sf::Packet& packet);
 	void SendPlayerName(const sf::Int8 identifier, const std::string& name) const;
+	void SendStartGame() const;
 	void AddPlayer(sf::Int8 identifier, const std::string& label_text);
 	void HandleSpawnSelf(sf::Packet& packet);
 	
