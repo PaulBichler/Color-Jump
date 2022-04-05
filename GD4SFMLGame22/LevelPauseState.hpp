@@ -9,7 +9,7 @@
 class LevelPauseState : public State
 {
 public:
-	LevelPauseState(StateStack& stack, Context context);
+	LevelPauseState(StateStack& stack, Context& context);
 
 	virtual void Draw();
 	virtual bool Update(sf::Time dt);

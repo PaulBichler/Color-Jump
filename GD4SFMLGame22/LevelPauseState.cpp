@@ -11,7 +11,7 @@
 #include "Utility.hpp"
 
 //Written by Paul Bichler (D00242563)
-LevelPauseState::LevelPauseState(StateStack& stack, Context context)
+LevelPauseState::LevelPauseState(StateStack& stack, Context& context)
 	: State(stack, context)
 {
 	const sf::Font& font = context.m_fonts->Get(Fonts::Main);

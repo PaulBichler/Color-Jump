@@ -5,7 +5,7 @@
 
 #include "ResourceHolder.hpp"
 
-TitleState::TitleState(StateStack& stack, const Context context)
+TitleState::TitleState(StateStack& stack, Context& context)
 : State(stack, context)
 , m_show_text(true)
 , m_text_effect_time(sf::Time::Zero)

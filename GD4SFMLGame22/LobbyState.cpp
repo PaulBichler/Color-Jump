@@ -6,7 +6,7 @@
 #include "Utility.hpp"
 #include <SFML/Network/Packet.hpp>
 
-void LobbyState::CreateUI(const Context context)
+void LobbyState::CreateUI(Context& context)
 {
 	int y = context.m_window->getSize().y / 2;
 	int x = context.m_window->getSize().x / 2;
@@ -39,6 +39,7 @@ void LobbyState::CreateUI(const Context context)
 	std::shared_ptr<GUI::Button> back_button;
 	Utility::CreateButton(context, back_button, 1080, 850, "Back", [this]
 	{
+		GetContext().DisableServer();
 		RequestStackPop();
 		RequestStackPush(StateID::kMenu);
 	});
@@ -58,7 +59,7 @@ void LobbyState::CreateUI(const Context context)
 	}
 }
 
-LobbyState::LobbyState(StateStack& stack, Context context, const bool is_host)
+LobbyState::LobbyState(StateStack& stack, Context& context, const bool is_host)
 	: State(stack, context)
 	  , m_player_input_name(context.m_player_data_manager->GetData().m_player_name)
 	  , m_connected(false)
@@ -76,7 +77,7 @@ LobbyState::LobbyState(StateStack& stack, Context context, const bool is_host)
 	sf::IpAddress ip;
 	if (m_is_host)
 	{
-		context.m_game_server = new GameServer(sf::Vector2f(context.m_window->getSize()));
+		context.m_game_server = std::make_unique<GameServer>(sf::Vector2f(context.m_window->getSize()));
 		ip = "127.0.0.1";
 	}
 	else

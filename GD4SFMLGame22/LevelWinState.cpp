@@ -8,7 +8,7 @@
 #include "Button.hpp"
 #include "Utility.hpp"
 
-LevelWinState::LevelWinState(StateStack& stack, Context context)
+LevelWinState::LevelWinState(StateStack& stack, Context& context)
 	: State(stack, context)
 {
 	const sf::Font& font = context.m_fonts->Get(Fonts::Main);

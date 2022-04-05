@@ -23,7 +23,7 @@ namespace GUI
 
 	public:
 		void ChangeTextColor(ButtonType button);
-		explicit Button(Context context);
+		explicit Button(const Context& context);
 		void SetCallback(Callback callback);
 		void SetText(const std::string& text);
 		void SetToggle(bool flag);

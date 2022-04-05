@@ -6,7 +6,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 
 
-SettingsState::SettingsState(StateStack& stack, Context context)
+SettingsState::SettingsState(StateStack& stack, Context& context)
 	: State(stack, context)
 {
 	m_background_sprite.setTexture(context.m_textures->Get(Textures::kTitleScreen));
@@ -91,7 +91,7 @@ bool SettingsState::HandleEvent(const sf::Event& event)
 	return false;
 }
 
-void SettingsState::UpdateLabels() const
+void SettingsState::UpdateLabels()
 {
 	for (std::size_t i = 0; i < static_cast<int>(PlayerAction::kActionCount); ++i)
 	{
@@ -108,7 +108,7 @@ void SettingsState::UpdateLabels() const
 	}
 }
 
-void SettingsState::AddButtonLabel(std::size_t index, const size_t x, const size_t y, const std::string& text, Context context)
+void SettingsState::AddButtonLabel(std::size_t index, const size_t x, const size_t y, const std::string& text, Context& context)
 {
 	index += static_cast<int>(PlayerAction::kActionCount) * x;
 

@@ -40,6 +40,7 @@ private:
 	LevelManager m_level_manager;
 	PlayerDataManager m_player_data_manager;
 
+	Context m_context;
 	StateStack m_stack;
 
 	sf::Text m_statistics_text;

@@ -1,17 +1,20 @@
 #include "MultiplayerGameState.hpp"
-#include "MusicPlayer.hpp"
-#include "Utility.hpp"
-#include <SFML/Graphics/RenderWindow.hpp>
+
 #include <fstream>
 #include <thread>
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Network/Packet.hpp>
-#include "GameServer.hpp"
-#include "NetworkProtocol.hpp"
 
-MultiplayerGameState::MultiplayerGameState(StateStack& stack, const Context context)
+#include "GameServer.hpp"
+#include "MusicPlayer.hpp"
+#include "NetworkProtocol.hpp"
+#include "Utility.hpp"
+
+MultiplayerGameState::MultiplayerGameState(StateStack& stack, Context& context)
 	: State(stack, context)
 	  , m_world(*context.m_window, *context.m_sounds, *context.m_fonts, this)
 	  , m_connected(true)
+	  , m_local_player_identifier(0)
 	  , m_has_focus(true)
 	  , m_client_timeout(sf::seconds(2.f))
 	  , m_time_since_last_packet(sf::seconds(0.f))
@@ -249,7 +252,7 @@ void MultiplayerGameState::HandleSelfSpawn(sf::Packet& packet)
 		ghost->SetTeamIdentifier(team_id);
 		ghost->SetName(name);
 
-		m_players[identifier].reset(new Player(m_context.m_socket, identifier, nullptr));
+		m_players[identifier].reset(new Player(m_context.m_socket.get(), identifier, nullptr));
 	}
 
 	packet >> identifier >> team_id >> name;
@@ -258,7 +261,7 @@ void MultiplayerGameState::HandleSelfSpawn(sf::Packet& packet)
 	const auto character = m_world.AddCharacter(identifier, true);
 	character->SetTeamIdentifier(team_id);
 	character->SetName(name);
-	m_players[identifier].reset(new Player(m_context.m_socket, identifier, GetContext().m_keys1));
+	m_players[identifier].reset(new Player(m_context.m_socket.get(), identifier, GetContext().m_keys1));
 }
 
 void MultiplayerGameState::HandlePlayerConnect(sf::Packet& packet)
@@ -268,7 +271,7 @@ void MultiplayerGameState::HandlePlayerConnect(sf::Packet& packet)
 
 	m_world.AddGhostCharacter(identifier);
 	m_world.UpdateCharacters();
-	m_players[identifier].reset(new Player(m_context.m_socket, identifier, nullptr));
+	m_players[identifier].reset(new Player(m_context.m_socket.get(), identifier, nullptr));
 }
 
 void MultiplayerGameState::HandlePlayerDisconnect(sf::Packet& packet)

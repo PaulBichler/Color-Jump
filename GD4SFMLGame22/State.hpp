@@ -22,7 +22,7 @@ namespace sf
 class StateStack;
 class Player;
 
-struct Context
+struct Context : sf::NonCopyable
 {
 	Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, MusicPlayer& music, SoundPlayer& sounds, LevelManager& level_manager, PlayerDataManager& player_data_manager, KeyBinding& keys1, KeyBinding& keys2);
 	sf::RenderWindow* m_window;
@@ -34,16 +34,20 @@ struct Context
 	PlayerDataManager* m_player_data_manager;
 	KeyBinding* m_keys1;
 	KeyBinding* m_keys2;
-	GameServer* m_game_server;
-	sf::TcpSocket* m_socket;
+
+	std::unique_ptr<GameServer> m_game_server;
+	std::unique_ptr<sf::TcpSocket> m_socket;
+
+	void DisableServer();
 };
 
 class State
 {
 public:
 	typedef std::unique_ptr<State> Ptr;
+
 public:
-	State(StateStack& stack, Context context);
+	State(StateStack& stack, Context& context);
 	virtual ~State();
 	virtual void Draw() = 0;
 	virtual bool Update(sf::Time dt) = 0;
@@ -54,9 +58,9 @@ public:
 protected:
 	void RequestStackPop() const;
 	void RequestStackClear() const;
-	Context GetContext() const;
+	Context& GetContext() const;
 
 protected:
 	StateStack* m_stack;
-	Context m_context;
+	Context& m_context;
 };

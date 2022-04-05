@@ -6,7 +6,7 @@
 #include "Utility.hpp"
 #include "Button.hpp"
 
-MenuState::MenuState(StateStack& stack, Context context)
+MenuState::MenuState(StateStack& stack, Context& context)
 	: State(stack, context)
 {
 	sf::Texture& texture = context.m_textures->Get(Textures::kTitleScreen);

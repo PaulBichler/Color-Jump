@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-StateStack::StateStack(Context context)
+StateStack::StateStack(Context& context)
 :m_context(context)
 {
 }
@@ -21,7 +21,7 @@ void StateStack::Update(sf::Time dt)
 
 void StateStack::Draw()
 {
-	for(State::Ptr& state:m_stack)
+	for(const State::Ptr& state : m_stack)
 	{
 		state->Draw();
 	}
@@ -59,16 +59,16 @@ bool StateStack::IsEmpty() const
 	return m_stack.empty();
 }
 
-State::Ptr StateStack::CreateState(StateID state_id)
+State::Ptr StateStack::CreateState(const StateID state_id)
 {
-	auto found = m_state_factory.find(state_id);
+	const auto found = m_state_factory.find(state_id);
 	assert(found != m_state_factory.end());
 	return found->second();
 }
 
 void StateStack::ApplyPendingChanges()
 {
-	for(PendingChange change : m_pending_list)
+	for(const PendingChange change : m_pending_list)
 	{
 		switch (change.m_action)
 		{
@@ -88,7 +88,7 @@ void StateStack::ApplyPendingChanges()
 	m_pending_list.clear();
 }
 
-StateStack::PendingChange::PendingChange(Action action, StateID state_id)
+StateStack::PendingChange::PendingChange(const Action action, const StateID state_id)
 : m_action(action)
 , m_state_id(state_id)
 {

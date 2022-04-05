@@ -8,7 +8,7 @@
 class LevelLoseState : public State
 {
 public:
-	LevelLoseState(StateStack& stack, Context context);
+	LevelLoseState(StateStack& stack, Context& context);
 
 	void Draw() override;
 	bool Update(sf::Time dt) override;

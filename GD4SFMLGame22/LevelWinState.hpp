@@ -7,7 +7,7 @@
 class LevelWinState : public State
 {
 public:
-	LevelWinState(StateStack& stack, Context context);
+	LevelWinState(StateStack& stack, Context& context);
 
 	void Draw() override;
 	bool Update(sf::Time dt) override;

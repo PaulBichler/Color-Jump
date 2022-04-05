@@ -7,9 +7,9 @@
 class LobbyState : public State
 {
 public:
-	void CreateUI(Context context);
-	LobbyState(StateStack& stack, Context context, bool is_host);
-	bool TeamHasPlace(sf::Int8 id);
+	LobbyState(StateStack& stack, Context& context, bool is_host);
+	void CreateUI(Context& context);
+	bool TeamHasPlace(sf::Int8 i);
 	static sf::Vector2f GetTeamPos(int i);
 	void MovePlayer(sf::Int8 id, sf::Int8 team_id);
 	void HandleTeamChoice(sf::Int8 i);

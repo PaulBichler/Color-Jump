@@ -5,7 +5,7 @@
 #include "Button.hpp"
 #include "Label.hpp"
 
-JoinSettingsState::JoinSettingsState(StateStack& stack, Context context)
+JoinSettingsState::JoinSettingsState(StateStack& stack, Context& context)
 	: State(stack, context),
 	m_player_input_ip(context.m_player_data_manager->GetData().m_ip_address),
 	m_player_input_name(context.m_player_data_manager->GetData().m_player_name)
@@ -41,7 +41,7 @@ JoinSettingsState::JoinSettingsState(StateStack& stack, Context context)
 	const auto connect_button = std::make_shared<GUI::Button>(context);
 	connect_button->setPosition(80.f, 400.f);
 	connect_button->SetText("Connect");
-	connect_button->SetCallback([this, context]
+	connect_button->SetCallback([this]
 	{
 		RequestStackPop(); //Pop Menu State
 		RequestStackPush(StateID::kLobbyClient);
@@ -53,7 +53,7 @@ JoinSettingsState::JoinSettingsState(StateStack& stack, Context context)
 	const auto back_button = std::make_shared<GUI::Button>(context);
 	back_button->setPosition(80.f, 450.f);
 	back_button->SetText("Back");
-	back_button->SetCallback([this, context]
+	back_button->SetCallback([this]
 	{
 		RequestStackPop();
 	});

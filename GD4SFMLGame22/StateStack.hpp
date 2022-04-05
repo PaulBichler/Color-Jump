@@ -28,7 +28,7 @@ public:
 	};
 
 public:
-	explicit StateStack(Context context);
+	explicit StateStack(Context& context);
 	template <typename T>
 	void RegisterState(StateID state_id);
 	template <class T, class Param1>
@@ -58,7 +58,7 @@ private:
 private:
 	std::vector<State::Ptr> m_stack;
 	std::vector<PendingChange> m_pending_list;
-	Context m_context;
+	Context& m_context;
 	std::map<StateID, std::function<State::Ptr()>> m_state_factory;
 };
 

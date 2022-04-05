@@ -8,7 +8,7 @@ class MenuState : public State
 {
 public:
 	
-	MenuState(StateStack& stack, Context context);
+	MenuState(StateStack& stack, Context& context);
 	virtual void Draw();
 	virtual bool Update(sf::Time dt);
 	virtual bool HandleEvent(const sf::Event& event);

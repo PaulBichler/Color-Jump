@@ -6,7 +6,7 @@
 class GameState : public State
 {
 public:
-	GameState(StateStack& stack, Context context);
+	GameState(StateStack& stack, Context& context);
 	void Draw() override;
 	bool Update(sf::Time dt) override;
 	bool HandleEvent(const sf::Event& event) override;

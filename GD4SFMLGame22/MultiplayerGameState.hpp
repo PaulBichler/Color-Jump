@@ -8,7 +8,7 @@
 class MultiplayerGameState : public State
 {
 public:
-	MultiplayerGameState(StateStack& stack, Context context);
+	MultiplayerGameState(StateStack& stack, Context& context);
 	void OnStackPopped() override;
 	void Draw() override;
 	void SendPlatformInfo(sf::Int8 player_id, sf::Int8 platform_id, EPlatformType platform) const;

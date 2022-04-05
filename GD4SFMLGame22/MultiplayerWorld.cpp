@@ -268,11 +268,8 @@ void MultiplayerWorld::OnReachedCheckpoint() const
 {
 	Platform* current_platform = m_client_player->GetCurrentPlatform();
 
-	if(current_platform == m_team_mate->GetCurrentPlatform() && current_platform != m_checkpoint)
+	if(m_team_mate != nullptr && current_platform == m_team_mate->GetCurrentPlatform() && current_platform != m_checkpoint)
 		m_state->SendCheckpointReached(m_client_player->GetTeamIdentifier(), current_platform->GetID());
-
-	/*m_checkpoint = m_client_player->GetCurrentPlatform();
-	m_checkpoint->SetType(EPlatformType::kCheckpointActivated);*/
 }
 
 void MultiplayerWorld::OnReachedGoal() const

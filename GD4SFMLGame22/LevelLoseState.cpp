@@ -12,7 +12,7 @@
 
 //Written by Paul Bichler (D00242563)
 //The Level Lose State is pushed when a player dies
-LevelLoseState::LevelLoseState(StateStack& stack, Context context)
+LevelLoseState::LevelLoseState(StateStack& stack, Context& context)
 	: State(stack, context)
 {
 	const sf::Font& font = context.m_fonts->Get(Fonts::Main);

@@ -21,7 +21,8 @@ Application::Application()
 	: m_window(sf::VideoMode(1344, 960), "States", sf::Style::Close)
 	  , m_key_binding_1(1)
 	  , m_key_binding_2(2)
-	  , m_stack(Context(m_window, m_textures, m_fonts, m_music, m_sounds, m_level_manager, m_player_data_manager, m_player_data_manager.GetData().m_player1_keybindings, m_player_data_manager.GetData().m_player2_keybindings))
+	  , m_context(m_window, m_textures, m_fonts, m_music, m_sounds, m_level_manager, m_player_data_manager, m_player_data_manager.GetData().m_player1_keybindings, m_player_data_manager.GetData().m_player2_keybindings)
+	  , m_stack(m_context)
 	  , m_statistics_num_frames(0)
 {
 	m_window.setKeyRepeatEnabled(false);

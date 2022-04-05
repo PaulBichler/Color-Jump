@@ -5,7 +5,7 @@
 #include "Player.hpp"
 
 //Written by Paul Bichler (D00242563)
-GameState::GameState(StateStack& stack, const Context context)
+GameState::GameState(StateStack& stack, Context& context)
 	: State(stack, context)
 	  , m_world(*context.m_window, *context.m_sounds, *context.m_fonts)
 {
@@ -28,7 +28,7 @@ GameState::GameState(StateStack& stack, const Context context)
 
 	for (int i = 0; i < 2; ++i)
 	{
-		m_world.AddCharacter(i, "");
+		m_world.AddCharacter(i, false);
 		m_players[i].reset(new Player(nullptr, i, i == 0 ? context.m_keys1 : context.m_keys2));
 	}
 

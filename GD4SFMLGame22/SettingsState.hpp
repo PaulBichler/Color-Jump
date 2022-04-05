@@ -16,18 +16,15 @@
 class SettingsState : public State
 {
 public:
-	SettingsState(StateStack& stack, Context context);
+	SettingsState(StateStack& stack, Context& context);
 
 	void Draw() override;
 	bool Update(sf::Time dt) override;
 	bool HandleEvent(const sf::Event& event) override;
 
-
 private:
-	void UpdateLabels() const;
-	void AddButtonLabel(std::size_t index, size_t x, size_t y,
-	                    const std::string& text, Context context);
-
+	void UpdateLabels();
+	void AddButtonLabel(std::size_t index, size_t x, size_t y, const std::string& text, Context& context);
 
 private:
 	sf::Sprite m_background_sprite;
