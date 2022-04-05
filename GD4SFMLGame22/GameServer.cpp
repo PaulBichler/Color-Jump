@@ -457,8 +457,8 @@ void GameServer::HandleDisconnections()
 
 			itr = m_peers.erase(itr);
 
-			//If the number of peers has dropped below max_connections
-			if (m_connected_players < m_max_connected_players)
+			//If the number of peers has dropped below max_connections (and the game hasn't started yet)
+			if (m_connected_players < m_max_connected_players && !m_game_started)
 			{
 				m_peers.emplace_back(std::make_unique<RemotePeer>());
 				SetListening(true);

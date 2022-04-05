@@ -17,6 +17,7 @@ public:
 	void NotifyServerOfExistence() const;
 	bool Update(sf::Time dt) override;
 	bool HandleEvent(const sf::Event& event) override;
+	void OnStackPopped() override;
 
 
 private:

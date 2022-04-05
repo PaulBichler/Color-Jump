@@ -14,7 +14,6 @@ MultiplayerGameState::MultiplayerGameState(StateStack& stack, Context& context)
 	: State(stack, context)
 	  , m_world(*context.m_window, *context.m_sounds, *context.m_fonts, this)
 	  , m_connected(true)
-	  , m_local_player_identifier(0)
 	  , m_has_focus(true)
 	  , m_client_timeout(sf::seconds(2.f))
 	  , m_time_since_last_packet(sf::seconds(0.f))
@@ -37,6 +36,9 @@ void MultiplayerGameState::OnStackPopped()
 {
 	//This state is popped --> disconnect the player
 	SendClientDisconnect(m_world.GetClientCharacter()->GetIdentifier());
+
+	//Disable the server (does nothing if you're not the host)
+	GetContext().DisableServer();
 
 	//SendClientDisconnect send a packet to the socket through a threaded operation.
 	//Since this instance is destroyed immediately after this method is called, we need to wait
@@ -193,7 +195,7 @@ void MultiplayerGameState::SendTeamDeath(sf::Int8 team_id)
 	m_context.m_socket->send(packet);
 }
 
-void MultiplayerGameState::SendCheckpointReached(sf::Int8 team_id, sf::Int8 platform_id)
+void MultiplayerGameState::SendCheckpointReached(sf::Int8 team_id, sf::Int8 platform_id) const
 {
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(client::PacketType::kCheckpointReached);
@@ -203,7 +205,7 @@ void MultiplayerGameState::SendCheckpointReached(sf::Int8 team_id, sf::Int8 plat
 	m_context.m_socket->send(packet);
 }
 
-void MultiplayerGameState::SendClientDisconnect(sf::Int8 identifier)
+void MultiplayerGameState::SendClientDisconnect(sf::Int8 identifier) const
 {
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(client::PacketType::kQuit);
@@ -212,7 +214,7 @@ void MultiplayerGameState::SendClientDisconnect(sf::Int8 identifier)
 	m_context.m_socket->send(packet);
 }
 
-void MultiplayerGameState::HandleClientUpdate(sf::Packet& packet)
+void MultiplayerGameState::HandleClientUpdate(sf::Packet& packet) const
 {
 	sf::Int8 player_count;
 	packet >> player_count;

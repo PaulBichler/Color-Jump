@@ -39,7 +39,6 @@ void LobbyState::CreateUI(Context& context)
 	std::shared_ptr<GUI::Button> back_button;
 	Utility::CreateButton(context, back_button, 1080, 850, "Back", [this]
 	{
-		GetContext().DisableServer();
 		RequestStackPop();
 		RequestStackPush(StateID::kMenu);
 	});
@@ -72,7 +71,6 @@ LobbyState::LobbyState(StateStack& stack, Context& context, const bool is_host)
 	  , m_send_time(sf::seconds(0.5f))
 {
 	CreateUI(context);
-
 
 	sf::IpAddress ip;
 	if (m_is_host)
@@ -269,6 +267,12 @@ bool LobbyState::HandleEvent(const sf::Event& event)
 	return false;
 }
 
+void LobbyState::OnStackPopped()
+{
+	if(!m_game_started)
+		GetContext().DisableServer();
+}
+
 void LobbyState::HandleTeamSelection(sf::Packet& packet)
 {
 	sf::Int8 identifier;
@@ -283,6 +287,7 @@ void LobbyState::HandleTeamSelection(sf::Packet& packet)
 
 void LobbyState::HandleGameStart()
 {
+	m_game_started = true;
 	RequestStackPop();
 	RequestStackPush(StateID::kNetworkGame);
 }

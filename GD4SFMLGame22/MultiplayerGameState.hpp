@@ -15,12 +15,12 @@ public:
 	bool Update(sf::Time dt) override;
 	bool HandleEvent(const sf::Event& event) override;
 	void SendTeamDeath(sf::Int8 team_id);
-	void SendCheckpointReached(sf::Int8 team_id, sf::Int8 platform_id);
-	void SendClientDisconnect(sf::Int8 identifier);
+	void SendCheckpointReached(sf::Int8 team_id, sf::Int8 platform_id) const;
+	void SendClientDisconnect(sf::Int8 identifier) const;
 	void SendMission(sf::Int8 player_id);
 
 private:
-	void HandleClientUpdate(sf::Packet& packet);
+	void HandleClientUpdate(sf::Packet& packet) const;
 	void HandleSelfSpawn(sf::Packet& packet);
 	void HandlePlayerConnect(sf::Packet& packet);
 	void HandlePlayerDisconnect(sf::Packet& packet);
