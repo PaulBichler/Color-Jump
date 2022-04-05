@@ -7,16 +7,20 @@
 //Movement is now for character
 struct CharacterMover
 {
-	CharacterMover(const float vx, const float vy) : m_velocity(vx, vy)
+	CharacterMover(const float vx, const float vy, sf::Int8 id) : m_velocity(vx, vy), m_id(id)
 	{
 	}
 
 	void operator()(Character& character, sf::Time) const
 	{
-		character.Accelerate(Character::GetMaxSpeed() * m_velocity);
+		if (m_id == character.GetIdentifier())
+		{
+			character.Accelerate(Character::GetMaxSpeed() * m_velocity);
+		}
 	}
 
 	sf::Vector2f m_velocity;
+	sf::Int8 m_id;
 };
 
 struct CharacterJumpTrigger
@@ -37,9 +41,9 @@ struct CharacterJumpTrigger
 void Player::InitialiseActions()
 {
 	m_action_binding[PlayerAction::kMoveLeft].action = DerivedAction<Character>(
-		CharacterMover(-1, 0.f));
+		CharacterMover(-1, 0.f, m_identifier));
 	m_action_binding[PlayerAction::kMoveRight].action = DerivedAction<Character>(
-		CharacterMover(+1, 0.f));
+		CharacterMover(+1, 0.f, m_identifier));
 	m_action_binding[PlayerAction::kMoveUp].action = DerivedAction<Character>(
 		CharacterJumpTrigger());
 }

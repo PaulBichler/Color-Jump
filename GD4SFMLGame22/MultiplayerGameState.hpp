@@ -21,6 +21,7 @@ public:
 
 private:
 	void HandleClientUpdate(sf::Packet& packet);
+	static void Debug(const std::string& message);
 	void HandleSelfSpawn(sf::Packet& packet);
 	void HandlePlayerConnect(sf::Packet& packet);
 	void HandlePlayerDisconnect(sf::Packet& packet);
@@ -40,7 +41,7 @@ private:
 	using PlayerPtr = std::unique_ptr<Player>;
 	std::map<int, PlayerPtr> m_players;
 
-	sf::Int8 m_local_player_identifier{};
+	sf::Int8 m_local_player_identifier;
 	sf::Clock m_tick_clock;
 
 	GUI::Label::Ptr m_failed_connection_text;
