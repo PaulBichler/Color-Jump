@@ -29,6 +29,7 @@ protected:
 public:
 	void InitRay();
 	void SetColor();
+	void ResetColor();
 	Character(EColorType type, const TextureHolder& textures, const FontHolder& fonts, const sf::IntRect& texture_rect, SoundPlayer& context);
 	static float GetMaxSpeed();
 	unsigned GetCategory() const override;

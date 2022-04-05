@@ -38,6 +38,15 @@ void Character::SetColor()
 	m_team_id_text.setFillColor(white);
 }
 
+void Character::ResetColor()
+{
+	const auto& color = m_sprite.getColor();
+	const auto& white = sf::Color(255, 255, 255, 255);
+	m_sprite.setColor(sf::Color(color.r, color.g, color.b, 255));
+	m_name_text.setFillColor(white);
+	m_team_id_text.setFillColor(white);
+}
+
 /*
  *	Dylan Goncalves Martins (D00242562)
  *	Creates the character for the players

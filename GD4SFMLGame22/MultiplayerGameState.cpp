@@ -78,7 +78,7 @@ void MultiplayerGameState::SendPlayerName(const sf::Int8 identifier, const std::
 	packet << static_cast<sf::Int8>(client::PacketType::kPlayerUpdate);
 	packet << identifier;
 	packet << name;
-
+	Debug("Name change.");
 	m_context.m_socket->send(packet);
 }
 
@@ -89,11 +89,10 @@ bool MultiplayerGameState::Update(const sf::Time dt)
 	{
 		m_world.Update(dt);
 
-		//Only handle the realtime input if the window has focus and the game is un paused
 		if (m_has_focus)
 		{
 			CommandQueue& commands = m_world.GetCommandQueue();
-			for (const auto& pair : m_players)
+			for (auto& pair : m_players)
 			{
 				pair.second->HandleRealtimeInput(commands);
 			}
@@ -130,6 +129,7 @@ bool MultiplayerGameState::Update(const sf::Time dt)
 			m_context.m_socket->send(packet);
 			m_tick_clock.restart();
 		}
+		m_time_since_last_packet += dt;
 	}
 	else if (m_failed_connection_clock.getElapsedTime() >= sf::seconds(5.f))
 	{
@@ -137,8 +137,6 @@ bool MultiplayerGameState::Update(const sf::Time dt)
 		RequestStackPush(StateID::kMenu);
 	}
 
-
-	m_time_since_last_packet += dt;
 	return true;
 }
 
@@ -183,6 +181,8 @@ void MultiplayerGameState::SendMission(const sf::Int8 player_id)
 	packet << static_cast<sf::Int8>(client::PacketType::kMission);
 	packet << player_id;
 
+	Debug("Mission completed.");
+
 	m_context.m_socket->send(packet);
 }
 
@@ -191,7 +191,7 @@ void MultiplayerGameState::SendTeamDeath(sf::Int8 team_id)
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(client::PacketType::kTeamDeath);
 	packet << team_id;
-
+	Debug("Team died.");
 	m_context.m_socket->send(packet);
 }
 
@@ -201,13 +201,14 @@ void MultiplayerGameState::SendCheckpointReached(sf::Int8 team_id, sf::Int8 plat
 	packet << static_cast<sf::Int8>(client::PacketType::kCheckpointReached);
 	packet << team_id;
 	packet << platform_id;
-
+	Debug("Checkpoint reached.");
 	m_context.m_socket->send(packet);
 }
 
 void MultiplayerGameState::SendClientDisconnect(sf::Int8 identifier) const
 {
 	sf::Packet packet;
+	Debug("Client disconnected.");
 	packet << static_cast<sf::Int8>(client::PacketType::kQuit);
 	packet << identifier;
 
@@ -216,6 +217,8 @@ void MultiplayerGameState::SendClientDisconnect(sf::Int8 identifier) const
 
 void MultiplayerGameState::HandleClientUpdate(sf::Packet& packet) const
 {
+	Debug("Handle client update.");
+
 	sf::Int8 player_count;
 	packet >> player_count;
 
@@ -228,7 +231,7 @@ void MultiplayerGameState::HandleClientUpdate(sf::Packet& packet) const
 		Character* character = m_world.GetCharacter(identifier);
 		const bool is_local_player = identifier == m_local_player_identifier;
 		if (character && !is_local_player)
-		{
+		{	
 			sf::Vector2f interpolated_position = character->getPosition() + (
 				position - character->getPosition()) * 0.5f;
 			character->setPosition(interpolated_position);
@@ -236,8 +239,15 @@ void MultiplayerGameState::HandleClientUpdate(sf::Packet& packet) const
 	}
 }
 
+void MultiplayerGameState::Debug(const std::string& message)
+{
+	Utility::Debug("MultiplayerGameState: " + message);
+}
+
+
 void MultiplayerGameState::HandleSelfSpawn(sf::Packet& packet)
 {
+	Debug("Self spawn.");
 	sf::Int8 identifier;
 	sf::Int8 team_id;
 	std::string name;
@@ -263,21 +273,16 @@ void MultiplayerGameState::HandleSelfSpawn(sf::Packet& packet)
 	const auto character = m_world.AddCharacter(identifier, true);
 	character->SetTeamIdentifier(team_id);
 	character->SetName(name);
-	m_players[identifier].reset(new Player(m_context.m_socket.get(), identifier, GetContext().m_keys1));
-}
+	m_players[identifier].reset(new Player(m_context.m_socket.get(), identifier,
+	                                       GetContext().m_keys1));
 
-void MultiplayerGameState::HandlePlayerConnect(sf::Packet& packet)
-{
-	sf::Int8 identifier;
-	packet >> identifier;
-
-	m_world.AddGhostCharacter(identifier);
-	m_world.UpdateCharacters();
-	m_players[identifier].reset(new Player(m_context.m_socket.get(), identifier, nullptr));
+	m_world.UpdateCharacters(team_id);
 }
 
 void MultiplayerGameState::HandlePlayerDisconnect(sf::Packet& packet)
 {
+	Debug("Player disconnected.");
+
 	sf::Int8 identifier;
 	packet >> identifier;
 	m_world.RemoveCharacter(identifier);
@@ -286,6 +291,8 @@ void MultiplayerGameState::HandlePlayerDisconnect(sf::Packet& packet)
 
 void MultiplayerGameState::HandleUpdatePlatformColors(sf::Packet& packet)
 {
+	Debug("Update platform colors.");
+
 	sf::Int8 player_id;
 	sf::Int8 platform_id;
 	sf::Int8 platform_color;
@@ -310,6 +317,8 @@ void MultiplayerGameState::HandleUpdatePlatformColors(sf::Packet& packet)
 
 void MultiplayerGameState::HandleUpdatePlayer(sf::Packet& packet) const
 {
+	Debug("Update player.");
+
 	sf::Int8 identifier;
 	std::string name;
 	packet >> identifier >> name;
@@ -318,6 +327,8 @@ void MultiplayerGameState::HandleUpdatePlayer(sf::Packet& packet) const
 
 void MultiplayerGameState::HandleMission(sf::Packet& packet) const
 {
+	Debug("Handle mission.");
+
 	sf::Int8 team_id;
 	packet >> team_id;
 
@@ -333,6 +344,7 @@ void MultiplayerGameState::HandleMission(sf::Packet& packet) const
 
 void MultiplayerGameState::HandleTeamRespawn(sf::Packet& packet) const
 {
+	Debug("Team respawn.");
 	sf::Int8 team_id;
 	packet >> team_id;
 
@@ -361,9 +373,6 @@ void MultiplayerGameState::HandlePacket(sf::Int8 packet_type, sf::Packet& packet
 	{
 	case server::PacketType::kSpawnSelf:
 		HandleSelfSpawn(packet);
-		break;
-	case server::PacketType::kPlayerConnect:
-		HandlePlayerConnect(packet);
 		break;
 	case server::PacketType::kPlayerDisconnect:
 		HandlePlayerDisconnect(packet);

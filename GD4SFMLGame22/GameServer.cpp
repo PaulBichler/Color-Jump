@@ -262,11 +262,14 @@ void GameServer::NotifyGameStart()
 	packet << static_cast<sf::Int8>(server::PacketType::kStartGame);
 	SendToAll(packet);
 
-	for (const auto& peer : m_peers)
+	for (int i = 0; i < m_connected_players; ++i)
 	{
-		packet.clear();
-		CreateSpawnSelfPacket(packet, peer->m_identifier);
-		peer->m_socket.send(packet);
+		if (m_peers[i]->m_ready)
+		{
+			packet.clear();
+			CreateSpawnSelfPacket(packet, m_peers[i]->m_identifier);
+			m_peers[i]->m_socket.send(packet);
+		}
 	}
 
 	Debug("Start game on all sockets");
@@ -512,7 +515,7 @@ void GameServer::UpdateClientState() const
 	for (const auto& player : m_player_info)
 	{
 		const auto& player_info = player.second;
-		packet << player.first << player_info.m_position.x << player_info.m_position.y;
+		packet << static_cast<sf::Int8>(player.first) << player_info.m_position.x << player_info.m_position.y;
 	}
 
 	Debug("Update all clients.");

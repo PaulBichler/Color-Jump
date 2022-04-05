@@ -62,7 +62,6 @@ Character* MultiplayerWorld::AddGhostCharacterWithColor(const sf::Int8 identifie
 	std::unique_ptr<GhostCharacter> player(new GhostCharacter(color, m_textures, m_fonts, int_rect, m_sounds));
 	player->setPosition(spawn_pos);
 	player->SetIdentifier(identifier);
-	player->SetTeamIdentifier((identifier + 1) / 2);
 
 	m_players.emplace_back(player.get());
 	m_scene_layers[static_cast<int>(Layers::kCharacters)]->AttachChild(std::move(player));
@@ -169,6 +168,10 @@ void MultiplayerWorld::UpdateCharacters(const sf::Int8 team_id) const
 		if (player->GetTeamIdentifier() != team_id)
 		{
 			player->SetColor();
+		}
+		else
+		{
+			player->ResetColor();
 		}
 	}
 }
