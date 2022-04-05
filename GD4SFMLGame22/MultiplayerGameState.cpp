@@ -250,6 +250,7 @@ void MultiplayerGameState::HandleSelfSpawn(sf::Packet& packet)
 	Debug("Self spawn.");
 	sf::Int8 identifier;
 	sf::Int8 team_id;
+	sf::Int8 color;
 	std::string name;
 
 	sf::Int8 players;
@@ -257,9 +258,9 @@ void MultiplayerGameState::HandleSelfSpawn(sf::Packet& packet)
 
 	for (int i = 0; i < players; ++i)
 	{
-		packet >> identifier >> team_id >> name;
+		packet >> identifier >> team_id >> color >> name;
 
-		const auto ghost = m_world.AddGhostCharacter(identifier);
+		const auto ghost = m_world.AddGhostCharacter(identifier, color);
 
 		ghost->SetTeamIdentifier(team_id);
 		ghost->SetName(name);
@@ -267,10 +268,10 @@ void MultiplayerGameState::HandleSelfSpawn(sf::Packet& packet)
 		m_players[identifier].reset(new Player(m_context.m_socket.get(), identifier, nullptr));
 	}
 
-	packet >> identifier >> team_id >> name;
+	packet >> identifier >> team_id >> color >> name;
 
 	m_local_player_identifier = identifier;
-	const auto character = m_world.AddCharacter(identifier, true);
+	const auto character = m_world.AddCharacter(identifier, color, true);
 	character->SetTeamIdentifier(team_id);
 	character->SetName(name);
 	m_players[identifier].reset(new Player(m_context.m_socket.get(), identifier,

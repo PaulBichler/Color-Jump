@@ -150,9 +150,9 @@ Character* World::AddCharacterWithColor(const sf::Int8 identifier,const EColorTy
 }
 
 
-Character* World::AddCharacter(const sf::Int8 identifier, const bool is_client_player)
+Character* World::AddCharacter(const sf::Int8 identifier, const sf::Int8 color, const bool is_client_player)
 {
-	if (identifier % 2 == 0)
+	if (color == 1)
 	{
 		return AddCharacterWithColor(identifier, EColorType::kRed, m_level_info.m_red_player_rect,
 		                             m_level_info.m_red_player_spawn_pos);

@@ -68,9 +68,9 @@ Character* MultiplayerWorld::AddGhostCharacterWithColor(const sf::Int8 identifie
 	return m_players.back();
 }
 
-Character* MultiplayerWorld::AddGhostCharacter(const sf::Int8 identifier)
+Character* MultiplayerWorld::AddGhostCharacter(const sf::Int8 identifier, const sf::Int8 color)
 {
-	if (identifier % 2 == 0)
+	if (color == 1)
 	{
 		return AddGhostCharacterWithColor(identifier, EColorType::kRed,
 		                                  m_level_info.m_red_player_rect,
@@ -107,9 +107,9 @@ void MultiplayerWorld::UpdatePlatform(const sf::Int8 id, const sf::Int8 platform
 	}
 }
 
-Character* MultiplayerWorld::AddCharacter(const sf::Int8 identifier, const bool is_client_player)
+Character* MultiplayerWorld::AddCharacter(const sf::Int8 identifier, const sf::Int8 color, const bool is_client_player)
 {
-	Character* player_character = World::AddCharacter(identifier, is_client_player);
+	Character* player_character = World::AddCharacter(identifier, color, is_client_player);
 
 	if (is_client_player)
 	{

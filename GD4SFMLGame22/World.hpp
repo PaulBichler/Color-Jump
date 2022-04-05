@@ -27,7 +27,7 @@ public:
 	virtual void Update(sf::Time dt);
 	virtual void Draw();
 	CommandQueue& GetCommandQueue();
-	virtual Character* AddCharacter(sf::Int8 identifier, bool is_client_player = false);
+	virtual Character* AddCharacter(const sf::Int8 identifier, const sf::Int8 color, const bool is_client_player = false);
 
 private:
 	void LoadTextures();

@@ -37,6 +37,7 @@ private:
 		sf::Vector2f m_position;
 		std::string name;
 		std::map<sf::Int8, sf::Int8> m_platform_colors;
+		sf::Int8 m_color;
 	};
 
 	using peer_ptr = std::unique_ptr<RemotePeer>;
@@ -52,7 +53,7 @@ private:
 	void NotifyPlayerPlatformChange(sf::Int8 player_id, sf::Int8 platform_id, sf::Int8 platform_color) const;
 	void NotifyMission(sf::Int8 team_id) const;
 	void NotifyTeamCheckpointSet(sf::Int8 team_id, sf::Int8 platform_id) const;
-	void NotifyTeamChange(sf::Int8 identifier, sf::Int8 team_id);
+	void NotifyTeamChange(const sf::Int8 identifier, const sf::Int8 team_id, const sf::Int8 color);
 	void NotifyGameStart();
 	void HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer, bool& detected_timeout);
 	void CreateSpawnSelfPacket(sf::Packet& packet, sf::Int8 id);
@@ -81,8 +82,9 @@ private:
 	sf::Int8 m_player_count;
 	std::map<sf::Int8, PlayerInfo> m_player_info;
 
+	std::vector<bool> m_ids;
+
 	std::vector<peer_ptr> m_peers;
-	sf::Int8 m_identifier_counter;
 	bool m_waiting_thread_end;
 	bool m_game_started;
 };
