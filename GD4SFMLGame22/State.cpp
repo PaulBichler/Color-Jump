@@ -21,7 +21,7 @@ Context::Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& 
 void Context::DisableServer()
 {
 	m_game_server.reset();
-	m_socket.reset(new sf::TcpSocket);
+	m_socket.reset(new sf::TcpSocket());
 }
 
 State::State(StateStack& stack, Context& context) : m_stack(&stack), m_context(context)
