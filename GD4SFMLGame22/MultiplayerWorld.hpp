@@ -12,9 +12,9 @@ public:
 	Character* GetCharacter(const sf::Int8 identifier) const;
 	void RemoveCharacter(const sf::Int8 identifier);
 	Character* AddGhostCharacterWithColor(const sf::Int8 identifier, const EColorType color, const sf::IntRect& int_rect, const sf::Vector2f& spawn_pos);
-	Character* AddGhostCharacter(const sf::Int8 identifier);
+	Character* AddGhostCharacter(const sf::Int8 identifier, const sf::Int8 color);
 	void UpdatePlatform(const sf::Int8 id, const sf::Int8 platform_id, const EPlatformType platform_color);
-	Character* AddCharacter(const sf::Int8 identifier, const bool is_client_player = false) override;
+	Character* AddCharacter(const sf::Int8 identifier, const sf::Int8 color, const bool is_client_player = false) override;
 	Character* GetClientCharacter() const;
 	void SetPlatformOnCharacter(Character* character, sf::Int8 platform_id) const;
 	void SetTeammate(Character* character);

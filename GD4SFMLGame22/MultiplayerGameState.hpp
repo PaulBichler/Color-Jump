@@ -23,7 +23,6 @@ private:
 	void HandleClientUpdate(sf::Packet& packet);
 	static void Debug(const std::string& message);
 	void HandleSelfSpawn(sf::Packet& packet);
-	void HandlePlayerConnect(sf::Packet& packet);
 	void HandlePlayerDisconnect(sf::Packet& packet);
 	void HandleUpdatePlatformColors(sf::Packet& packet);
 	void HandleUpdatePlayer(sf::Packet& packet) const;

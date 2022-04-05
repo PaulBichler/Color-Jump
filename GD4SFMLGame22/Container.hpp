@@ -15,6 +15,7 @@ namespace GUI
 		void Pack(const Component::Ptr& component);
 		virtual bool IsSelectable() const override;
 		virtual void HandleEvent(const sf::Event& event) override;
+		void Pull(const Component::Ptr& component);
 
 	private:
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

@@ -6,6 +6,15 @@
 #include "Utility.hpp"
 #include <SFML/Network/Packet.hpp>
 
+void LobbyState::SendClientDisconnect(const sf::Int8 id) const
+{
+	sf::Packet packet;
+	packet << static_cast<sf::Int8>(client::PacketType::kQuit);
+	packet << id;
+
+	m_context.m_socket->send(packet);
+}
+
 void LobbyState::CreateUI(Context& context)
 {
 	int y = context.m_window->getSize().y / 2;
@@ -40,12 +49,13 @@ void LobbyState::CreateUI(Context& context)
 	Utility::CreateButton(context, back_button, 1080, 850, "Back", [this]
 	{
 		GetContext().DisableServer();
+		SendClientDisconnect(m_player_id);
 		RequestStackPop();
 		RequestStackPush(StateID::kMenu);
 	});
 	m_gui_container.Pack(back_button);
 
-	for (int i = 1; i <= 8; ++i)
+	for (sf::Int8 i = 1; i <= 8; ++i)
 	{
 		std::shared_ptr<GUI::Button> team_button;
 		y = 150 + 150 * ((i - 1 - (i - 1) % 2) / 2);
@@ -65,7 +75,7 @@ LobbyState::LobbyState(StateStack& stack, Context& context, const bool is_host)
 	  , m_connected(false)
 	  , m_is_host(is_host)
 	  , m_unpaired_y_pos(200)
-	  , m_player(-1)
+	  , m_player_id(-1)
 	  , m_time_since_last_packet(sf::seconds(0.f))
 	  , m_client_timeout(sf::seconds(2.f))
 	  , m_lobby_time(sf::seconds(0))
@@ -77,7 +87,8 @@ LobbyState::LobbyState(StateStack& stack, Context& context, const bool is_host)
 	sf::IpAddress ip;
 	if (m_is_host)
 	{
-		context.m_game_server = std::make_unique<GameServer>(sf::Vector2f(context.m_window->getSize()));
+		context.m_game_server = std::make_unique<GameServer>(
+			sf::Vector2f(context.m_window->getSize()));
 		ip = "127.0.0.1";
 	}
 	else
@@ -150,14 +161,22 @@ void LobbyState::MovePlayer(const sf::Int8 id, const sf::Int8 team_id)
 	m_player_team_selection[id] = team_id;
 }
 
-void LobbyState::HandleTeamChoice(const sf::Int8 i)
+void LobbyState::HandleTeamChoice(const sf::Int8 id)
 {
-	if (TeamHasPlace(i))
+	if (TeamHasPlace(id))
 	{
 		sf::Packet packet;
 		packet << static_cast<sf::Int8>(client::PacketType::kChoseTeam);
-		packet << m_player;
-		packet << i;
+		packet << m_player_id;
+		packet << id;
+		if (m_team_selections[id].empty())
+		{
+			packet << static_cast<sf::Int8>(0);
+		}
+		else
+		{
+			packet << static_cast<sf::Int8>(1);
+		}
 
 		m_context.m_socket->send(packet);
 	}
@@ -240,10 +259,9 @@ bool LobbyState::HandleEvent(const sf::Event& event)
 			GetContext().m_player_data_manager->GetData().m_player_name = m_player_input_name;
 			GetContext().m_player_data_manager->Save();
 
-			m_players[m_player]->SetText(m_player_input_name);
+			m_players[m_player_id]->SetText(m_player_input_name);
 
-			SendPlayerName(m_player, m_player_input_name);
-
+			SendPlayerName(m_player_id, m_player_input_name);
 		}
 		else if (event.type == sf::Event::TextEntered)
 		{
@@ -333,11 +351,10 @@ void LobbyState::HandlePlayerDisconnect(sf::Packet& packet)
 	const auto remove = std::remove(team_selection.begin(), team_selection.end(), id);
 	team_selection.erase(remove, team_selection.end());
 
-	const auto remove_team_selection = m_team_selections.find(id);
-	m_team_selections.erase(remove_team_selection, m_team_selections.end());
-
-	const auto remove_player = m_players.find(id);
-	m_players.erase(remove_player, m_players.end());
+	m_player_team_selection.erase(id);
+	m_gui_container.Pull(m_players[id]);
+	m_players[id].reset();
+	m_players.erase(id);
 }
 
 void LobbyState::HandleUpdatePlayer(sf::Packet& packet)
@@ -346,7 +363,7 @@ void LobbyState::HandleUpdatePlayer(sf::Packet& packet)
 	std::string name;
 
 	packet >> identifier >> name;
-	
+
 	m_players[identifier]->SetText(name);
 }
 
@@ -366,7 +383,7 @@ void LobbyState::HandleInitialState(sf::Packet& packet)
 
 		if (team_identifier != 0)
 		{
-			if (identifier != m_player)
+			if (identifier != m_player_id)
 			{
 				MovePlayer(identifier, team_identifier);
 			}
@@ -399,7 +416,7 @@ void LobbyState::HandleSpawnSelf(sf::Packet& packet)
 	sf::Int8 identifier;
 	packet >> identifier;
 
-	m_player = identifier;
+	m_player_id = identifier;
 
 	Utility::Debug("Player connected.");
 	AddPlayer(identifier, GetContext().m_player_data_manager->GetData().m_player_name);

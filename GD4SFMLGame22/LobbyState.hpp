@@ -9,10 +9,10 @@ class LobbyState : public State
 public:
 	LobbyState(StateStack& stack, Context& context, bool is_host);
 	void CreateUI(Context& context);
-	bool TeamHasPlace(sf::Int8 i);
+	bool TeamHasPlace(sf::Int8 id);
 	static sf::Vector2f GetTeamPos(int i);
 	void MovePlayer(sf::Int8 id, sf::Int8 team_id);
-	void HandleTeamChoice(sf::Int8 i);
+	void HandleTeamChoice(sf::Int8 id);
 	void Draw() override;
 	void NotifyServerOfExistence() const;
 	bool Update(sf::Time dt) override;
@@ -21,6 +21,7 @@ public:
 
 private:
 	void HandleTeamSelection(sf::Packet& packet);
+	void SendClientDisconnect(sf::Int8 id) const;
 	void HandleGameStart();
 	void HandlePacket(sf::Int8 packet_type, sf::Packet& packet);
 	void HandlePlayerConnect(sf::Packet& packet);
@@ -48,7 +49,7 @@ private:
 	std::map<sf::Int8, GUI::Label::Ptr> m_players;
 	std::map<sf::Int8, std::vector<sf::Int8>> m_team_selections;
 	std::map<sf::Int8, sf::Int8> m_player_team_selection;
-	sf::Int8 m_player{};
+	sf::Int8 m_player_id{};
 
 	sf::Time m_time_since_last_packet;
 	sf::Time m_client_timeout;

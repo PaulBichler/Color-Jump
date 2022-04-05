@@ -28,7 +28,7 @@ GameState::GameState(StateStack& stack, Context& context)
 
 	for (int i = 0; i < 2; ++i)
 	{
-		m_world.AddCharacter(i, false);
+		m_world.AddCharacter(i,i, false);
 		m_players[i].reset(new Player(nullptr, i, i == 0 ? context.m_keys1 : context.m_keys2));
 	}
 

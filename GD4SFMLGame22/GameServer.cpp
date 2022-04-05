@@ -24,8 +24,8 @@ GameServer::GameServer(const sf::Vector2f battlefield_size)
 	  , m_battlefield_rect(0.f, m_world_height - battlefield_size.y, battlefield_size.x,
 	                       battlefield_size.y)
 	  , m_player_count(0)
+	  , m_ids(15)
 	  , m_peers(1)
-	  , m_identifier_counter(1)
 	  , m_waiting_thread_end(false)
 	  , m_game_started(false)
 {
@@ -74,7 +74,7 @@ void GameServer::NotifyPlayerNameChange(const sf::Int8 identifier, const std::st
 	packet << name;
 
 	Debug("Update player info.");
-	
+
 	SendPackageToAll(packet);
 }
 
@@ -241,7 +241,7 @@ void GameServer::NotifyMission(const sf::Int8 team_id) const
 	SendPackageToAll(packet);
 }
 
-void GameServer::NotifyTeamChange(const sf::Int8 identifier, const sf::Int8 team_id)
+void GameServer::NotifyTeamChange(const sf::Int8 identifier, const sf::Int8 team_id, const sf::Int8 color)
 {
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(server::PacketType::kTeamSelection);
@@ -249,6 +249,7 @@ void GameServer::NotifyTeamChange(const sf::Int8 identifier, const sf::Int8 team
 	packet << team_id;
 
 	m_player_info[identifier].m_team_id = team_id;
+	m_player_info[identifier].m_color = color;
 
 	Debug("Team changes");
 
@@ -356,9 +357,10 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 		{
 			sf::Int8 identifier;
 			sf::Int8 team_id;
-			packet >> identifier >> team_id;
+			sf::Int8 color;
+			packet >> identifier >> team_id >> color;
 
-			NotifyTeamChange(identifier, team_id);
+			NotifyTeamChange(identifier, team_id, color);
 		}
 		break;
 	case client::PacketType::kCheckpointReached:
@@ -394,11 +396,13 @@ void GameServer::CreateSpawnSelfPacket(sf::Packet& packet, const sf::Int8 id)
 
 		packet << player_info.first;
 		packet << player_info.second.m_team_id;
+		packet << player_info.second.m_color;
 		packet << player_info.second.name;
 	}
 
 	packet << id;
 	packet << m_player_info[id].m_team_id;
+	packet << m_player_info[id].m_color;
 	packet << m_player_info[id].name;
 }
 
@@ -411,21 +415,35 @@ void GameServer::HandleIncomingConnections()
 
 	if (m_listener_socket.accept(m_peers[m_connected_players]->m_socket) == sf::TcpListener::Done)
 	{
+		sf::Int8 id = 0;
+
+		for (sf::Int8 i = 0; i < static_cast<sf::Int8>(m_ids.size()); ++i)
+		{
+			if (m_ids[i])
+				continue;
+
+			id = i;
+			m_ids[i] = true;
+			break;
+		}
+
+		id += 1;
+
 		//Order the new client to spawn its player 1
-		m_player_info[m_identifier_counter].m_position = sf::Vector2f(0, 0);
+		m_player_info[id].m_position = sf::Vector2f(0, 0);
 
 		sf::Packet packet;
 		packet << static_cast<sf::Int8>(server::PacketType::kSpawnSelf);
-		packet << m_identifier_counter;
+		packet << id;
 
-		m_peers[m_connected_players]->m_identifier = m_identifier_counter;
+		m_peers[m_connected_players]->m_identifier = id;
 
 		InformWorldState(m_peers[m_connected_players]->m_socket);
-		NotifyPlayerSpawn(m_identifier_counter++);
+		NotifyPlayerSpawn(id);
 
 		m_peers[m_connected_players]->m_socket.send(packet);
 
-		Debug("Send self spawn package to " + std::to_string(m_identifier_counter - 1) + ".");
+		Debug("Send self spawn package to " + std::to_string(id) + ".");
 
 		m_peers[m_connected_players]->m_ready = true;
 		m_peers[m_connected_players]->m_last_packet_time = Now();
@@ -450,11 +468,10 @@ void GameServer::HandleDisconnections()
 	{
 		if ((*itr)->m_timed_out)
 		{
-			SendToAll(
-				sf::Packet() << static_cast<sf::Int8>(server::PacketType::kPlayerDisconnect) <<
-				(*itr)->m_identifier);
+			SendToAll(sf::Packet() << static_cast<sf::Int8>(server::PacketType::kPlayerDisconnect) <<(*itr)->m_identifier);
+			m_ids[(*itr)->m_identifier - 1] = false;
 			m_player_info.erase((*itr)->m_identifier);
-
+			
 			m_connected_players--;
 			m_player_count -= 1;
 
@@ -515,7 +532,7 @@ void GameServer::UpdateClientState() const
 	for (const auto& player : m_player_info)
 	{
 		const auto& player_info = player.second;
-		packet << static_cast<sf::Int8>(player.first) << player_info.m_position.x << player_info.m_position.y;
+		packet << player.first << player_info.m_position.x << player_info.m_position.y;
 	}
 
 	Debug("Update all clients.");
