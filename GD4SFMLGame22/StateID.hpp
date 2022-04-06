@@ -14,4 +14,5 @@ enum class StateID
 	kLobbyHost,
 	kLobbyClient,
 	kNetworkGame,
+	kTutorial
 };

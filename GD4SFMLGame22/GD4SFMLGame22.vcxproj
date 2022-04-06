@@ -201,6 +201,7 @@
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TileFactory.cpp" />
     <ClCompile Include="TitleState.cpp" />
+    <ClCompile Include="TutorialState.cpp" />
     <ClCompile Include="Utility.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
@@ -272,6 +273,7 @@
     <ClInclude Include="Tile.hpp" />
     <ClInclude Include="TileFactory.hpp" />
     <ClInclude Include="TitleState.hpp" />
+    <ClInclude Include="TutorialState.hpp" />
     <ClInclude Include="Utility.hpp" />
     <ClInclude Include="World.hpp" />
   </ItemGroup>

@@ -12,7 +12,7 @@
 #include "LevelPauseState.hpp"
 #include "MultiplayerGameState.hpp"
 #include "SettingsState.hpp"
-
+#include "TutorialState.hpp"
 
 
 const sf::Time Application::time_per_frame = sf::seconds(1.f / 60.f);
@@ -29,6 +29,9 @@ Application::Application()
 
 	m_fonts.Load(Fonts::Main, "Media/Fonts/Sansation.ttf");
 	m_textures.Load(Textures::kTitleScreen, "Media/Textures/TitleScreen.png");
+	m_textures.Load(Textures::kTutorialColorCollision, "Media/Textures/Tutorial_Color_Collisions.png");
+	m_textures.Load(Textures::kTutorialImpactPlatform, "Media/Textures/Tutorial_Impact_Platforms.png");
+	m_textures.Load(Textures::kTutorialCheckpoint, "Media/Textures/Tutorial_Checkpoints.png");
 	m_textures.Load(Textures::kButtons, "Media/Textures/Buttons.png");
 
 	m_statistics_text.setFont(m_fonts.Get(Fonts::Main));
@@ -125,5 +128,6 @@ void Application::RegisterStates()
 	m_stack.RegisterState<SettingsState>(StateID::kSettings);
 	m_stack.RegisterState<LevelLoseState>(StateID::kLevelLose);
 	m_stack.RegisterState<LevelWinState>(StateID::kLevelWin);
+	m_stack.RegisterState<TutorialState>(StateID::kTutorial);
 }
 

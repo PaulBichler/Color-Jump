@@ -14,5 +14,8 @@ enum class Textures
 	kVImpactBluePlatform,
 	kVImpactGreenPlatform,
 	kActivatedCheckpointPlatform,
-	kJumpSmoke
+	kJumpSmoke,
+	kTutorialColorCollision,
+	kTutorialImpactPlatform,
+	kTutorialCheckpoint
 };

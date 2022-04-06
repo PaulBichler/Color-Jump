@@ -40,7 +40,7 @@ void PlayerDataManager::Load()
 
 	//Load Name
 	std::getline(in, line);
-	m_player_data.m_player_name = line.substr(0, 20.f);
+	m_player_data.m_player_name = line.substr(0, 15.f);
 
 	//Load Ip Address
 	std::getline(in, line);

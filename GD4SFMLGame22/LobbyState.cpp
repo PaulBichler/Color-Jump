@@ -6,6 +6,14 @@
 #include "Utility.hpp"
 #include <SFML/Network/Packet.hpp>
 
+constexpr int TITLE_POS_Y = 30;
+constexpr int UNPAIRED_POS_X = 100;
+constexpr int TEAM_POS_Y = 260;
+constexpr int TEAM_COL_1_POS_X = 550;
+constexpr int TEAM_COL_2_POS_X = 950;
+constexpr int TEAM_BUTTON_GAP = 135;
+constexpr int FOOTER_POS_Y = 850;
+
 void LobbyState::SendClientDisconnect(const sf::Int8 id) const
 {
 	sf::Packet packet;
@@ -23,47 +31,58 @@ void LobbyState::CreateUI(Context& context)
 	Utility::CentreOrigin(m_failed_connection_text->GetText());
 	m_gui_fail_container.Pack(m_failed_connection_text);
 
-	Utility::CreateButton(context, m_change_name_button, 80, 850, "Change Name", true);
+	std::shared_ptr<GUI::Label> title_label;
+	Utility::CreateLabel(context, title_label, UNPAIRED_POS_X, TITLE_POS_Y, "Lobby", 100);
+	m_gui_container.Pack(title_label);
+
+	Utility::CreateButton(context, m_change_name_button, TEAM_COL_1_POS_X, TITLE_POS_Y + 10, "Change Name", true);
 	m_gui_container.Pack(m_change_name_button);
 
-	Utility::CreateLabel(context, m_current_name_label, 310, 865, m_player_input_name, 20);
+	Utility::CreateLabel(context, m_current_name_label, TEAM_COL_1_POS_X + 215, TITLE_POS_Y + 25, m_player_input_name, 20);
 	m_gui_container.Pack(m_current_name_label);
 
+	std::shared_ptr<GUI::Button> tutorial_button;
+	Utility::CreateButton(context, tutorial_button, TEAM_COL_1_POS_X, TITLE_POS_Y + 85, "How to Play", [this]
+		{
+			RequestStackPush(StateID::kTutorial);
+		});
+	m_gui_container.Pack(tutorial_button);
+
 	std::shared_ptr<GUI::Label> unpaired_label;
-	Utility::CreateLabel(context, unpaired_label, 80, 190, "Unpaired Players", 25);
+	Utility::CreateLabel(context, unpaired_label, UNPAIRED_POS_X, TEAM_POS_Y - 50, "Unpaired Players", 30);
 	m_gui_container.Pack(unpaired_label);
-
-	std::shared_ptr<GUI::Button> start_game;
-	Utility::CreateButton(context, start_game, 600, 850, "Start game", [this]
-	{
-		SendStartGame();
-	}, [this]
-	{
-		return m_is_host && m_team_selections[m_player_team_selection[m_player]].size() == 2;
-	});
-	m_gui_container.Pack(start_game);
-
-	std::shared_ptr<GUI::Button> back_button;
-	Utility::CreateButton(context, back_button, 1080, 850, "Back", [this]
-	{
-		SendClientDisconnect(m_player_id);
-		RequestStackPop();
-		RequestStackPush(StateID::kMenu);
-	});
-	m_gui_container.Pack(back_button);
 
 	for (sf::Int8 i = 1; i <= 8; ++i)
 	{
 		std::shared_ptr<GUI::Button> team_button;
-		y = 150 + 150 * ((i - 1 - (i - 1) % 2) / 2);
-		x = i % 2 == 0 ? 900 : 500;
+		y = TEAM_POS_Y + TEAM_BUTTON_GAP * ((i - 1 - (i - 1) % 2) / 2);
+		x = i % 2 == 0 ? TEAM_COL_2_POS_X : TEAM_COL_1_POS_X;
 		auto label = "Team " + std::to_string(i);
-		Utility::CreateButton(context, back_button, x, y, label, [this, i]
+		Utility::CreateButton(context, team_button, x, y, label, [this, i]
 		{
 			HandleTeamChoice(i);
 		});
-		m_gui_container.Pack(back_button);
+		m_gui_container.Pack(team_button);
 	}
+
+	std::shared_ptr<GUI::Button> start_game_button;
+	Utility::CreateButton(context, start_game_button, UNPAIRED_POS_X, FOOTER_POS_Y, "Start game", [this]
+		{
+			SendStartGame();
+		}, [this]
+		{
+			return m_is_host && m_team_selections[m_player_team_selection[m_player_id]].size() == 2;
+		});
+	m_gui_container.Pack(start_game_button);
+
+	std::shared_ptr<GUI::Button> back_button;
+	Utility::CreateButton(context, back_button, TEAM_COL_2_POS_X + 150, FOOTER_POS_Y, "Leave", [this]
+		{
+			SendClientDisconnect(m_player_id);
+			RequestStackPop();
+			RequestStackPush(StateID::kMenu);
+		});
+	m_gui_container.Pack(back_button);
 }
 
 LobbyState::LobbyState(StateStack& stack, Context& context, const bool is_host)
@@ -71,7 +90,7 @@ LobbyState::LobbyState(StateStack& stack, Context& context, const bool is_host)
 	  , m_player_input_name(context.m_player_data_manager->GetData().m_player_name)
 	  , m_connected(false)
 	  , m_is_host(is_host)
-	  , m_unpaired_y_pos(200)
+	  , m_unpaired_y_pos(TEAM_POS_Y - 20)
 	  , m_player_id(-1)
 	  , m_time_since_last_packet(sf::seconds(0.f))
 	  , m_client_timeout(sf::seconds(2.f))
@@ -122,8 +141,8 @@ bool LobbyState::TeamHasPlace(const sf::Int8 id)
 
 sf::Vector2f LobbyState::GetTeamPos(const int i)
 {
-	const int y = 150 + 150 * ((i - 1 - (i - 1) % 2) / 2);
-	const int x = i % 2 == 0 ? 900 : 500;
+	const int y = TEAM_POS_Y + TEAM_BUTTON_GAP * ((i - 1 - (i - 1) % 2) / 2);
+	const int x = i % 2 == 0 ? TEAM_COL_2_POS_X : TEAM_COL_1_POS_X;
 
 	return {static_cast<float>(x), static_cast<float>(y)};
 }
@@ -145,7 +164,7 @@ void LobbyState::MovePlayer(const sf::Int8 id, const sf::Int8 team_id)
 
 	if (m_team_selections[team_id].front() != id)
 	{
-		y += 2 * 60;
+		y += 85;
 	}
 	else
 	{
@@ -269,7 +288,7 @@ bool LobbyState::HandleEvent(const sf::Event& event)
 			else if (event.text.unicode != '\n' && event.text.unicode != '\r')
 			{
 				m_player_input_name += event.text.unicode;
-				m_player_input_name = m_player_input_name.substr(0, 20);
+				m_player_input_name = m_player_input_name.substr(0, 15);
 			}
 
 			m_current_name_label->SetText(m_player_input_name);
@@ -303,10 +322,10 @@ void LobbyState::HandleTeamSelection(sf::Packet& packet)
 
 void LobbyState::HandleGameStart()
 {
-	if(m_team_selections[m_player_team_selection[m_player]].size() == 2)
+	if(m_team_selections[m_player_team_selection[m_player_id]].size() == 2)
 	{
 		m_game_started = true;
-		RequestStackPop();
+		RequestStackClear();
 		RequestStackPush(StateID::kNetworkGame);
 		return;
 	}
@@ -373,7 +392,6 @@ void LobbyState::HandleUpdatePlayer(sf::Packet& packet)
 	std::string name;
 
 	packet >> identifier >> name;
-
 	m_players[identifier]->SetText(name);
 }
 
@@ -403,10 +421,13 @@ void LobbyState::HandleInitialState(sf::Packet& packet)
 
 void LobbyState::SendPlayerName(const sf::Int8 identifier, const std::string& name) const
 {
+	std::string display_name = name;
+	display_name.append(m_is_host ? " (Host)" : "");
+
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(client::PacketType::kPlayerUpdate);
 	packet << identifier;
-	packet << name;
+	packet << display_name;
 
 	m_context.m_socket->send(packet);
 }
@@ -421,7 +442,7 @@ void LobbyState::SendStartGame() const
 void LobbyState::AddPlayer(const sf::Int8 identifier, const std::string& label_text)
 {
 	GUI::Label::Ptr name;
-	Utility::CreateLabel(m_context, name, 80, m_unpaired_y_pos + 30 * identifier,
+	Utility::CreateLabel(m_context, name, UNPAIRED_POS_X, m_unpaired_y_pos + 30 * identifier,
 	                     label_text, 20);
 	m_gui_container.Pack(name);
 	m_players.try_emplace(identifier, name);
