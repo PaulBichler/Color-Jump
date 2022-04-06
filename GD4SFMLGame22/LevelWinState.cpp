@@ -59,6 +59,7 @@ LevelWinState::LevelWinState(StateStack& stack, Context& context)
 	main_menu_button->SetText("Back to Main Menu");
 	main_menu_button->SetCallback([this]()
 	{
+		GetContext().DisableServer();
 		RequestStackClear();
 		RequestStackPush(StateID::kMenu);
 	});

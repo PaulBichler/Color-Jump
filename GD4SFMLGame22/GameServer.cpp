@@ -241,7 +241,8 @@ void GameServer::NotifyMission(const sf::Int8 team_id) const
 	SendPackageToAll(packet);
 }
 
-void GameServer::NotifyTeamChange(const sf::Int8 identifier, const sf::Int8 team_id, const sf::Int8 color)
+void GameServer::NotifyTeamChange(const sf::Int8 identifier, const sf::Int8 team_id,
+                                  const sf::Int8 color)
 {
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(server::PacketType::kTeamSelection);
@@ -309,7 +310,26 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 			sf::Int8 identifier;
 			sf::Vector2f position;
 			packet >> identifier >> position.x >> position.y;
+
+			// if (abs(
+			// 	position.x + position.y - (m_player_info[identifier].m_position.x + m_player_info[
+			// 		identifier].m_position.y)) > 2)
+			// {
+			//
+			// 	Debug("Kicked");
+			//
+			// 	for (const auto& remote_peer : m_peers)
+			// 	{
+			// 		if (remote_peer->m_identifier == identifier)
+			// 		{
+			// 			remote_peer->m_timed_out = true;
+			// 		}
+			// 	}
+			// }
+			// else
+			// {
 			m_player_info[identifier].m_position = position;
+			// }
 		}
 		break;
 
@@ -468,10 +488,12 @@ void GameServer::HandleDisconnections()
 	{
 		if ((*itr)->m_timed_out)
 		{
-			SendToAll(sf::Packet() << static_cast<sf::Int8>(server::PacketType::kPlayerDisconnect) <<(*itr)->m_identifier);
+			SendToAll(
+				sf::Packet() << static_cast<sf::Int8>(server::PacketType::kPlayerDisconnect) << (*
+					itr)->m_identifier);
 			m_ids[(*itr)->m_identifier - 1] = false;
 			m_player_info.erase((*itr)->m_identifier);
-			
+
 			m_connected_players--;
 			m_player_count -= 1;
 

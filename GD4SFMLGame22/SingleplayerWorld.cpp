@@ -77,7 +77,7 @@ void SinglePlayerWorld::DestroyEntitiesOutsideView()
 }
 
 //Written by Dylan Goncalves Martins (), modified by Paul Bichler (D00242563)
-void SinglePlayerWorld::HandleCollisions()
+void SinglePlayerWorld::HandleCollisions(const sf::Time dt)
 {
 	std::set<SceneNode::Pair> collision_pairs;
 	m_sceneGraph.CheckSceneCollision(m_sceneGraph, collision_pairs, [this](SceneNode& node)
@@ -92,7 +92,7 @@ void SinglePlayerWorld::HandleCollisions()
 
 	for (const SceneNode::Pair& pair : collision_pairs)
 	{
-		if (CollisionHandler::PlatformCollision(pair, m_win_callback,m_win_callback))
+		if (CollisionHandler::PlatformCollision(dt, pair,m_win_callback, m_win_callback))
 			continue;
 
 		CollisionHandler::TrapCollision(pair, m_lose_callback);

@@ -213,7 +213,7 @@ void MultiplayerWorld::SetCheckpointToPlatformWithID(const sf::Int8 platform_id)
 	}
 }
 
-void MultiplayerWorld::HandleCollisions()
+void MultiplayerWorld::HandleCollisions(const sf::Time dt)
 {
 	std::set<SceneNode::Pair> collision_pairs;
 	m_sceneGraph.CheckSceneCollision(m_sceneGraph, collision_pairs, [this](SceneNode& node)
@@ -232,7 +232,7 @@ void MultiplayerWorld::HandleCollisions()
 
 	for (const SceneNode::Pair& pair : collision_pairs)
 	{
-		if (CollisionHandler::PlatformCollision(pair, [this] { OnReachedCheckpoint(); }, [this] { OnReachedGoal(); }, this))
+		if (CollisionHandler::PlatformCollision(dt, pair, [this] { OnReachedCheckpoint(); }, [this] { OnReachedGoal(); }, this))
 			continue;
 
 		CollisionHandler::TrapCollision(pair, [this] { OnClientPlayerDeath(); });

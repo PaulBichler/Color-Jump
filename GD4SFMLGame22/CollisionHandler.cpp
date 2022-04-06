@@ -15,13 +15,13 @@ void CollisionHandler::ChangeVerticalTileColor(const Character& player, Tile& ti
 	}
 }
 
-void CollisionHandler::StopPlayerMovement(Character& player, Tile& tile)
+void CollisionHandler::StopPlayerMovement(const sf::Time dt, Character& player, Tile& tile)
 {
 	//Checks if platform is collidable with player
 	if (IsPlayerAtHisTile(player, tile))
 	{
 		// move player out of collision and stop his movement
-		player.MoveOutOfCollision(tile.GetBoundingRect());
+		player.MoveOutOfCollision(dt, tile.GetBoundingRect());
 		player.StopMovement();
 
 		ChangeVerticalTileColor(player, tile);
@@ -102,12 +102,12 @@ bool CollisionHandler::CheckTile(const Tile& tile, const EColorType character)
 	return false;
 }
 
-bool CollisionHandler::CollideAndChangeColors(Character& player, Tile& tile)
+bool CollisionHandler::CollideAndChangeColors(const sf::Time dt,Character& player, Tile& tile)
 {
 	//Checks if player collided from underneath the center of the platform
 	if (IsPlayerAboveTile(player, tile))
 	{
-		StopPlayerMovement(player, tile);
+		StopPlayerMovement(dt, player, tile);
 		// continue to next pair
 		return true;
 	}
@@ -147,7 +147,14 @@ void CollisionHandler::GroundPlayerAndChangePlatformColor(Character& player, Pla
 			                                             platform->GetID(),
 			                                             platform->GetPlatformType());
 		}
-		//Collision
+		//
+		const auto platform_type = platform->GetPlatformType();
+		if (platform_type == EPlatformType::kVerticalBlue
+			|| platform_type == EPlatformType::kVerticalImpact
+			|| platform_type == EPlatformType::kVerticalRed)
+		{
+			return;
+		}
 		player.SetGrounded(platform);
 	}
 }
@@ -177,6 +184,13 @@ void CollisionHandler::GroundPlayer(Character& player, Platform* platform)
 {
 	if (platform->HandlePlayerCollision(player.GetCharacterType()))
 	{
+		const auto platform_type = platform->GetPlatformType();
+		if (platform_type == EPlatformType::kVerticalBlue
+			|| platform_type == EPlatformType::kVerticalImpact
+			|| platform_type == EPlatformType::kVerticalRed)
+		{
+			return;
+		}
 		player.SetGrounded(platform);
 	}
 }
@@ -184,7 +198,7 @@ void CollisionHandler::GroundPlayer(Character& player, Platform* platform)
 void CollisionHandler::IsAtTheFinishLine(const Character* player_1, const Character* player_2,
                                          const std::function<void()>& checkpoint_callback,
                                          const std::function<void()>& win_callback,
-										 const Platform* platform)
+                                         const Platform* platform)
 {
 	const EPlatformType platform_type = platform->GetPlatformType();
 
@@ -197,7 +211,7 @@ void CollisionHandler::IsAtTheFinishLine(const Character* player_1, const Charac
 		}
 	}
 
-	if(platform_type == EPlatformType::kGoal)
+	if (platform_type == EPlatformType::kGoal)
 	{
 		if (player_1 == nullptr || player_2 == nullptr)
 			return;
@@ -222,34 +236,35 @@ void CollisionHandler::ChangeVerticalPlatformColor(const Character& player, Plat
 	}
 }
 
-void CollisionHandler::StopPlayerMovement(Character& player, const PlatformPart& platform_part,
+void CollisionHandler::StopPlayerMovement(const sf::Time dt,Character& player, const PlatformPart& platform_part,
                                           Platform* platform)
 {
 	//Checks if platform is collidable with player
 	if (IsPlayerAtHisPlatform(player, platform))
 	{
 		// move player out of collision and stop his movement
-		player.MoveOutOfCollision(platform_part.GetBoundingRect());
+		player.MoveOutOfCollision(dt, platform_part.GetBoundingRect());
 		player.StopMovement();
 
 		ChangeVerticalPlatformColor(player, platform);
 	}
 }
 
-bool CollisionHandler::CollideAndChangeColors(Character& player, const PlatformPart& platform_part,
+bool CollisionHandler::CollideAndChangeColors(const sf::Time dt, Character& player, const PlatformPart& platform_part,
                                               Platform* platform)
 {
 	//Checks if player collided from underneath the center of the platform
 	if (IsPlayerAbovePlatform(player, platform_part))
 	{
-		StopPlayerMovement(player, platform_part, platform);
+		StopPlayerMovement(dt,player, platform_part, platform);
 		// continue to next pair
 		return true;
 	}
 	return false;
 }
 
-bool CollisionHandler::PlatformCollision(SceneNode::Pair pair,
+bool CollisionHandler::PlatformCollision(const sf::Time dt,
+										SceneNode::Pair pair,
                                          const std::function<void()>& checkpoint_callback,
                                          const std::function<void()>& win_callback,
                                          MultiplayerWorld* multiplayer_world)
@@ -260,10 +275,11 @@ bool CollisionHandler::PlatformCollision(SceneNode::Pair pair,
 		const auto& platform_part = dynamic_cast<PlatformPart&>(*pair.second);
 		Platform* platform = platform_part.GetPlatform();
 
-		if (CollideAndChangeColors(player, platform_part, platform)) return true;
+		if (CollideAndChangeColors(dt,player, platform_part, platform)) return true;
 
 		GroundPlayerAndChangePlatformColor(player, platform, multiplayer_world);
-		IsAtTheFinishLine(&player, multiplayer_world->GetTeammate(), checkpoint_callback, win_callback, platform);
+		IsAtTheFinishLine(&player, multiplayer_world->GetTeammate(), checkpoint_callback,
+		                  win_callback, platform);
 	}
 	return false;
 }
@@ -283,7 +299,9 @@ bool CollisionHandler::IsPlayerAbovePlatform(const Character& player,
 bool CollisionHandler::IsPlayerAtHisPlatform(const Character& player, const Platform* platform)
 {
 	const auto platform_type = platform->GetPlatformType();
-	if (platform_type == EPlatformType::kNormal || platform_type == EPlatformType::kGoal || platform_type == EPlatformType::kCheckpoint || platform_type == EPlatformType::kCheckpointActivated)
+	if (platform_type == EPlatformType::kNormal || platform_type == EPlatformType::kGoal ||
+		platform_type == EPlatformType::kCheckpoint || platform_type ==
+		EPlatformType::kCheckpointActivated)
 	{
 		return true;
 	}
@@ -380,7 +398,8 @@ void CollisionHandler::PlayerGroundRayCast(const std::set<SceneNode::Pair>& pair
 
 bool CollisionHandler::CheckPlatformUnderneath(const EColorType color, const EPlatformType platform)
 {
-	if (platform == EPlatformType::kGoal || platform == EPlatformType::kNormal || platform == EPlatformType::kCheckpoint || platform == EPlatformType::kCheckpointActivated)
+	if (platform == EPlatformType::kGoal || platform == EPlatformType::kNormal || platform ==
+		EPlatformType::kCheckpoint || platform == EPlatformType::kCheckpointActivated)
 	{
 		return true;
 	}
@@ -404,13 +423,13 @@ bool CollisionHandler::CheckPlatformUnderneath(const EColorType color, const EPl
 	return false;
 }
 
-bool CollisionHandler::Collide(Character& character, const PlatformPart& platform_part,
+bool CollisionHandler::Collide(const sf::Time dt,Character& character, const PlatformPart& platform_part,
                                Platform* platform)
 {
 	//Checks if player collided from underneath the center of the platform
 	if (IsPlayerAbovePlatform(character, platform_part))
 	{
-		StopPlayerMovement(character, platform_part, platform);
+		StopPlayerMovement(dt, character, platform_part, platform);
 		// continue to next pair
 		return true;
 	}

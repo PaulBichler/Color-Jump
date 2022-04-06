@@ -71,7 +71,7 @@ Character::Character(const EColorType type, const TextureHolder& textures, const
 
 	const sf::FloatRect bounds = m_jump_smoke_animation.GetLocalBounds();
 	m_jump_smoke_animation.setOrigin(std::floor(bounds.left + bounds.width / 2.f),
-		std::floor(bounds.top + 50.f));
+	                                 std::floor(bounds.top + 50.f));
 
 	m_name_text.setFont(fonts.Get(Fonts::Main));
 	m_name_text.setCharacterSize(15.f);
@@ -196,7 +196,7 @@ void Character::StopMovement()
  *	On Collision with platform from sides or underneath
  *	Moves the player back so he is not colliding anymore
  */
-void Character::MoveOutOfCollision(const sf::FloatRect& rect)
+void Character::MoveOutOfCollision(const sf::Time dt, const sf::FloatRect& rect)
 {
 	sf::Vector2f velocity = GetVelocity();
 
@@ -206,11 +206,13 @@ void Character::MoveOutOfCollision(const sf::FloatRect& rect)
 	}
 
 	const sf::Vector2f normal_velocity = Utility::UnitVector(velocity);
-	SetVelocity(0, 0);
+	SetVelocity(0, kTable.m_gravityForce);
 
 	while (rect.intersects(GetBoundingRect()))
 	{
-		setPosition(getPosition() - normal_velocity);
+		setPosition(
+			getPosition() - normal_velocity + sf::Vector2f(
+				0, kTable.m_gravityForce * dt.asSeconds()));
 	}
 }
 

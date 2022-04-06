@@ -38,7 +38,7 @@ private:
 
 protected:
 	sf::FloatRect GetViewBounds() const;
-	virtual void HandleCollisions() = 0;
+	virtual void HandleCollisions(sf::Time dt) = 0;
 	virtual sf::FloatRect GetBattlefieldBounds() const = 0;
 	virtual void DestroyEntitiesOutsideView() = 0;
 
