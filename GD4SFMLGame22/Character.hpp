@@ -42,7 +42,7 @@ public:
 	bool IsOnPlatformOfType(EPlatformType platform_type) const;
 	bool IsOnPlatform(Platform* platform) const;
 	void StopMovement();
-	void MoveOutOfCollision(const sf::FloatRect& rect);
+	void MoveOutOfCollision(const sf::Time dt, const sf::FloatRect& rect);
 	void SetIdentifier(sf::Int8 identifier);
 	void SetTeamIdentifier(sf::Int8 identifier);
 	void SetName(const std::string& name);

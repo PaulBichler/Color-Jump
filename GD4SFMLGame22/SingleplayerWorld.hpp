@@ -16,7 +16,7 @@ protected:
 	void UpdateSounds() const;
 	void DestroyEntitiesOutsideView() override;
 	sf::FloatRect GetBattlefieldBounds() const override;
-	void HandleCollisions() override;
+	void HandleCollisions(sf::Time dt) override;
 
 private:
 	std::function<void()> m_lose_callback;

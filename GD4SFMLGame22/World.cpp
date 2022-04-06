@@ -35,7 +35,7 @@ void World::Update(const sf::Time dt)
 		m_sceneGraph.OnCommand(m_command_queue.Pop(), dt);
 	}
 
-	HandleCollisions();
+	HandleCollisions(dt);
 
 	//Remove all destroyed entities
 	m_sceneGraph.RemoveWrecks();

@@ -26,7 +26,7 @@ public:
 	void SetCheckpointToPlatformWithID(sf::Int8 platform_id);
 
 protected:
-	void HandleCollisions() override;
+	void HandleCollisions(sf::Time dt) override;
 	sf::FloatRect GetBattlefieldBounds() const override;
 	void DestroyEntitiesOutsideView() override;
 
