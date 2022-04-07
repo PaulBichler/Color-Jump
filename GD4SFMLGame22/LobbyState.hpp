@@ -46,7 +46,7 @@ private:
 
 	bool m_connected;
 	bool m_is_host;
-	bool m_game_started;
+	bool m_game_started{};
 	int m_unpaired_y_pos;
 
 	std::map<sf::Int8, GUI::Label::Ptr> m_players;
@@ -58,4 +58,6 @@ private:
 	sf::Time m_client_timeout;
 	sf::Time m_lobby_time;
 	sf::Time m_send_time;
+	bool m_is_connecting;
+	sf::IpAddress ip;
 };

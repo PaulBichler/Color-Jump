@@ -33,7 +33,7 @@ namespace GUI
 
 	Button::Button(const Context& context)
 		: m_sprite(context.m_textures->Get(Textures::kButtons))
-		  , m_text("", context.m_fonts->Get(Fonts::Main), 16)
+		  , m_text("", context.m_fonts->Get(Fonts::kButtons), 16)
 		  , m_is_toggle(false)
 		  , m_sounds(*context.m_sounds)
 	{

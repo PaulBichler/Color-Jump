@@ -14,7 +14,7 @@
 LevelPauseState::LevelPauseState(StateStack& stack, Context& context)
 	: State(stack, context)
 {
-	const sf::Font& font = context.m_fonts->Get(Fonts::Main);
+	const sf::Font& font = context.m_fonts->Get(Fonts::kMain);
 	const sf::Vector2f viewSize = context.m_window->getView().getSize();
 
 	//Game Paused Title Text

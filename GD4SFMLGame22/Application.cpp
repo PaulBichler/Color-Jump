@@ -27,14 +27,15 @@ Application::Application()
 {
 	m_window.setKeyRepeatEnabled(false);
 
-	m_fonts.Load(Fonts::Main, "Media/Fonts/Sansation.ttf");
+	m_fonts.Load(Fonts::kButtons, "Media/Fonts/ADELIA.otf");
+	m_fonts.Load(Fonts::kMain, "Media/Fonts/Sansation.ttf");
 	m_textures.Load(Textures::kTitleScreen, "Media/Textures/TitleScreen.png");
 	m_textures.Load(Textures::kTutorialColorCollision, "Media/Textures/Tutorial_Color_Collisions.png");
 	m_textures.Load(Textures::kTutorialImpactPlatform, "Media/Textures/Tutorial_Impact_Platforms.png");
 	m_textures.Load(Textures::kTutorialCheckpoint, "Media/Textures/Tutorial_Checkpoints.png");
 	m_textures.Load(Textures::kButtons, "Media/Textures/Buttons.png");
 
-	m_statistics_text.setFont(m_fonts.Get(Fonts::Main));
+	m_statistics_text.setFont(m_fonts.Get(Fonts::kMain));
 	m_statistics_text.setPosition(5.f, 5.f);
 	m_statistics_text.setCharacterSize(10u);
 

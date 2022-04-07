@@ -14,7 +14,7 @@ JoinSettingsState::JoinSettingsState(StateStack& stack, Context& context)
 
 	//Ip Input
 	m_change_ip_button = std::make_shared<GUI::Button>(context);
-	m_change_ip_button->SetText("Change IP Address");
+	m_change_ip_button->SetText("IP Address");
 	m_change_ip_button->SetToggle(true);
 	m_change_ip_button->setPosition(80.f, 300.f);
 
@@ -43,6 +43,7 @@ JoinSettingsState::JoinSettingsState(StateStack& stack, Context& context)
 	back_button->SetCallback([this]
 	{
 		RequestStackPop();
+		RequestStackPush(StateID::kMenu);
 	});
 
 	m_gui_container.Pack(back_button);
