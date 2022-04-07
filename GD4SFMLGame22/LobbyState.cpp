@@ -80,6 +80,15 @@ void LobbyState::CreateUI(Context& context)
 		});
 	m_gui_container.Pack(start_game_button);
 
+	std::shared_ptr<GUI::Button> leave_team_button;
+	Utility::CreateButton(context, leave_team_button, TEAM_COL_1_POS_X, FOOTER_POS_Y, "Leave Team",
+		[this]
+		{
+			HandleTeamChoice(0);
+		});
+	leave_team_button->SetDrawPredicate([this] { return m_player_team_selection[m_player_id] != 0; });
+	m_gui_container.Pack(leave_team_button);
+
 	std::shared_ptr<GUI::Button> back_button;
 	Utility::CreateButton(context, back_button, TEAM_COL_2_POS_X + 150, FOOTER_POS_Y, "Leave",
 	                      [this]
@@ -157,6 +166,14 @@ sf::Vector2f LobbyState::GetTeamPos(const int i)
 	return {static_cast<float>(x), static_cast<float>(y)};
 }
 
+sf::Vector2f LobbyState::GetUnpairedPos(const int i) const
+{
+	const int y = m_unpaired_y_pos + 30 * i;
+	const int x = UNPAIRED_POS_X;
+
+	return { static_cast<float>(x), static_cast<float>(y) };
+}
+
 void LobbyState::MovePlayer(const sf::Int8 id, const sf::Int8 team_id)
 {
 	if (m_player_team_selection[id] != 0)
@@ -186,9 +203,27 @@ void LobbyState::MovePlayer(const sf::Int8 id, const sf::Int8 team_id)
 	m_player_team_selection[id] = team_id;
 }
 
+void LobbyState::MovePlayerBack(const sf::Int8 id)
+{
+	if (m_player_team_selection[id] != 0)
+	{
+		m_team_selections[m_player_team_selection[id]].erase(
+			std::remove(m_team_selections[m_player_team_selection[id]].begin(),
+				m_team_selections[m_player_team_selection[id]].end(), id),
+			m_team_selections[m_player_team_selection[id]].end());
+	}
+
+	const sf::Vector2f pos = GetUnpairedPos(id);
+	float y = pos.y;
+	
+	m_players[id]->setPosition(pos.x, y);
+	m_player_team_selection[id] = 0;
+	
+}
+
 void LobbyState::HandleTeamChoice(const sf::Int8 id)
 {
-	if (TeamHasPlace(id))
+	if (TeamHasPlace(id) || id == 0)
 	{
 		sf::Packet packet;
 		packet << static_cast<sf::Int8>(client::PacketType::kChoseTeam);
@@ -364,9 +399,10 @@ void LobbyState::HandleTeamSelection(sf::Packet& packet)
 	sf::Int8 team_identifier;
 	packet >> identifier >> team_identifier;
 
-	Utility::Debug(std::to_string(identifier) + " : " + std::to_string(team_identifier));
-
-	MovePlayer(identifier, team_identifier);
+	if (team_identifier == 0)
+		MovePlayerBack(identifier);
+	else
+		MovePlayer(identifier, team_identifier);
 }
 
 

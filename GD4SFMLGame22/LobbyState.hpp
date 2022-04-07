@@ -11,7 +11,9 @@ public:
 	void CreateUI(Context& context);
 	bool TeamHasPlace(sf::Int8 id);
 	static sf::Vector2f GetTeamPos(int i);
+	sf::Vector2f GetUnpairedPos(int i) const;
 	void MovePlayer(sf::Int8 id, sf::Int8 team_id);
+	void MovePlayerBack(sf::Int8 id);
 	void HandleTeamChoice(sf::Int8 id);
 	void Draw() override;
 	void NotifyServerOfExistence() const;
