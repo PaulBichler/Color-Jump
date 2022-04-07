@@ -1,5 +1,6 @@
 #pragma once
 enum class Fonts
 {
-	Main
+	kButtons,
+	kMain
 };

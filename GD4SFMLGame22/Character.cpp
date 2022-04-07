@@ -73,9 +73,9 @@ Character::Character(const EColorType type, const TextureHolder& textures, const
 	m_jump_smoke_animation.setOrigin(std::floor(bounds.left + bounds.width / 2.f),
 	                                 std::floor(bounds.top + 50.f));
 
-	m_name_text.setFont(fonts.Get(Fonts::Main));
+	m_name_text.setFont(fonts.Get(Fonts::kMain));
 	m_name_text.setCharacterSize(15.f);
-	m_team_id_text.setFont(fonts.Get(Fonts::Main));
+	m_team_id_text.setFont(fonts.Get(Fonts::kMain));
 	m_team_id_text.setCharacterSize(15.f);
 
 	Utility::Debug("Character created.");

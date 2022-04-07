@@ -7,7 +7,7 @@
 namespace GUI
 {
 	Label::Label(const std::string& text, const FontHolder& fonts, const int font_size)
-	: m_text(text, fonts.Get(Fonts::Main), font_size)
+	: m_text(text, fonts.Get(Fonts::kMain), font_size)
 	{
 	}
 

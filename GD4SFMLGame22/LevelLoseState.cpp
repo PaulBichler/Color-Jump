@@ -15,7 +15,7 @@
 LevelLoseState::LevelLoseState(StateStack& stack, Context& context)
 	: State(stack, context)
 {
-	const sf::Font& font = context.m_fonts->Get(Fonts::Main);
+	const sf::Font& font = context.m_fonts->Get(Fonts::kMain);
 	const sf::Vector2f viewSize = context.m_window->getView().getSize();
 
 	//Create the Lose Level title text

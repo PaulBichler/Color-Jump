@@ -27,6 +27,7 @@ void LobbyState::CreateUI(Context& context)
 {
 	int y = context.m_window->getSize().y / 2;
 	int x = context.m_window->getSize().x / 2;
+
 	Utility::CreateLabel(context, m_failed_connection_text, x, y, "Attempting to connect...", 35);
 	Utility::CentreOrigin(m_failed_connection_text->GetText());
 	m_gui_fail_container.Pack(m_failed_connection_text);
@@ -35,21 +36,25 @@ void LobbyState::CreateUI(Context& context)
 	Utility::CreateLabel(context, title_label, UNPAIRED_POS_X, TITLE_POS_Y, "Lobby", 100);
 	m_gui_container.Pack(title_label);
 
-	Utility::CreateButton(context, m_change_name_button, TEAM_COL_1_POS_X, TITLE_POS_Y + 10, "Change Name", true);
+	Utility::CreateButton(context, m_change_name_button, TEAM_COL_1_POS_X, TITLE_POS_Y + 10, "Name",
+	                      true);
 	m_gui_container.Pack(m_change_name_button);
 
-	Utility::CreateLabel(context, m_current_name_label, TEAM_COL_1_POS_X + 215, TITLE_POS_Y + 25, m_player_input_name, 20);
+	Utility::CreateLabel(context, m_current_name_label, TEAM_COL_1_POS_X + 215, TITLE_POS_Y + 25,
+	                     m_player_input_name, 20);
 	m_gui_container.Pack(m_current_name_label);
 
 	std::shared_ptr<GUI::Button> tutorial_button;
-	Utility::CreateButton(context, tutorial_button, TEAM_COL_1_POS_X, TITLE_POS_Y + 85, "How to Play", [this]
-		{
-			RequestStackPush(StateID::kTutorial);
-		});
+	Utility::CreateButton(context, tutorial_button, TEAM_COL_1_POS_X, TITLE_POS_Y + 85,
+	                      "How to Play", [this]
+	                      {
+		                      RequestStackPush(StateID::kTutorial);
+	                      });
 	m_gui_container.Pack(tutorial_button);
 
 	std::shared_ptr<GUI::Label> unpaired_label;
-	Utility::CreateLabel(context, unpaired_label, UNPAIRED_POS_X, TEAM_POS_Y - 50, "Unpaired Players", 30);
+	Utility::CreateLabel(context, unpaired_label, UNPAIRED_POS_X, TEAM_POS_Y - 50,
+	                     "Unpaired Players", 30);
 	m_gui_container.Pack(unpaired_label);
 
 	for (sf::Int8 i = 1; i <= 8; ++i)
@@ -76,12 +81,13 @@ void LobbyState::CreateUI(Context& context)
 	m_gui_container.Pack(start_game_button);
 
 	std::shared_ptr<GUI::Button> back_button;
-	Utility::CreateButton(context, back_button, TEAM_COL_2_POS_X + 150, FOOTER_POS_Y, "Leave", [this]
-		{
-			SendClientDisconnect(m_player_id);
-			RequestStackPop();
-			RequestStackPush(StateID::kMenu);
-		});
+	Utility::CreateButton(context, back_button, TEAM_COL_2_POS_X + 150, FOOTER_POS_Y, "Leave",
+	                      [this]
+	                      {
+		                      SendClientDisconnect(m_player_id);
+		                      RequestStackPop();
+		                      RequestStackPush(StateID::kMenu);
+	                      });
 	m_gui_container.Pack(back_button);
 
 	std::shared_ptr<GUI::Label> start_countdown_text_label;
@@ -109,7 +115,6 @@ LobbyState::LobbyState(StateStack& stack, Context& context, const bool is_host)
 {
 	CreateUI(context);
 
-	sf::IpAddress ip;
 	if (m_is_host)
 	{
 		context.m_game_server = std::make_unique<GameServer>(
@@ -121,17 +126,12 @@ LobbyState::LobbyState(StateStack& stack, Context& context, const bool is_host)
 		ip = context.m_player_data_manager->GetData().m_ip_address;
 	}
 
-
-	if (sf::TcpSocket::Done == context.m_socket->connect(ip, SERVER_PORT, sf::seconds(10.f)))
-	{
-		m_connected = true;
-	}
-	else
-	{
-		m_failed_connection_clock.restart();
-	}
-
 	context.m_socket->setBlocking(false);
+
+	context.m_socket->connect(ip, SERVER_PORT, sf::seconds(5.f));
+	m_is_connecting = true;
+	m_failed_connection_clock.restart();
+
 
 	for (sf::Int8 i = 0; i < 8; ++i)
 	{
@@ -211,7 +211,6 @@ void LobbyState::Draw()
 {
 	sf::RenderWindow& window = *GetContext().m_window;
 
-
 	if (m_connected)
 	{
 		window.clear(sf::Color(0, 37, 97));
@@ -232,6 +231,28 @@ void LobbyState::NotifyServerOfExistence() const
 
 bool LobbyState::Update(const sf::Time dt)
 {
+	if (m_is_connecting)
+	{
+		sf::Packet packet;
+		if (GetContext().m_socket->send(packet) == sf::Socket::Done)
+		{
+			m_is_connecting = false;
+			m_connected = true;
+			return true;
+		}
+
+		if (m_failed_connection_clock.getElapsedTime() >= sf::seconds(5.f))
+		{
+			m_is_connecting = false;
+				m_failed_connection_text->SetText("404 No Server Found");
+				Utility::CentreOrigin(m_failed_connection_text->GetText());
+				m_failed_connection_clock.restart();
+		}
+
+		return true;
+	}
+
+
 	if (m_connected)
 	{
 		if (m_lobby_time > m_send_time)
@@ -260,6 +281,7 @@ bool LobbyState::Update(const sf::Time dt)
 				m_failed_connection_clock.restart();
 			}
 		}
+		m_time_since_last_packet += dt;
 	}
 	//Failed to connect and waited for more than 5 seconds: Back to menu
 	else if (m_failed_connection_clock.getElapsedTime() >= sf::seconds(5.f))
@@ -268,7 +290,6 @@ bool LobbyState::Update(const sf::Time dt)
 		RequestStackPush(StateID::kMenu);
 	}
 
-	m_time_since_last_packet += dt;
 	m_lobby_time += dt;
 
 	//Update the start game countdown (if the game has been started by the host)
@@ -333,7 +354,7 @@ bool LobbyState::HandleEvent(const sf::Event& event)
 
 void LobbyState::OnStackPopped()
 {
-	if(!m_game_started)
+	if (!m_game_started)
 		GetContext().DisableServer();
 }
 
@@ -351,7 +372,7 @@ void LobbyState::HandleTeamSelection(sf::Packet& packet)
 
 void LobbyState::HandleGameStart()
 {
-	if(m_team_selections[m_player_team_selection[m_player_id]].size() == 2)
+	if (m_team_selections[m_player_team_selection[m_player_id]].size() == 2)
 	{
 		m_game_started = true;
 		RequestStackClear();

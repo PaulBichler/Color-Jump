@@ -64,4 +64,6 @@ private:
 	sf::Time m_lobby_time;
 	sf::Time m_send_time;
 	sf::Time m_start_countdown_timer;
+	bool m_is_connecting;
+	sf::IpAddress ip;
 };
