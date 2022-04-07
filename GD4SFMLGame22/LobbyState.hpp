@@ -24,12 +24,14 @@ private:
 	void HandleTeamSelection(sf::Packet& packet);
 	void SendClientDisconnect(sf::Int8 id) const;
 	void HandleGameStart();
+	void HandleGameStartCountdown();
 	void HandlePacket(sf::Int8 packet_type, sf::Packet& packet);
 	void HandlePlayerConnect(sf::Packet& packet);
 	void HandlePlayerDisconnect(sf::Packet& packet);
 	void HandleUpdatePlayer(sf::Packet& packet);
 	void HandleInitialState(sf::Packet& packet);
 	void SendPlayerName(const sf::Int8 identifier, const std::string& name) const;
+	void SendStartGameCountdown() const;
 	void SendStartGame() const;
 	void AddPlayer(sf::Int8 identifier, const std::string& label_text);
 	void HandleSpawnSelf(sf::Packet& packet);
@@ -47,7 +49,10 @@ private:
 	bool m_connected;
 	bool m_is_host;
 	bool m_game_started;
+	bool m_start_countdown;
 	int m_unpaired_y_pos;
+
+	std::shared_ptr<GUI::Label> m_start_countdown_label;
 
 	std::map<sf::Int8, GUI::Label::Ptr> m_players;
 	std::map<sf::Int8, std::vector<sf::Int8>> m_team_selections;
@@ -58,4 +63,5 @@ private:
 	sf::Time m_client_timeout;
 	sf::Time m_lobby_time;
 	sf::Time m_send_time;
+	sf::Time m_start_countdown_timer;
 };

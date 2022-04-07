@@ -55,6 +55,7 @@ private:
 	void NotifyTeamCheckpointSet(sf::Int8 team_id, sf::Int8 platform_id) const;
 	void NotifyTeamChange(const sf::Int8 identifier, const sf::Int8 team_id, const sf::Int8 color);
 	void NotifyGameStart();
+	void NotifyGameCountdownStart() const;
 	void HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer, bool& detected_timeout);
 	void CreateSpawnSelfPacket(sf::Packet& packet, sf::Int8 id);
 

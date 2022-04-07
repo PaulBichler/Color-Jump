@@ -278,6 +278,13 @@ void GameServer::NotifyGameStart()
 	SetListening(false);
 }
 
+void GameServer::NotifyGameCountdownStart() const
+{
+	sf::Packet packet;
+	packet << static_cast<sf::Int8>(server::PacketType::kStartGameCountdown);
+	SendToAll(packet);
+}
+
 void GameServer::NotifyTeamCheckpointSet(const sf::Int8 team_id, const sf::Int8 platform_id) const
 {
 	sf::Packet packet;
@@ -395,6 +402,9 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 		break;
 	case client::PacketType::kStartNetworkGame:
 		NotifyGameStart();
+		break;
+	case client::PacketType::kStartNetworkGameCountdown:
+		NotifyGameCountdownStart();
 		break;
 	default:
 		break;

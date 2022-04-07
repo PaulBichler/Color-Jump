@@ -20,6 +20,7 @@ namespace server
 		kSetTeamCheckpoint,
 		kTeamSelection,
 		kStartGame,
+		kStartGameCountdown,
 		kLobbyUpdate
 	};
 }
@@ -36,6 +37,7 @@ namespace client
 		kMission,
 		kChoseTeam,
 		kStartNetworkGame,
+		kStartNetworkGameCountdown,
 		kTeamDeath,
 		kCheckpointReached
 	};

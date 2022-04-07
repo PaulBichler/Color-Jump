@@ -68,10 +68,10 @@ void LobbyState::CreateUI(Context& context)
 	std::shared_ptr<GUI::Button> start_game_button;
 	Utility::CreateButton(context, start_game_button, UNPAIRED_POS_X, FOOTER_POS_Y, "Start game", [this]
 		{
-			SendStartGame();
+			SendStartGameCountdown();
 		}, [this]
 		{
-			return m_is_host && m_team_selections[m_player_team_selection[m_player_id]].size() == 2;
+			return m_is_host && m_team_selections[m_player_team_selection[m_player_id]].size() == 2 && !m_start_countdown && !m_game_started;
 		});
 	m_gui_container.Pack(start_game_button);
 
@@ -83,6 +83,15 @@ void LobbyState::CreateUI(Context& context)
 			RequestStackPush(StateID::kMenu);
 		});
 	m_gui_container.Pack(back_button);
+
+	std::shared_ptr<GUI::Label> start_countdown_text_label;
+	Utility::CreateLabel(context, start_countdown_text_label, UNPAIRED_POS_X, FOOTER_POS_Y + 15, "Game starts in...", 30);
+	start_countdown_text_label->SetDrawPredicate([this] { return m_start_countdown; });
+	m_gui_container.Pack(start_countdown_text_label);
+
+	Utility::CreateLabel(context, m_start_countdown_label, UNPAIRED_POS_X + 250, FOOTER_POS_Y + 15, std::to_string(m_start_countdown_timer.asSeconds()), 30);
+	m_start_countdown_label->SetDrawPredicate([this] { return m_start_countdown; });
+	m_gui_container.Pack(m_start_countdown_label);
 }
 
 LobbyState::LobbyState(StateStack& stack, Context& context, const bool is_host)
@@ -96,6 +105,7 @@ LobbyState::LobbyState(StateStack& stack, Context& context, const bool is_host)
 	  , m_client_timeout(sf::seconds(2.f))
 	  , m_lobby_time(sf::seconds(0))
 	  , m_send_time(sf::seconds(0.5f))
+	  , m_start_countdown_timer(sf::seconds(5.f))
 {
 	CreateUI(context);
 
@@ -260,11 +270,30 @@ bool LobbyState::Update(const sf::Time dt)
 
 	m_time_since_last_packet += dt;
 	m_lobby_time += dt;
+
+	//Update the start game countdown (if the game has been started by the host)
+	if(m_start_countdown)
+	{
+		if (m_start_countdown_timer.asSeconds() > 0) 
+		{
+			m_start_countdown_timer -= dt;
+			m_start_countdown_label->SetText(std::to_string(static_cast<int>(m_start_countdown_timer.asSeconds())));
+		}
+		else if(m_is_host)
+		{
+			SendStartGame();
+			m_start_countdown = false;
+		}
+	}
+
 	return true;
 }
 
 bool LobbyState::HandleEvent(const sf::Event& event)
 {
+	if (m_game_started)
+		return false;
+
 	if (m_change_name_button->IsActive())
 	{
 		//Name Input
@@ -334,6 +363,11 @@ void LobbyState::HandleGameStart()
 	RequestStackPush(StateID::kMenu);
 }
 
+void LobbyState::HandleGameStartCountdown()
+{
+	m_start_countdown = true;
+}
+
 void LobbyState::HandlePacket(sf::Int8 packet_type, sf::Packet& packet)
 {
 	switch (static_cast<server::PacketType>(packet_type))
@@ -358,6 +392,9 @@ void LobbyState::HandlePacket(sf::Int8 packet_type, sf::Packet& packet)
 		break;
 	case server::PacketType::kStartGame:
 		HandleGameStart();
+		break;
+	case server::PacketType::kStartGameCountdown:
+		m_start_countdown = true;
 		break;
 	default:
 		break;
@@ -429,6 +466,13 @@ void LobbyState::SendPlayerName(const sf::Int8 identifier, const std::string& na
 	packet << identifier;
 	packet << display_name;
 
+	m_context.m_socket->send(packet);
+}
+
+void LobbyState::SendStartGameCountdown() const
+{
+	sf::Packet packet;
+	packet << static_cast<sf::Int8>(client::PacketType::kStartNetworkGameCountdown);
 	m_context.m_socket->send(packet);
 }
 
