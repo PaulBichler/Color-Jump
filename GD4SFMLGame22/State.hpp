@@ -10,6 +10,7 @@
 #include "GameServer.hpp"
 #include "KeyBinding.hpp"
 #include "LevelManager.hpp"
+#include "MultiplayerManager.hpp"
 #include "MusicPlayer.hpp"
 #include "PlayerDataManager.hpp"
 #include "SoundPlayer.hpp"
@@ -24,7 +25,7 @@ class Player;
 
 struct Context : sf::NonCopyable
 {
-	Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, MusicPlayer& music, SoundPlayer& sounds, LevelManager& level_manager, PlayerDataManager& player_data_manager, KeyBinding& keys1, KeyBinding& keys2);
+	Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, MusicPlayer& music, SoundPlayer& sounds, LevelManager& level_manager, PlayerDataManager& player_data_manager, KeyBinding& keys1, KeyBinding& keys2, MultiplayerManager& multiplayer_manager);
 	sf::RenderWindow* m_window;
 	TextureHolder* m_textures;
 	FontHolder* m_fonts;
@@ -34,11 +35,7 @@ struct Context : sf::NonCopyable
 	PlayerDataManager* m_player_data_manager;
 	KeyBinding* m_keys1;
 	KeyBinding* m_keys2;
-
-	std::unique_ptr<GameServer> m_game_server;
-	std::unique_ptr<sf::TcpSocket> m_socket;
-
-	void DisableServer();
+	MultiplayerManager* m_multiplayer_manager;
 };
 
 class State
@@ -60,7 +57,7 @@ protected:
 	void RequestStackClear() const;
 	Context& GetContext() const;
 
-protected:
+private:
 	StateStack* m_stack;
 	Context& m_context;
 };

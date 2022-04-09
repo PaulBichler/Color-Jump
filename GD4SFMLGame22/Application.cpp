@@ -10,6 +10,7 @@
 #include "LevelWinState.hpp"
 #include "MenuState.hpp"
 #include "LevelPauseState.hpp"
+#include "MultiplayerGameOverState.hpp"
 #include "MultiplayerGameState.hpp"
 #include "SettingsState.hpp"
 #include "TutorialState.hpp"
@@ -21,7 +22,7 @@ Application::Application()
 	: m_window(sf::VideoMode(1344, 960), "States", sf::Style::Close)
 	  , m_key_binding_1(1)
 	  , m_key_binding_2(2)
-	  , m_context(m_window, m_textures, m_fonts, m_music, m_sounds, m_level_manager, m_player_data_manager, m_player_data_manager.GetData().m_player1_keybindings, m_player_data_manager.GetData().m_player2_keybindings)
+	  , m_context(m_window, m_textures, m_fonts, m_music, m_sounds, m_level_manager, m_player_data_manager, m_player_data_manager.GetData().m_player1_keybindings, m_player_data_manager.GetData().m_player2_keybindings, m_multiplayer_manager)
 	  , m_stack(m_context)
 	  , m_statistics_num_frames(0)
 {
@@ -130,5 +131,7 @@ void Application::RegisterStates()
 	m_stack.RegisterState<LevelLoseState>(StateID::kLevelLose);
 	m_stack.RegisterState<LevelWinState>(StateID::kLevelWin);
 	m_stack.RegisterState<TutorialState>(StateID::kTutorial);
+	m_stack.RegisterState<MultiplayerGameOverState>(StateID::kMultiplayerWin, true);
+	m_stack.RegisterState<MultiplayerGameOverState>(StateID::kMultiplayerLose, false);
 }
 

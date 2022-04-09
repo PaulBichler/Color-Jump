@@ -27,6 +27,7 @@ LevelManager::LevelManager() : m_current_coop_index(0), m_current_multiplayer_in
 
 	//Holds level data info for multiplayer levels (online)
 	m_multiplayer_levels.emplace_back("LevelData/Multiplayer/LevelData_Multiplayer_Level1_ColliderTiles.csv", "LevelData/Multiplayer/LevelData_Multiplayer_Level1_BackgroundTiles.csv", sf::Vector2u(64, 64));
+	/*m_multiplayer_levels.emplace_back("LevelData/Multiplayer/Multiplayer_Test_ColliderTiles.csv", "LevelData/Multiplayer/Multiplayer_Test_BackgroundTiles.csv", sf::Vector2u(64, 64));*/
 }
 
 //Written by Paul Bichler (D00242563)

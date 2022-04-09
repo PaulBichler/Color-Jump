@@ -41,9 +41,9 @@ LevelLoseState::LevelLoseState(StateStack& stack, Context& context)
 	const auto main_menu_button = std::make_shared<GUI::Button>(context);
 	main_menu_button->setPosition(0.5f * viewSize.x - 100, 0.4f * viewSize.y + 150);
 	main_menu_button->SetText("Back to Main Menu");
-	main_menu_button->SetCallback([this]()
+	main_menu_button->SetCallback([this]
 	{
-		GetContext().DisableServer();
+		GetContext().m_multiplayer_manager->Disconnect();
 		RequestStackClear();
 		RequestStackPush(StateID::kMenu);
 	});

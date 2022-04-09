@@ -21,7 +21,6 @@ public:
 	bool HandleEvent(const sf::Event& event) override;
 	void OnStackPopped() override;
 
-
 private:
 	void HandleTeamSelection(sf::Packet& packet);
 	void SendClientDisconnect(sf::Int8 id) const;
@@ -37,7 +36,10 @@ private:
 	void SendStartGame() const;
 	void AddPlayer(sf::Int8 identifier, const std::string& label_text);
 	void HandleSpawnSelf(sf::Packet& packet);
-	
+
+private:
+	sf::TcpSocket* m_socket;
+
 	GUI::Container m_gui_container;
 	GUI::Container m_gui_fail_container;
 
@@ -50,8 +52,8 @@ private:
 
 	bool m_connected;
 	bool m_is_host;
-	bool m_game_started;
-	bool m_start_countdown;
+	bool m_game_started{};
+	bool m_start_countdown{};
 	int m_unpaired_y_pos;
 
 	std::shared_ptr<GUI::Label> m_start_countdown_label;

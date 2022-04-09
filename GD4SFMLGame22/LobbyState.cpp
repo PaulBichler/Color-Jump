@@ -20,7 +20,7 @@ void LobbyState::SendClientDisconnect(const sf::Int8 id) const
 	packet << static_cast<sf::Int8>(client::PacketType::kQuit);
 	packet << id;
 
-	m_context.m_socket->send(packet);
+	m_socket->send(packet);
 }
 
 void LobbyState::CreateUI(Context& context)
@@ -126,8 +126,7 @@ LobbyState::LobbyState(StateStack& stack, Context& context, const bool is_host)
 
 	if (m_is_host)
 	{
-		context.m_game_server = std::make_unique<GameServer>(
-			sf::Vector2f(context.m_window->getSize()));
+		context.m_multiplayer_manager->HostServer(sf::Vector2f(context.m_window->getSize()));
 		ip = "127.0.0.1";
 	}
 	else
@@ -135,9 +134,7 @@ LobbyState::LobbyState(StateStack& stack, Context& context, const bool is_host)
 		ip = context.m_player_data_manager->GetData().m_ip_address;
 	}
 
-	context.m_socket->setBlocking(false);
-
-	context.m_socket->connect(ip, SERVER_PORT, sf::seconds(5.f));
+	m_socket = context.m_multiplayer_manager->ConnectToServer(ip);
 	m_is_connecting = true;
 	m_failed_connection_clock.restart();
 
@@ -238,22 +235,21 @@ void LobbyState::HandleTeamChoice(const sf::Int8 id)
 			packet << static_cast<sf::Int8>(1);
 		}
 
-		m_context.m_socket->send(packet);
+		m_socket->send(packet);
 	}
 }
 
 void LobbyState::Draw()
 {
 	sf::RenderWindow& window = *GetContext().m_window;
+	window.clear(sf::Color(0, 37, 97));
 
 	if (m_connected)
 	{
-		window.clear(sf::Color(0, 37, 97));
 		window.draw(m_gui_container);
 	}
 	else
 	{
-		window.clear(sf::Color(0, 37, 97));
 		window.draw(m_gui_fail_container);
 	}
 }
@@ -261,7 +257,7 @@ void LobbyState::Draw()
 void LobbyState::NotifyServerOfExistence() const
 {
 	sf::Packet packet;
-	m_context.m_socket->send(packet);
+	m_socket->send(packet);
 }
 
 bool LobbyState::Update(const sf::Time dt)
@@ -269,7 +265,7 @@ bool LobbyState::Update(const sf::Time dt)
 	if (m_is_connecting)
 	{
 		sf::Packet packet;
-		if (GetContext().m_socket->send(packet) == sf::Socket::Done)
+		if (m_socket->send(packet) == sf::Socket::Done)
 		{
 			m_is_connecting = false;
 			m_connected = true;
@@ -298,7 +294,7 @@ bool LobbyState::Update(const sf::Time dt)
 
 		//Handle messages from the server that may have arrived
 		sf::Packet packet;
-		if (m_context.m_socket->receive(packet) == sf::Socket::Done)
+		if (m_socket->receive(packet) == sf::Socket::Done)
 		{
 			m_time_since_last_packet = sf::seconds(0.f);
 			sf::Int8 packet_type;
@@ -390,7 +386,7 @@ bool LobbyState::HandleEvent(const sf::Event& event)
 void LobbyState::OnStackPopped()
 {
 	if (!m_game_started)
-		GetContext().DisableServer();
+		GetContext().m_multiplayer_manager->Disconnect();
 }
 
 void LobbyState::HandleTeamSelection(sf::Packet& packet)
@@ -523,27 +519,27 @@ void LobbyState::SendPlayerName(const sf::Int8 identifier, const std::string& na
 	packet << identifier;
 	packet << display_name;
 
-	m_context.m_socket->send(packet);
+	m_socket->send(packet);
 }
 
 void LobbyState::SendStartGameCountdown() const
 {
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(client::PacketType::kStartNetworkGameCountdown);
-	m_context.m_socket->send(packet);
+	m_socket->send(packet);
 }
 
 void LobbyState::SendStartGame() const
 {
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(client::PacketType::kStartNetworkGame);
-	m_context.m_socket->send(packet);
+	m_socket->send(packet);
 }
 
 void LobbyState::AddPlayer(const sf::Int8 identifier, const std::string& label_text)
 {
 	GUI::Label::Ptr name;
-	Utility::CreateLabel(m_context, name, UNPAIRED_POS_X, m_unpaired_y_pos + 30 * identifier,
+	Utility::CreateLabel(GetContext(), name, UNPAIRED_POS_X, m_unpaired_y_pos + 30 * identifier,
 	                     label_text, 20);
 	m_gui_container.Pack(name);
 	m_players.try_emplace(identifier, name);

@@ -4,7 +4,8 @@
 
 Context::Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts,
                  MusicPlayer& music, SoundPlayer& sounds, LevelManager& level_manager,
-                 PlayerDataManager& player_data_manager, KeyBinding& keys1, KeyBinding& keys2)
+                 PlayerDataManager& player_data_manager, KeyBinding& keys1, KeyBinding& keys2, 
+				 MultiplayerManager& multiplayer_manager)
 	: m_window(&window)
 	  , m_textures(&textures)
 	  , m_fonts(&fonts)
@@ -14,14 +15,8 @@ Context::Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& 
 	  , m_player_data_manager(&player_data_manager)
 	  , m_keys1(&keys1)
 	  , m_keys2(&keys2)
-	  , m_socket(std::make_unique<sf::TcpSocket>())
+	  , m_multiplayer_manager(&multiplayer_manager)
 {
-}
-
-void Context::DisableServer()
-{
-	m_game_server.reset();
-	m_socket.reset(new sf::TcpSocket());
 }
 
 State::State(StateStack& stack, Context& context) : m_stack(&stack), m_context(context)

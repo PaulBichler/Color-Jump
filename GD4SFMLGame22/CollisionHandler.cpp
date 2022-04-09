@@ -216,7 +216,6 @@ void CollisionHandler::IsAtTheFinishLine(const Character* player_1, const Charac
 		if (player_1 == nullptr || player_2 == nullptr)
 			return;
 
-
 		const bool player_1_check = player_1->IsOnPlatformOfType(platform_type);
 		const bool player_2_check = player_2->IsOnPlatformOfType(platform_type);
 

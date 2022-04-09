@@ -4,7 +4,6 @@
 #include <SFML/System/Time.hpp>
 
 #include "MusicPlayer.hpp"
-#include "Player.hpp"
 #include "ResourceHolder.hpp"
 #include "ResourceIdentifiers.hpp"
 #include "StateStack.hpp"
@@ -39,6 +38,7 @@ private:
 
 	LevelManager m_level_manager;
 	PlayerDataManager m_player_data_manager;
+	MultiplayerManager m_multiplayer_manager;
 
 	Context m_context;
 	StateStack m_stack;
