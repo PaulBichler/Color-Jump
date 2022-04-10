@@ -460,6 +460,15 @@ bool LobbyState::HandleEvent(const sf::Event& event)
 		m_gui_container.HandleEvent(event);
 	}
 
+	if (event.type == sf::Event::GainedFocus)
+	{
+		GetContext().m_multiplayer_manager->SetPassFocus(true);
+	}
+	else if (event.type == sf::Event::LostFocus)
+	{
+		GetContext().m_multiplayer_manager->SetPassFocus(false);
+	}
+
 	return false;
 }
 

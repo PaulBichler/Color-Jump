@@ -70,6 +70,16 @@ int MultiplayerManager::GetNumberOfTeams() const
 	return m_teams.size();
 }
 
+void MultiplayerManager::SetPassFocus(bool pass_focus)
+{
+	m_pass_focus = pass_focus;
+}
+
+bool MultiplayerManager::GetPassFocus() const
+{
+	return m_pass_focus;
+}
+
 sf::TcpSocket* MultiplayerManager::GetSocket() const
 {
 	return m_socket.get();

@@ -177,9 +177,6 @@
     <ClCompile Include="TileFactory.cpp">
       <Filter>Source Files\Level\Base</Filter>
     </ClCompile>
-    <ClCompile Include="ColorTile.cpp">
-      <Filter>Source Files\Level\Multiplayer</Filter>
-    </ClCompile>
     <ClCompile Include="MultiplayerGameState.cpp">
       <Filter>Source Files\GameStates</Filter>
     </ClCompile>
@@ -364,9 +361,6 @@
     </ClInclude>
     <ClInclude Include="SinglePlayerWorld.hpp">
       <Filter>Header Files\Level\Singleplayer</Filter>
-    </ClInclude>
-    <ClInclude Include="ColorTile.hpp">
-      <Filter>Header Files\Level\Multiplayer</Filter>
     </ClInclude>
     <ClInclude Include="MultiplayerWorld.hpp">
       <Filter>Header Files\Level\Multiplayer</Filter>

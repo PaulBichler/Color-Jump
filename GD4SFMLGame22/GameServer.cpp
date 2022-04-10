@@ -12,9 +12,9 @@ GameServer::GameServer()
 	: m_thread(&GameServer::ExecutionThread, this)
 	  , m_listening_state(false)
 	  , m_client_timeout(sf::seconds(2.f))
-	  , m_max_connected_players(15)
+	  , m_max_connected_players(16)
 	  , m_player_count(0)
-	  , m_ids(15)
+	  , m_ids(16)
 	  , m_peers(1)
 	  , m_waiting_thread_end(false)
 	  , m_game_started(false)
@@ -66,7 +66,6 @@ void GameServer::LobbyTick() const
 {
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(server::PacketType::kLobbyUpdate);
-	Debug("Lobby Update");
 
 	SendPackageToAll(packet);
 }
@@ -621,8 +620,6 @@ void GameServer::NotifyClientState() const
 		const auto& player_info = player.second;
 		packet << player.first << player_info.m_position.x << player_info.m_position.y;
 	}
-
-	Debug("Update all clients.");
 
 	SendPackageToAll(packet);
 }

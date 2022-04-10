@@ -15,7 +15,6 @@ MultiplayerGameState::MultiplayerGameState(StateStack& stack, Context& context)
 	  , m_world(*context.m_window, *context.m_sounds, *context.m_fonts, this)
 	  , m_socket(context.m_multiplayer_manager->GetSocket())
 	  , m_connected(true)
-	  , m_has_focus(true)
 	  , m_client_timeout(sf::seconds(2.f))
 	  , m_time_since_last_packet(sf::seconds(0.f))
 {
@@ -83,7 +82,7 @@ bool MultiplayerGameState::Update(const sf::Time dt)
 	{
 		m_world.Update(dt);
 
-		if (m_has_focus)
+		if (GetContext().m_multiplayer_manager->GetPassFocus())
 		{
 			CommandQueue& commands = m_world.GetCommandQueue();
 			for (const auto& pair : m_players)
@@ -163,11 +162,11 @@ bool MultiplayerGameState::HandleEvent(const sf::Event& event)
 	}
 	else if (event.type == sf::Event::GainedFocus)
 	{
-		m_has_focus = true;
+		GetContext().m_multiplayer_manager->SetPassFocus(true);
 	}
 	else if (event.type == sf::Event::LostFocus)
 	{
-		m_has_focus = false;
+		GetContext().m_multiplayer_manager->SetPassFocus(false);
 	}
 	return true;
 }
@@ -222,8 +221,6 @@ void MultiplayerGameState::SendClientDisconnect(sf::Int8 identifier) const
 */
 void MultiplayerGameState::HandleClientUpdate(sf::Packet& packet) const
 {
-	Debug("Handle client update.");
-
 	sf::Int8 player_count;
 	packet >> player_count;
 
