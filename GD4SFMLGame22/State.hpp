@@ -6,8 +6,6 @@
 #include <SFML/Window/Event.hpp>
 
 #include <memory>
-
-#include "GameServer.hpp"
 #include "KeyBinding.hpp"
 #include "LevelManager.hpp"
 #include "MultiplayerManager.hpp"

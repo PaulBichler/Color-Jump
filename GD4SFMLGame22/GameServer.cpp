@@ -1,28 +1,18 @@
 #include "GameServer.hpp"
 #include "NetworkProtocol.hpp"
 #include <SFML/System.hpp>
-
-#include <SFML/Network/Packet.hpp>
 #include "Utility.hpp"
-
-
-//It is essential to set the sockets to non-blocking - m_socket.setBlocking(false)
-//otherwise the server will hang waiting to read input from a connection
 
 GameServer::RemotePeer::RemotePeer() : m_ready(false), m_timed_out(false)
 {
 	m_socket.setBlocking(false);
 }
 
-GameServer::GameServer(const sf::Vector2f battlefield_size)
+GameServer::GameServer()
 	: m_thread(&GameServer::ExecutionThread, this)
 	  , m_listening_state(false)
 	  , m_client_timeout(sf::seconds(2.f))
 	  , m_max_connected_players(15)
-	  , m_connected_players(0)
-	  , m_world_height(5000.f)
-	  , m_battlefield_rect(0.f, m_world_height - battlefield_size.y, battlefield_size.x,
-	                       battlefield_size.y)
 	  , m_player_count(0)
 	  , m_ids(15)
 	  , m_peers(1)
@@ -40,54 +30,15 @@ GameServer::~GameServer()
 	m_thread.wait();
 }
 
-//This is the same as SpawnSelf but indicate that an aircraft from a different client is entering the world
-
 void GameServer::SendPackageToAll(sf::Packet packet) const
 {
-	for (sf::Int8 i = 0; i < m_connected_players; ++i)
+	for (sf::Int8 i = 0; i < m_player_count; ++i)
 	{
 		if (m_peers[i]->m_ready)
 		{
 			m_peers[i]->m_socket.send(packet);
 		}
 	}
-}
-
-void GameServer::NotifyPlayerSpawn(const sf::Int8 id) const
-{
-	sf::Packet packet;
-	//First thing for every packet is what type of packet it is
-	packet << static_cast<sf::Int8>(server::PacketType::kPlayerConnect);
-	packet << id;
-
-	Debug("Spawn player " + std::to_string(id));
-
-	SendPackageToAll(packet);
-}
-
-void GameServer::NotifyPlayerNameChange(const sf::Int8 identifier, const std::string& name) const
-{
-	sf::Packet packet;
-	//First thing for every packet is what type of packet it is
-	packet << static_cast<sf::Int8>(server::PacketType::kUpdatePlayer);
-	packet << identifier;
-	packet << name;
-
-	Debug("Update player info.");
-
-	SendPackageToAll(packet);
-}
-
-void GameServer::NotifyTeamRespawn(const sf::Int8 team_id) const
-{
-	sf::Packet packet;
-	//First thing for every packet is what type of packet it is
-	packet << static_cast<sf::Int8>(server::PacketType::kRespawnTeam);
-	packet << team_id;
-
-	Debug("Respawn team " + std::to_string(team_id));
-
-	SendPackageToAll(packet);
 }
 
 void GameServer::SetListening(const bool enable)
@@ -97,7 +48,7 @@ void GameServer::SetListening(const bool enable)
 	{
 		if (!m_listening_state)
 		{
-			m_listening_state = (m_listener_socket.listen(SERVER_PORT) == sf::TcpListener::Done);
+			m_listening_state = m_listener_socket.listen(SERVER_PORT) == sf::TcpListener::Done;
 		}
 	}
 	else
@@ -107,15 +58,18 @@ void GameServer::SetListening(const bool enable)
 	}
 }
 
+/**
+ * Dylan Goncalves Martins (D00242562)
+ * \brief Every half a second send package to clients so they know that they didn't lose connection
+ */
 void GameServer::LobbyTick() const
 {
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(server::PacketType::kLobbyUpdate);
 	Debug("Lobby Update");
 
-	SendToAll(packet);
+	SendPackageToAll(packet);
 }
-
 
 void GameServer::ExecutionThread()
 {
@@ -123,7 +77,7 @@ void GameServer::ExecutionThread()
 
 	const sf::Time frame_rate = sf::seconds(1.f / 60.f);
 	sf::Time frame_time = sf::Time::Zero;
-	const sf::Time game_tick_rate = sf::seconds(1.f / 20.f);
+	const sf::Time game_tick_rate = sf::seconds(1.f / 24.f);
 	sf::Time game_tick_time = sf::Time::Zero;
 	const sf::Time lobby_tick_rate = sf::seconds(1.f / 2.f);
 	sf::Time lobby_tick_time = sf::Time::Zero;
@@ -175,7 +129,7 @@ void GameServer::ExecutionThread()
 
 void GameServer::Tick() const
 {
-	UpdateClientState();
+	NotifyClientState();
 }
 
 sf::Time GameServer::Now() const
@@ -215,61 +169,47 @@ void GameServer::HandleIncomingPackets()
 	}
 }
 
-void GameServer::NotifyPlayerPlatformChange(const sf::Int8 player_id, const sf::Int8 platform_id,
-                                            const sf::Int8 platform_color) const
-{
-	sf::Packet packet;
-	//First thing for every packet is what type of packet it is
-	packet << static_cast<sf::Int8>(server::PacketType::kUpdatePlatformColors);
-	packet << player_id;
-	packet << platform_id;
-	packet << platform_color;
-
-	Debug("Platform changes for " + std::to_string(player_id));
-
-	SendPackageToAll(packet);
-}
-
-void GameServer::NotifyMission(const sf::Int8 team_id) const
-{
-	sf::Packet packet;
-	packet << static_cast<sf::Int8>(server::PacketType::kMissionSuccess);
-	packet << team_id;
-
-	Debug("Mission completed");
-
-	SendPackageToAll(packet);
-}
-
-void GameServer::NotifyTeamChange(const sf::Int8 identifier, const sf::Int8 team_id,
-                                  const sf::Int8 color)
-{
-	sf::Packet packet;
-	packet << static_cast<sf::Int8>(server::PacketType::kTeamSelection);
-	packet << identifier;
-	packet << team_id;
-
-	m_player_info[identifier].m_team_id = team_id;
-	m_player_info[identifier].m_color = color;
-
-	Debug("Team changes");
-
-	SendPackageToAll(packet);
-}
-
+/**
+ * Dylan Goncalves Martins (D00242562)
+ * \brief Send to every one the start packet and then foreach client a spawn self packet
+ */
 void GameServer::NotifyGameStart()
 {
 	m_game_started = true;
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(server::PacketType::kStartGame);
-	SendToAll(packet);
+	SendPackageToAll(packet);
 
-	for (int i = 0; i < m_connected_players; ++i)
+	for (int i = 0; i < m_player_count; ++i)
 	{
 		if (m_peers[i]->m_ready)
 		{
 			packet.clear();
-			CreateSpawnSelfPacket(packet, m_peers[i]->m_identifier);
+
+			packet << static_cast<sf::Int8>(server::PacketType::kSpawnSelf);
+
+			packet << static_cast<sf::Int8>(m_player_info.size() - 1);
+
+			sf::Int8 id = m_peers[i]->m_identifier;
+
+			for (const auto& player_info : m_player_info)
+			{
+				if (player_info.first == id)
+				{
+					continue;
+				}
+
+				packet << player_info.first;
+				packet << player_info.second.m_team_id;
+				packet << player_info.second.m_color;
+				packet << player_info.second.name;
+			}
+
+			packet << id;
+			packet << m_player_info[id].m_team_id;
+			packet << m_player_info[id].m_color;
+			packet << m_player_info[id].name;
+
 			m_peers[i]->m_socket.send(packet);
 		}
 	}
@@ -282,23 +222,229 @@ void GameServer::NotifyGameCountdownStart() const
 {
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(server::PacketType::kStartGameCountdown);
-	SendToAll(packet);
+	SendPackageToAll(packet);
 }
 
-void GameServer::NotifyTeamCheckpointSet(const sf::Int8 team_id, const sf::Int8 platform_id) const
+void GameServer::NotifyCheckpointReached(const sf::Int8 team_id, const sf::Int8 platform_id) const
 {
-	sf::Packet packet;
-	packet << static_cast<sf::Int8>(server::PacketType::kSetTeamCheckpoint);
-	packet << team_id;
-	packet << platform_id;
+	sf::Packet notify_packet;
+	notify_packet << static_cast<sf::Int8>(server::PacketType::kSetTeamCheckpoint);
+	notify_packet << team_id;
+	notify_packet << platform_id;
 
 	Debug("New checkpoint set for team: " + std::to_string(team_id));
+
+	SendPackageToAll(notify_packet);
+}
+
+void GameServer::HandleCheckpointReached(sf::Packet& packet) const
+{
+	sf::Int8 team_id;
+	sf::Int8 platform_id;
+	packet >> team_id;
+	packet >> platform_id;
+
+	NotifyCheckpointReached(team_id, platform_id);
+}
+
+/**
+ * Dylan Goncalves Martins (D00242562)
+ * \brief package with the new player id send to everyone
+ * \param id player id
+ */
+void GameServer::NotifyPlayerJoin(const sf::Int8 id) const
+{
+	sf::Packet packet;
+	packet << static_cast<sf::Int8>(server::PacketType::kPlayerConnect);
+	packet << id;
+
+	Debug("Player " + std::to_string(id) + " joined.");
 
 	SendPackageToAll(packet);
 }
 
-void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer,
-                                      bool& detected_timeout)
+/**
+ * Dylan Goncalves Martins (D00242562)
+ * \brief Notifies all clients of a team change for a player
+ * \param id player id
+ * \param team_id new team id
+ */
+void GameServer::NotifyTeamChange(const sf::Int8 id, const sf::Int8 team_id) const
+{
+	sf::Packet notify_packet;
+	notify_packet << static_cast<sf::Int8>(server::PacketType::kTeamSelection);
+	notify_packet << id;
+	notify_packet << team_id;
+
+	Debug("Team change");
+
+	SendPackageToAll(notify_packet);
+}
+
+/**
+ * Dylan Goncalves Martins (D00242562)
+ * \brief reads the packet and set the player info for the incoming id (team id and player color)
+ * \param packet incoming packet
+ */
+void GameServer::HandleTeamChange(sf::Packet& packet)
+{
+	sf::Int8 id;
+	sf::Int8 team_id;
+	sf::Int8 color;
+	packet >> id >> team_id >> color;
+
+	m_player_info[id].m_team_id = team_id;
+	m_player_info[id].m_color = color;
+
+	NotifyTeamChange(id, team_id);
+}
+
+/**
+ * \brief sends a packet with the team id in it to all clients, informing of a team respawn
+ * \param team_id team id
+ */
+void GameServer::NotifyTeamRespawn(const sf::Int8 team_id) const
+{
+	sf::Packet notify_packet;
+	notify_packet << static_cast<sf::Int8>(server::PacketType::kRespawnTeam);
+	notify_packet << team_id;
+
+	Debug("Respawn team " + std::to_string(team_id));
+
+	SendPackageToAll(notify_packet);
+}
+
+/**
+ * \brief just reads in the team id, and then notifies all clients
+ * \param packet packet
+ */
+void GameServer::HandleTeamRespawn(sf::Packet& packet) const
+{
+	sf::Int8 team_id;
+	packet >> team_id;
+
+	NotifyTeamRespawn(team_id);
+}
+
+/**
+ * \brief Notifies all clients of a name change
+ * \param id player id
+ * \param name chosen name
+ */
+void GameServer::NotifyPlayerNameChange(const sf::Int8 id, const std::string& name) const
+{
+	sf::Packet notify_packet;
+	notify_packet << static_cast<sf::Int8>(server::PacketType::kUpdatePlayer);
+	notify_packet << id;
+	notify_packet << name;
+
+	Debug("Update player info.");
+
+	SendPackageToAll(notify_packet);
+}
+
+/**
+ * \brief Reads packet and stores name in player info
+ * also only takes a max of 20 chars
+ * \param packet packet
+ */
+void GameServer::HandlePlayerNameChange(sf::Packet& packet)
+{
+	sf::Int8 id;
+	std::string name;
+	packet >> id >> name;
+	name = name.substr(0, 20);
+	m_player_info[id].name = name;
+
+	NotifyPlayerNameChange(id, name);
+}
+
+/**
+ * \brief Sends the team id of the team who reached the goal tile to all clients 
+ * \param team_id team id
+ */
+void GameServer::NotifyGoalReached(const sf::Int8 team_id) const
+{
+	sf::Packet notify_packet;
+	notify_packet << static_cast<sf::Int8>(server::PacketType::kMissionSuccess);
+	notify_packet << team_id;
+
+	Debug("Mission completed");
+
+	SendPackageToAll(notify_packet);
+}
+
+/**
+ * \brief just reads in the team id, and then notifies all clients
+ * \param packet packet
+ */
+void GameServer::HandleGoalReached(sf::Packet& packet) const
+{
+	sf::Int8 team_id;
+	packet >> team_id;
+
+	NotifyGoalReached(team_id);
+}
+
+/**
+ * Dylan Goncalves Martins (D00242562)
+ * \brief Sends the platform changes to all clients
+ * \param id player id
+ * \param platform_id platform id
+ * \param platform_color platform color
+ */
+void GameServer::NotifyPlatformUpdate(const sf::Int8 id, const sf::Int8 platform_id, const sf::Int8 platform_color) const
+{
+	sf::Packet packet;
+	packet << static_cast<sf::Int8>(server::PacketType::kUpdatePlatformColors);
+	packet << id;
+	packet << platform_id;
+	packet << platform_color;
+
+	Debug("Platform changes for " + std::to_string(id));
+
+	SendPackageToAll(packet);
+}
+
+/**
+ * Dylan Goncalves Martins (D00242562)
+ * \brief Handles incoming platform changes
+ * \param packet packet
+ */
+void GameServer::HandlePlatformUpdate(sf::Packet& packet) const
+{
+	sf::Int8 id;
+	sf::Int8 platform_id;
+	sf::Int8 platform_color;
+
+	packet >> id >> platform_id >> platform_color;
+
+	NotifyPlatformUpdate(id, platform_id, platform_color);
+}
+
+/**
+ * Dylan Goncalves Martins (D00242562)
+ * \brief Updates server saved positions
+ * \param packet packet
+ */
+void GameServer::HandlePlayerPositionUpdate(sf::Packet& packet)
+{
+	sf::Int8 id;
+	sf::Vector2f position;
+	packet >> id >> position.x >> position.y;
+	m_player_info[id].m_position = position;
+}
+
+/**
+ * \brief Sets a player who wants to quit to timeout
+ */
+void GameServer::HandlePlayerQuit(RemotePeer& receiving_peer, bool& detected_timeout)
+{
+	receiving_peer.m_timed_out = true;
+	detected_timeout = true;
+}
+
+void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_peer, bool& detected_timeout)
 {
 	sf::Int8 packet_type;
 	packet >> packet_type;
@@ -306,99 +452,28 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 	switch (static_cast<client::PacketType>(packet_type))
 	{
 	case client::PacketType::kQuit:
-		{
-			receiving_peer.m_timed_out = true;
-			detected_timeout = true;
-		}
+		HandlePlayerQuit(receiving_peer, detected_timeout);
 		break;
-
 	case client::PacketType::kPositionUpdate:
-		{
-			sf::Int8 identifier;
-			sf::Vector2f position;
-			packet >> identifier >> position.x >> position.y;
-
-			// if (abs(
-			// 	position.x + position.y - (m_player_info[identifier].m_position.x + m_player_info[
-			// 		identifier].m_position.y)) > 2)
-			// {
-			//
-			// 	Debug("Kicked");
-			//
-			// 	for (const auto& remote_peer : m_peers)
-			// 	{
-			// 		if (remote_peer->m_identifier == identifier)
-			// 		{
-			// 			remote_peer->m_timed_out = true;
-			// 		}
-			// 	}
-			// }
-			// else
-			// {
-			m_player_info[identifier].m_position = position;
-			// }
-		}
+		HandlePlayerPositionUpdate(packet);
 		break;
-
 	case client::PacketType::kPlatformUpdate:
-		{
-			sf::Int8 player_id;
-			sf::Int8 platform_id;
-			sf::Int8 platform_color;
-
-			packet >> player_id >> platform_id >> platform_color;
-
-			m_player_info[player_id].m_platform_colors.try_emplace(platform_id, platform_color);
-			NotifyPlayerPlatformChange(player_id, platform_id, platform_color);
-		}
+		HandlePlatformUpdate(packet);
 		break;
 	case client::PacketType::kPlayerUpdate:
-		{
-			sf::Int8 id;
-			std::string name;
-			packet >> id >> name;
-			name = name.substr(0, 20);
-			m_player_info[id].name = name;
-
-			NotifyPlayerNameChange(id, name);
-		}
+		HandlePlayerNameChange(packet);
 		break;
-
-	case client::PacketType::kMission:
-		{
-			sf::Int8 identifier;
-			packet >> identifier;
-
-			NotifyMission(identifier);
-		}
+	case client::PacketType::kGoalReached:
+		HandleGoalReached(packet);
 		break;
 	case client::PacketType::kTeamDeath:
-		{
-			sf::Int8 team_id;
-			packet >> team_id;
-
-			NotifyTeamRespawn(team_id);
-		}
+		HandleTeamRespawn(packet);
 		break;
-	case client::PacketType::kChoseTeam:
-		{
-			sf::Int8 identifier;
-			sf::Int8 team_id;
-			sf::Int8 color;
-			packet >> identifier >> team_id >> color;
-
-			NotifyTeamChange(identifier, team_id, color);
-		}
+	case client::PacketType::kTeamChange:
+		HandleTeamChange(packet);
 		break;
 	case client::PacketType::kCheckpointReached:
-		{
-			sf::Int8 team_id;
-			sf::Int8 platform_id;
-			packet >> team_id;
-			packet >> platform_id;
-
-			NotifyTeamCheckpointSet(team_id, platform_id);
-		}
+		HandleCheckpointReached(packet);
 		break;
 	case client::PacketType::kStartNetworkGame:
 		NotifyGameStart();
@@ -411,29 +486,22 @@ void GameServer::HandleIncomingPacket(sf::Packet& packet, RemotePeer& receiving_
 	}
 }
 
-void GameServer::CreateSpawnSelfPacket(sf::Packet& packet, const sf::Int8 id)
+/**
+ * Dylan Goncalves Martins (D00242562)
+ * \brief This method finds the first available id and sets it to being used, then it return the id
+ * \param id player id
+ */
+void GameServer::GetAndSetID(sf::Int8& id)
 {
-	packet << static_cast<sf::Int8>(server::PacketType::kSpawnSelf);
-
-	packet << static_cast<sf::Int8>(m_player_info.size() - 1);
-
-	for (const auto& player_info : m_player_info)
+	for (sf::Int8 i = 0; i < static_cast<sf::Int8>(m_ids.size()); ++i)
 	{
-		if (player_info.first == id)
-		{
+		if (m_ids[i])
 			continue;
-		}
 
-		packet << player_info.first;
-		packet << player_info.second.m_team_id;
-		packet << player_info.second.m_color;
-		packet << player_info.second.name;
+		id = i;
+		m_ids[i] = true;
+		break;
 	}
-
-	packet << id;
-	packet << m_player_info[id].m_team_id;
-	packet << m_player_info[id].m_color;
-	packet << m_player_info[id].name;
 }
 
 void GameServer::HandleIncomingConnections()
@@ -443,19 +511,18 @@ void GameServer::HandleIncomingConnections()
 		return;
 	}
 
-	if (m_listener_socket.accept(m_peers[m_connected_players]->m_socket) == sf::TcpListener::Done)
+	if (m_listener_socket.accept(m_peers[m_player_count]->m_socket) == sf::TcpListener::Done)
 	{
+		if (m_player_count >= m_max_connected_players)
+		{
+			SetListening(false);
+			return;
+		}
+
+
 		sf::Int8 id = 0;
 
-		for (sf::Int8 i = 0; i < static_cast<sf::Int8>(m_ids.size()); ++i)
-		{
-			if (m_ids[i])
-				continue;
-
-			id = i;
-			m_ids[i] = true;
-			break;
-		}
+		GetAndSetID(id);
 
 		id += 1;
 
@@ -466,29 +533,20 @@ void GameServer::HandleIncomingConnections()
 		packet << static_cast<sf::Int8>(server::PacketType::kSpawnSelf);
 		packet << id;
 
-		m_peers[m_connected_players]->m_identifier = id;
+		m_peers[m_player_count]->m_identifier = id;
 
-		InformWorldState(m_peers[m_connected_players]->m_socket);
-		NotifyPlayerSpawn(id);
+		NotifyLobbyState(m_peers[m_player_count]->m_socket);
+		NotifyPlayerJoin(id);
 
-		m_peers[m_connected_players]->m_socket.send(packet);
+		m_peers[m_player_count]->m_socket.send(packet);
 
 		Debug("Send self spawn package to " + std::to_string(id) + ".");
 
-		m_peers[m_connected_players]->m_ready = true;
-		m_peers[m_connected_players]->m_last_packet_time = Now();
+		m_peers[m_player_count]->m_ready = true;
+		m_peers[m_player_count]->m_last_packet_time = Now();
 
 		m_player_count++;
-		m_connected_players++;
-
-		if (m_connected_players >= m_max_connected_players)
-		{
-			SetListening(false);
-		}
-		else
-		{
-			m_peers.emplace_back(std::make_unique<RemotePeer>());
-		}
+		m_peers.emplace_back(std::make_unique<RemotePeer>());
 	}
 }
 
@@ -498,19 +556,18 @@ void GameServer::HandleDisconnections()
 	{
 		if ((*itr)->m_timed_out)
 		{
-			SendToAll(
-				sf::Packet() << static_cast<sf::Int8>(server::PacketType::kPlayerDisconnect) << (*
-					itr)->m_identifier);
+			const auto& disconnect_packet = sf::Packet() << static_cast<sf::Int8>(server::PacketType::kPlayerDisconnect)
+				<< (*itr)->m_identifier;
+			SendPackageToAll(disconnect_packet);
 			m_ids[(*itr)->m_identifier - 1] = false;
 			m_player_info.erase((*itr)->m_identifier);
 
-			m_connected_players--;
-			m_player_count -= 1;
+			m_player_count--;
 
 			itr = m_peers.erase(itr);
 
 			//If the number of peers has dropped below max_connections (and the game hasn't started yet)
-			if (m_connected_players < m_max_connected_players && !m_game_started)
+			if (m_player_count < m_max_connected_players && !m_game_started)
 			{
 				m_peers.emplace_back(std::make_unique<RemotePeer>());
 				SetListening(true);
@@ -523,13 +580,18 @@ void GameServer::HandleDisconnections()
 	}
 }
 
-void GameServer::InformWorldState(sf::TcpSocket& socket)
+/**
+ * Dylan Goncalves Martins (D00242562)
+ * \brief Sends an Initial Lobby state to the person joining
+ * \param socket receiver
+ */
+void GameServer::NotifyLobbyState(sf::TcpSocket& socket)
 {
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(server::PacketType::kInitialState);
 	packet << m_player_count;
 
-	for (sf::Int8 i = 0; i < m_connected_players; ++i)
+	for (sf::Int8 i = 0; i < m_player_count; ++i)
 	{
 		if (m_peers[i]->m_ready)
 		{
@@ -544,18 +606,11 @@ void GameServer::InformWorldState(sf::TcpSocket& socket)
 	socket.send(packet);
 }
 
-void GameServer::SendToAll(sf::Packet& packet) const
-{
-	for (const peer_ptr& peer : m_peers)
-	{
-		if (peer->m_ready)
-		{
-			peer->m_socket.send(packet);
-		}
-	}
-}
-
-void GameServer::UpdateClientState() const
+/**
+ * Dylan Goncalves Martins (D00242562)
+ * \brief Notifies all client positions 
+ */
+void GameServer::NotifyClientState() const
 {
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(server::PacketType::kUpdateClientState);
@@ -569,9 +624,8 @@ void GameServer::UpdateClientState() const
 
 	Debug("Update all clients.");
 
-	SendToAll(packet);
+	SendPackageToAll(packet);
 }
-
 
 void GameServer::Debug(const std::string& message)
 {

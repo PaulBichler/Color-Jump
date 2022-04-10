@@ -4,9 +4,9 @@
 
 #include "NetworkProtocol.hpp"
 
-void MultiplayerManager::HostServer(sf::Vector2f battlefield_size)
+void MultiplayerManager::HostServer()
 {
-	m_game_server = std::make_unique<GameServer>(battlefield_size);
+	m_game_server = std::make_unique<GameServer>();
 }
 
 sf::TcpSocket* MultiplayerManager::ConnectToServer(const sf::IpAddress ip_address, float timeout, bool blocking_mode)

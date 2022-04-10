@@ -23,6 +23,66 @@ void LobbyState::SendClientDisconnect(const sf::Int8 id) const
 	m_socket->send(packet);
 }
 
+auto LobbyState::HandleTutorialPress() const
+{
+	return [this]
+	{
+		RequestStackPush(StateID::kTutorial);
+	};
+}
+
+auto LobbyState::HandleTeamButtonPressed(sf::Int8 id)
+{
+	return [this, id]
+	{
+		HandleTeamChoice(id);
+	};
+}
+
+auto LobbyState::HandleStartGamePressed() const
+{
+	return [this]
+	{
+		SendStartGameCountdown();
+	};
+}
+
+auto LobbyState::IsHostAndInTeam()
+{
+	return [this]
+	{
+		return m_is_host && m_team_selections[m_player_team_selection[m_player_id]].size() == 2 && !m_start_countdown &&
+			!m_game_started;
+	};
+}
+
+auto LobbyState::HandleLeaveTeamButtonPress()
+{
+	return [this]
+	{
+		HandleTeamChoice(0);
+	};
+}
+
+auto LobbyState::IsInATeam()
+{
+	return [this] { return m_player_team_selection[m_player_id] != 0; };
+}
+
+auto LobbyState::HandleBackButtonPressed() const
+{
+	return [this]
+	{
+		SendClientDisconnect(m_player_id);
+		RequestStackPop();
+		RequestStackPush(StateID::kMenu);
+	};
+}
+
+/**
+* Dylan Goncalves Martins (D00242562)
+* Creates the lobby UI
+*/
 void LobbyState::CreateUI(Context& context)
 {
 	int y = context.m_window->getSize().y / 2;
@@ -46,10 +106,7 @@ void LobbyState::CreateUI(Context& context)
 
 	std::shared_ptr<GUI::Button> tutorial_button;
 	Utility::CreateButton(context, tutorial_button, TEAM_COL_1_POS_X, TITLE_POS_Y + 85,
-	                      "How to Play", [this]
-	                      {
-		                      RequestStackPush(StateID::kTutorial);
-	                      });
+	                      "How to Play", HandleTutorialPress());
 	m_gui_container.Pack(tutorial_button);
 
 	std::shared_ptr<GUI::Label> unpaired_label;
@@ -57,54 +114,39 @@ void LobbyState::CreateUI(Context& context)
 	                     "Unpaired Players", 30);
 	m_gui_container.Pack(unpaired_label);
 
-	for (sf::Int8 i = 1; i <= 8; ++i)
+	for (sf::Int8 id = 1; id <= 8; ++id)
 	{
 		std::shared_ptr<GUI::Button> team_button;
-		y = TEAM_POS_Y + TEAM_BUTTON_GAP * ((i - 1 - (i - 1) % 2) / 2);
-		x = i % 2 == 0 ? TEAM_COL_2_POS_X : TEAM_COL_1_POS_X;
-		auto label = "Team " + std::to_string(i);
-		Utility::CreateButton(context, team_button, x, y, label, [this, i]
-		{
-			HandleTeamChoice(i);
-		});
+		y = TEAM_POS_Y + TEAM_BUTTON_GAP * ((id - 1 - (id - 1) % 2) / 2);
+		x = id % 2 == 0 ? TEAM_COL_2_POS_X : TEAM_COL_1_POS_X;
+		auto label = "Team " + std::to_string(id);
+		Utility::CreateButton(context, team_button, x, y, label, HandleTeamButtonPressed(id));
 		m_gui_container.Pack(team_button);
 	}
 
 	std::shared_ptr<GUI::Button> start_game_button;
-	Utility::CreateButton(context, start_game_button, UNPAIRED_POS_X, FOOTER_POS_Y, "Start game", [this]
-		{
-			SendStartGameCountdown();
-		}, [this]
-		{
-			return m_is_host && m_team_selections[m_player_team_selection[m_player_id]].size() == 2 && !m_start_countdown && !m_game_started;
-		});
+	Utility::CreateButton(context, start_game_button, UNPAIRED_POS_X, FOOTER_POS_Y, "Start game",
+	                      HandleStartGamePressed(), IsHostAndInTeam());
 	m_gui_container.Pack(start_game_button);
 
 	std::shared_ptr<GUI::Button> leave_team_button;
 	Utility::CreateButton(context, leave_team_button, TEAM_COL_1_POS_X, FOOTER_POS_Y, "Leave Team",
-		[this]
-		{
-			HandleTeamChoice(0);
-		});
-	leave_team_button->SetDrawPredicate([this] { return m_player_team_selection[m_player_id] != 0; });
+	                      HandleLeaveTeamButtonPress(), IsInATeam());
 	m_gui_container.Pack(leave_team_button);
 
 	std::shared_ptr<GUI::Button> back_button;
 	Utility::CreateButton(context, back_button, TEAM_COL_2_POS_X + 150, FOOTER_POS_Y, "Leave",
-	                      [this]
-	                      {
-		                      SendClientDisconnect(m_player_id);
-		                      RequestStackPop();
-		                      RequestStackPush(StateID::kMenu);
-	                      });
+	                      HandleBackButtonPressed());
 	m_gui_container.Pack(back_button);
 
 	std::shared_ptr<GUI::Label> start_countdown_text_label;
-	Utility::CreateLabel(context, start_countdown_text_label, UNPAIRED_POS_X, FOOTER_POS_Y + 15, "Game starts in...", 30);
+	Utility::CreateLabel(context, start_countdown_text_label, UNPAIRED_POS_X, FOOTER_POS_Y + 15, "Game starts in...",
+	                     30);
 	start_countdown_text_label->SetDrawPredicate([this] { return m_start_countdown; });
 	m_gui_container.Pack(start_countdown_text_label);
 
-	Utility::CreateLabel(context, m_start_countdown_label, UNPAIRED_POS_X + 250, FOOTER_POS_Y + 15, std::to_string(m_start_countdown_timer.asSeconds()), 30);
+	Utility::CreateLabel(context, m_start_countdown_label, UNPAIRED_POS_X + 250, FOOTER_POS_Y + 15,
+	                     std::to_string(m_start_countdown_timer.asSeconds()), 30);
 	m_start_countdown_label->SetDrawPredicate([this] { return m_start_countdown; });
 	m_gui_container.Pack(m_start_countdown_label);
 }
@@ -126,7 +168,7 @@ LobbyState::LobbyState(StateStack& stack, Context& context, const bool is_host)
 
 	if (m_is_host)
 	{
-		context.m_multiplayer_manager->HostServer(sf::Vector2f(context.m_window->getSize()));
+		context.m_multiplayer_manager->HostServer();
 		ip = "127.0.0.1";
 	}
 	else
@@ -155,6 +197,10 @@ bool LobbyState::TeamHasPlace(const sf::Int8 id)
 	return false;
 }
 
+/**
+* Dylan Goncalves Martins (D00242562)
+* Gets the appropriate screen pos for the label
+*/
 sf::Vector2f LobbyState::GetTeamPos(const int i)
 {
 	const int y = TEAM_POS_Y + TEAM_BUTTON_GAP * ((i - 1 - (i - 1) % 2) / 2);
@@ -168,11 +214,19 @@ sf::Vector2f LobbyState::GetUnpairedPos(const int i) const
 	const int y = m_unpaired_y_pos + 30 * i;
 	const int x = UNPAIRED_POS_X;
 
-	return { static_cast<float>(x), static_cast<float>(y) };
+	return {static_cast<float>(x), static_cast<float>(y)};
 }
 
+/**
+* Dylan Goncalves Martins (D00242562)
+* Moves a label to the right pos
+*/
 void LobbyState::MovePlayer(const sf::Int8 id, const sf::Int8 team_id)
 {
+	/**
+	* Dylan Goncalves Martins (D00242562)
+	* Removes from previous team pos
+	*/
 	if (m_player_team_selection[id] != 0)
 	{
 		m_team_selections[m_player_team_selection[id]].erase(
@@ -206,24 +260,25 @@ void LobbyState::MovePlayerBack(const sf::Int8 id)
 	{
 		m_team_selections[m_player_team_selection[id]].erase(
 			std::remove(m_team_selections[m_player_team_selection[id]].begin(),
-				m_team_selections[m_player_team_selection[id]].end(), id),
+			            m_team_selections[m_player_team_selection[id]].end(), id),
 			m_team_selections[m_player_team_selection[id]].end());
 	}
 
-	const sf::Vector2f pos = GetUnpairedPos(id);
-	float y = pos.y;
-	
-	m_players[id]->setPosition(pos.x, y);
+	m_players[id]->setPosition(GetUnpairedPos(id));
 	m_player_team_selection[id] = 0;
-	
 }
 
+
+/**
+ * Dylan Goncalves Martins (D00242562)
+ * Sends a packet to the server on team choice
+ */
 void LobbyState::HandleTeamChoice(const sf::Int8 id)
 {
 	if (TeamHasPlace(id) || id == 0)
 	{
 		sf::Packet packet;
-		packet << static_cast<sf::Int8>(client::PacketType::kChoseTeam);
+		packet << static_cast<sf::Int8>(client::PacketType::kTeamChange);
 		packet << m_player_id;
 		packet << id;
 		if (m_team_selections[id].empty())
@@ -254,6 +309,10 @@ void LobbyState::Draw()
 	}
 }
 
+/**
+ * Dylan Goncalves Martins (D00242562)
+ * Sends a packet to the server so the server doesn't disconnect him
+ */
 void LobbyState::NotifyServerOfExistence() const
 {
 	sf::Packet packet;
@@ -262,8 +321,16 @@ void LobbyState::NotifyServerOfExistence() const
 
 bool LobbyState::Update(const sf::Time dt)
 {
+	/**
+	* Dylan Goncalves Martins (D00242562)
+	* This runs at the start until a succesfull conection between the client and the server have benn made
+	*/
 	if (m_is_connecting)
 	{
+		/**
+		* Dylan Goncalves Martins (D00242562)
+		* Sends a packet to the server to see if server succsefully connected
+		*/
 		sf::Packet packet;
 		if (m_socket->send(packet) == sf::Socket::Done)
 		{
@@ -271,28 +338,37 @@ bool LobbyState::Update(const sf::Time dt)
 			m_connected = true;
 			return true;
 		}
-
+		/**
+		* Dylan Goncalves Martins (D00242562)
+		* After some time and no succesfull connection we tell the client that he hasnt found a server
+		*/
 		if (m_failed_connection_clock.getElapsedTime() >= sf::seconds(5.f))
 		{
 			m_is_connecting = false;
-				m_failed_connection_text->SetText("404 No Server Found");
-				Utility::CentreOrigin(m_failed_connection_text->GetText());
-				m_failed_connection_clock.restart();
+			m_failed_connection_text->SetText("No servers available");
+			Utility::CentreOrigin(m_failed_connection_text->GetText());
+			m_failed_connection_clock.restart();
 		}
 
 		return true;
 	}
 
-
+	/**
+	* Dylan Goncalves Martins (D00242562)
+	* As long as the player is conected this will be executed
+	*/
 	if (m_connected)
 	{
+		/**
+		* Dylan Goncalves Martins (D00242562)
+		* Every few frames send a packet to the server so he knows of the players existance
+		*/
 		if (m_lobby_time > m_send_time)
 		{
 			m_lobby_time = sf::seconds(0.f);
 			NotifyServerOfExistence();
 		}
 
-		//Handle messages from the server that may have arrived
 		sf::Packet packet;
 		if (m_socket->receive(packet) == sf::Socket::Done)
 		{
@@ -303,6 +379,10 @@ bool LobbyState::Update(const sf::Time dt)
 		}
 		else
 		{
+			/**
+			* Dylan Goncalves Martins (D00242562)
+			* If there is no response from the server after some time set connected to false
+			*/
 			if (m_time_since_last_packet > m_client_timeout)
 			{
 				m_connected = false;
@@ -324,14 +404,14 @@ bool LobbyState::Update(const sf::Time dt)
 	m_lobby_time += dt;
 
 	//Update the start game countdown (if the game has been started by the host)
-	if(m_start_countdown)
+	if (m_start_countdown)
 	{
-		if (m_start_countdown_timer.asSeconds() > 0) 
+		if (m_start_countdown_timer.asSeconds() > 0)
 		{
 			m_start_countdown_timer -= dt;
 			m_start_countdown_label->SetText(std::to_string(static_cast<int>(m_start_countdown_timer.asSeconds())));
 		}
-		else if(m_is_host)
+		else if (m_is_host)
 		{
 			SendStartGame();
 			m_start_countdown = false;
@@ -485,6 +565,10 @@ void LobbyState::HandleUpdatePlayer(sf::Packet& packet)
 	m_players[identifier]->SetText(name);
 }
 
+/**
+* Dylan Goncalves Martins (D00242562)
+* Handles the initial state packet
+*/
 void LobbyState::HandleInitialState(sf::Packet& packet)
 {
 	sf::Int8 player_count;
@@ -509,14 +593,14 @@ void LobbyState::HandleInitialState(sf::Packet& packet)
 	}
 }
 
-void LobbyState::SendPlayerName(const sf::Int8 identifier, const std::string& name) const
+void LobbyState::SendPlayerName(const sf::Int8 id, const std::string& name) const
 {
 	std::string display_name = name;
 	display_name.append(m_is_host ? " (Host)" : "");
 
 	sf::Packet packet;
 	packet << static_cast<sf::Int8>(client::PacketType::kPlayerUpdate);
-	packet << identifier;
+	packet << id;
 	packet << display_name;
 
 	m_socket->send(packet);
@@ -529,6 +613,10 @@ void LobbyState::SendStartGameCountdown() const
 	m_socket->send(packet);
 }
 
+/**
+* Dylan Goncalves Martins (D00242562)
+* Sends Start game packet
+*/
 void LobbyState::SendStartGame() const
 {
 	sf::Packet packet;
@@ -536,16 +624,24 @@ void LobbyState::SendStartGame() const
 	m_socket->send(packet);
 }
 
-void LobbyState::AddPlayer(const sf::Int8 identifier, const std::string& label_text)
+/**
+* Dylan Goncalves Martins (D00242562)
+* Adds a label to the lobby for a player
+*/
+void LobbyState::AddPlayer(const sf::Int8 id, const std::string& label_text)
 {
 	GUI::Label::Ptr name;
-	Utility::CreateLabel(GetContext(), name, UNPAIRED_POS_X, m_unpaired_y_pos + 30 * identifier,
+	Utility::CreateLabel(GetContext(), name, UNPAIRED_POS_X, m_unpaired_y_pos + 30 * id,
 	                     label_text, 20);
 	m_gui_container.Pack(name);
-	m_players.try_emplace(identifier, name);
-	m_player_team_selection.try_emplace(identifier, 0);
+	m_players.try_emplace(id, name);
+	m_player_team_selection.try_emplace(id, 0);
 }
 
+/**
+* Dylan Goncalves Martins (D00242562)
+* Handles self spawn packet
+*/
 void LobbyState::HandleSpawnSelf(sf::Packet& packet)
 {
 	sf::Int8 identifier;

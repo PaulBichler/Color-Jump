@@ -230,7 +230,7 @@ void Utility::CreateButton(Context& context, std::shared_ptr<GUI::Button>& butto
 	CreateButton(context, button, x, y, label, nullptr, toggle, nullptr);
 }
 
-void Utility::CreateLabel(Context& context, std::shared_ptr<GUI::Label>& label, const int x,
+void Utility::CreateLabel(const Context& context, std::shared_ptr<GUI::Label>& label, const int x,
                           const int y, const std::string& label_text, const int text_size)
 {
 	label = std::make_shared<GUI::Label>(label_text, *context.m_fonts, text_size);

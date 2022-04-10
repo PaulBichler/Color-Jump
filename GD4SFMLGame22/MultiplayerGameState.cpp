@@ -61,6 +61,10 @@ void MultiplayerGameState::Draw()
 	}
 }
 
+/**
+* Dylan Goncalves Martins (D00242562)
+* Sends a platform packet to the server
+*/
 void MultiplayerGameState::SendPlatformInfo(const sf::Int8 player_id, const sf::Int8 platform_id,
                                             EPlatformType platform) const
 {
@@ -73,17 +77,6 @@ void MultiplayerGameState::SendPlatformInfo(const sf::Int8 player_id, const sf::
 	m_socket->send(packet);
 }
 
-void MultiplayerGameState::SendPlayerName(const sf::Int8 identifier, const std::string& name) const
-{
-	sf::Packet packet;
-	packet << static_cast<sf::Int8>(client::PacketType::kPlayerUpdate);
-	packet << identifier;
-	packet << name;
-	Debug("Name change.");
-	m_socket->send(packet);
-}
-
-
 bool MultiplayerGameState::Update(const sf::Time dt)
 {
 	if (m_connected)
@@ -93,7 +86,7 @@ bool MultiplayerGameState::Update(const sf::Time dt)
 		if (m_has_focus)
 		{
 			CommandQueue& commands = m_world.GetCommandQueue();
-			for (auto& pair : m_players)
+			for (const auto& pair : m_players)
 			{
 				pair.second->HandleRealtimeInput(commands);
 			}
@@ -120,7 +113,7 @@ bool MultiplayerGameState::Update(const sf::Time dt)
 			}
 		}
 
-		if (m_tick_clock.getElapsedTime() > sf::seconds(1.f / 20.f))
+		if (m_tick_clock.getElapsedTime() > sf::seconds(1.f / 24.f))
 		{
 			packet.clear();
 			packet << static_cast<sf::Int8>(client::PacketType::kPositionUpdate);
@@ -179,10 +172,14 @@ bool MultiplayerGameState::HandleEvent(const sf::Event& event)
 	return true;
 }
 
+/**
+* Dylan Goncalves Martins (D00242562)
+* Sends a packet when the goal is reached
+*/
 void MultiplayerGameState::SendMission(const sf::Int8 player_id) const
 {
 	sf::Packet packet;
-	packet << static_cast<sf::Int8>(client::PacketType::kMission);
+	packet << static_cast<sf::Int8>(client::PacketType::kGoalReached);
 	packet << player_id;
 
 	Debug("Mission completed.");
@@ -219,6 +216,10 @@ void MultiplayerGameState::SendClientDisconnect(sf::Int8 identifier) const
 	m_socket->send(packet);
 }
 
+/**
+* Dylan Goncalves Martins (D00242562)
+* Update non client player positions
+*/
 void MultiplayerGameState::HandleClientUpdate(sf::Packet& packet) const
 {
 	Debug("Handle client update.");
@@ -248,7 +249,11 @@ void MultiplayerGameState::Debug(const std::string& message)
 	Utility::Debug("MultiplayerGameState: " + message);
 }
 
-
+/**
+* Dylan Goncalves Martins (D00242562)
+* This spawns a playable character for client
+* and ghost characters for other players
+*/
 void MultiplayerGameState::HandleSelfSpawn(sf::Packet& packet)
 {
 	Debug("Self spawn.");
@@ -295,6 +300,10 @@ void MultiplayerGameState::HandlePlayerDisconnect(sf::Packet& packet)
 	m_players.erase(identifier);
 }
 
+/**
+* Dylan Goncalves Martins (D00242562)
+* Updates platform colors for team members
+*/
 void MultiplayerGameState::HandleUpdatePlatformColors(sf::Packet& packet)
 {
 	Debug("Update platform colors.");
@@ -319,16 +328,6 @@ void MultiplayerGameState::HandleUpdatePlatformColors(sf::Packet& packet)
 		m_world.UpdatePlatform(send_char->GetIdentifier(), platform_id,
 		                       static_cast<EPlatformType>(platform_color));
 	}
-}
-
-void MultiplayerGameState::HandleUpdatePlayer(sf::Packet& packet) const
-{
-	Debug("Update player.");
-
-	sf::Int8 identifier;
-	std::string name;
-	packet >> identifier >> name;
-	m_world.GetCharacter(identifier)->SetName(name);
 }
 
 void MultiplayerGameState::HandleMission(sf::Packet& packet)
@@ -394,9 +393,6 @@ void MultiplayerGameState::HandlePacket(sf::Int8 packet_type, sf::Packet& packet
 		break;
 	case server::PacketType::kUpdatePlatformColors:
 		HandleUpdatePlatformColors(packet);
-		break;
-	case server::PacketType::kUpdatePlayer:
-		HandleUpdatePlayer(packet);
 		break;
 	case server::PacketType::kRespawnTeam:
 		HandleTeamRespawn(packet);

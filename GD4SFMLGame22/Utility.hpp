@@ -39,6 +39,6 @@ public:
 	static void CreateButton(Context& context, std::shared_ptr<GUI::Button>& button, int x, int y,
 	                         const std::string& label, bool toggle);
 
-	static void CreateLabel(Context& context, std::shared_ptr<GUI::Label>& label, int x, int y,
+	static void CreateLabel(const Context& context, std::shared_ptr<GUI::Label>& label, int x, int y,
 	                        const std::string& label_text, int text_size);
 };

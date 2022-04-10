@@ -24,6 +24,13 @@ public:
 private:
 	void HandleTeamSelection(sf::Packet& packet);
 	void SendClientDisconnect(sf::Int8 id) const;
+	auto HandleTutorialPress() const;
+	auto HandleTeamButtonPressed(sf::Int8 id);
+	auto HandleStartGamePressed() const;
+	auto IsHostAndInTeam();
+	auto HandleLeaveTeamButtonPress();
+	auto IsInATeam();
+	auto HandleBackButtonPressed() const;
 	void HandleGameStart();
 	void HandleGameStartCountdown();
 	void HandlePacket(sf::Int8 packet_type, sf::Packet& packet);
@@ -31,10 +38,10 @@ private:
 	void HandlePlayerDisconnect(sf::Packet& packet);
 	void HandleUpdatePlayer(sf::Packet& packet);
 	void HandleInitialState(sf::Packet& packet);
-	void SendPlayerName(const sf::Int8 identifier, const std::string& name) const;
+	void SendPlayerName(sf::Int8 id, const std::string& name) const;
 	void SendStartGameCountdown() const;
 	void SendStartGame() const;
-	void AddPlayer(sf::Int8 identifier, const std::string& label_text);
+	void AddPlayer(sf::Int8 id, const std::string& label_text);
 	void HandleSpawnSelf(sf::Packet& packet);
 
 private:

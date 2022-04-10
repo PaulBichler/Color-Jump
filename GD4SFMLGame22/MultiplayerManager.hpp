@@ -9,7 +9,7 @@ class MultiplayerManager
 {
 public:
 	MultiplayerManager() = default;
-	void HostServer(sf::Vector2f battlefield_size);
+	void HostServer();
 	sf::TcpSocket* ConnectToServer(sf::IpAddress ip_address, float timeout = 5.f, bool blocking_mode = false);
 	sf::TcpSocket* GetSocket() const;
 	void Disconnect();
