@@ -5,7 +5,7 @@
 #include "TitleState.hpp"
 #include "GameState.hpp"
 #include "LobbyState.hpp"
-#include "JoinSettingsState.hpp"
+#include "JoinServerState.hpp"
 #include "LevelLoseState.hpp"
 #include "LevelWinState.hpp"
 #include "MenuState.hpp"
@@ -122,7 +122,7 @@ void Application::RegisterStates()
 	m_stack.RegisterState<MenuState>(StateID::kMenu);
 	m_stack.RegisterState<GameState>(StateID::kGame);
 	m_stack.RegisterState<MultiplayerGameState>(StateID::kNetworkGame);
-	m_stack.RegisterState<JoinSettingsState>(StateID::kJoinSettings);
+	m_stack.RegisterState<JoinServerState>(StateID::kJoinSettings);
 	m_stack.RegisterState<LobbyState>(StateID::kLobbyHost, true);
 	m_stack.RegisterState<LobbyState>(StateID::kLobbyClient, false);
 	m_stack.RegisterState<LevelPauseState>(StateID::kNetworkPause);

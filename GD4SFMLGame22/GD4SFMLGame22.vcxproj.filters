@@ -195,9 +195,6 @@
     <ClCompile Include="PlayerDataManager.cpp">
       <Filter>Source Files\Player</Filter>
     </ClCompile>
-    <ClCompile Include="JoinSettingsState.cpp">
-      <Filter>Source Files\GameStates</Filter>
-    </ClCompile>
     <ClCompile Include="LobbyState.cpp">
       <Filter>Source Files\GameStates</Filter>
     </ClCompile>
@@ -208,6 +205,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MultiplayerGameOverState.cpp">
+      <Filter>Source Files\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="JoinServerState.cpp">
       <Filter>Source Files\GameStates</Filter>
     </ClCompile>
   </ItemGroup>
@@ -383,9 +383,6 @@
     <ClInclude Include="TileFactory.hpp">
       <Filter>Header Files\Level\Base</Filter>
     </ClInclude>
-    <ClInclude Include="EGameMode.hpp">
-      <Filter>Header Files\Level\Base</Filter>
-    </ClInclude>
     <ClInclude Include="KeyBinding.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -410,9 +407,6 @@
     <ClInclude Include="PlayerDataManager.hpp">
       <Filter>Header Files\Player</Filter>
     </ClInclude>
-    <ClInclude Include="JoinSettingsState.hpp">
-      <Filter>Header Files\GameStates</Filter>
-    </ClInclude>
     <ClInclude Include="LobbyState.hpp">
       <Filter>Header Files\GameStates</Filter>
     </ClInclude>
@@ -423,6 +417,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MultiplayerGameOverState.hpp">
+      <Filter>Header Files\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="JoinServerState.hpp">
       <Filter>Header Files\GameStates</Filter>
     </ClInclude>
   </ItemGroup>

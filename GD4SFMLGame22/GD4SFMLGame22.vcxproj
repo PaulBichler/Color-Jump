@@ -167,7 +167,7 @@
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="GhostCharacter.cpp" />
     <ClCompile Include="LobbyState.cpp" />
-    <ClCompile Include="JoinSettingsState.cpp" />
+    <ClCompile Include="JoinServerState.cpp" />
     <ClCompile Include="KeyBinding.cpp" />
     <ClCompile Include="Label.cpp" />
     <ClCompile Include="LevelLoader.cpp" />
@@ -220,7 +220,6 @@
     <ClInclude Include="Container.hpp" />
     <ClInclude Include="DataTables.hpp" />
     <ClInclude Include="EColorType.hpp" />
-    <ClInclude Include="EGameMode.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="EPlatformType.hpp" />
     <ClInclude Include="ETileType.hpp" />
@@ -229,7 +228,7 @@
     <ClInclude Include="GameState.hpp" />
     <ClInclude Include="GhostCharacter.hpp" />
     <ClInclude Include="LobbyState.hpp" />
-    <ClInclude Include="JoinSettingsState.hpp" />
+    <ClInclude Include="JoinServerState.hpp" />
     <ClInclude Include="KeyBinding.hpp" />
     <ClInclude Include="Label.hpp" />
     <ClInclude Include="Layers.hpp" />

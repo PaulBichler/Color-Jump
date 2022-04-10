@@ -32,6 +32,8 @@ MultiplayerGameState::MultiplayerGameState(StateStack& stack, Context& context)
 	context.m_music->Play(MusicThemes::kMissionTheme);
 }
 
+//Written by Paul Bichler (D00242563)
+//This method is called right before the state is popped
 void MultiplayerGameState::OnStackPopped()
 {
 	//This state is popped --> disconnect the player
@@ -186,6 +188,8 @@ void MultiplayerGameState::SendMission(const sf::Int8 player_id) const
 	m_socket->send(packet);
 }
 
+//Written by Paul Bichler (D00242563)
+//this packet is send when a player dies (when one player dies, the whole team dies and resets)
 void MultiplayerGameState::SendTeamDeath(sf::Int8 team_id) const
 {
 	sf::Packet packet;
@@ -195,6 +199,8 @@ void MultiplayerGameState::SendTeamDeath(sf::Int8 team_id) const
 	m_socket->send(packet);
 }
 
+//Written by Paul Bichler (D00242563)
+//This packet is send to inform players in a team that the checkpoint needs to be activated
 void MultiplayerGameState::SendCheckpointReached(sf::Int8 team_id, sf::Int8 platform_id) const
 {
 	sf::Packet packet;
@@ -205,6 +211,8 @@ void MultiplayerGameState::SendCheckpointReached(sf::Int8 team_id, sf::Int8 plat
 	m_socket->send(packet);
 }
 
+//Written by Paul Bichler (D00242563)
+//This packet informs the server that this client will disconnect
 void MultiplayerGameState::SendClientDisconnect(sf::Int8 identifier) const
 {
 	sf::Packet packet;
@@ -287,6 +295,8 @@ void MultiplayerGameState::HandleSelfSpawn(sf::Packet& packet)
 	m_world.UpdateCharacters(team_id);
 }
 
+//Written by Paul Bichler (D00242563)
+//Informs the client that a player has disconnected
 void MultiplayerGameState::HandlePlayerDisconnect(sf::Packet& packet)
 {
 	Debug("Player disconnected.");
@@ -316,6 +326,8 @@ void MultiplayerGameState::HandleUpdatePlatformColors(sf::Packet& packet)
 
 	if (client_char->GetTeamIdentifier() == send_char->GetTeamIdentifier())
 	{
+		//Update the current platform on the character that belongs to your team mate
+		//(this will later be needed to check for checkpoints and goal tiles)
 		if (client_char->GetIdentifier() != player_id)
 		{
 			m_world.SetPlatformOnCharacter(send_char, platform_id);
@@ -327,6 +339,8 @@ void MultiplayerGameState::HandleUpdatePlatformColors(sf::Packet& packet)
 	}
 }
 
+//Written by Paul Bichler (D00242563)
+//Informs the client that a team has completed the level
 void MultiplayerGameState::HandleMission(sf::Packet& packet)
 {
 	Debug("Handle mission.");
@@ -336,6 +350,7 @@ void MultiplayerGameState::HandleMission(sf::Packet& packet)
 
 	if (!m_game_over && team_id == m_world.GetClientCharacter()->GetTeamIdentifier())
 	{
+		//Leaderboard empty => you are first place (you won)
 		if(GetContext().m_multiplayer_manager->GetLeaderboard().empty())
 			RequestStackPush(StateID::kMultiplayerWin);
 		else
@@ -347,6 +362,8 @@ void MultiplayerGameState::HandleMission(sf::Packet& packet)
 	GetContext().m_multiplayer_manager->AddToLeaderboard(team_id, m_completion_time);
 }
 
+//Written by Paul Bichler (D00242563)
+//Informs the client that a team has died (respawns player if it is his team)
 void MultiplayerGameState::HandleTeamRespawn(sf::Packet& packet) const
 {
 	Debug("Team respawn.");
@@ -359,6 +376,8 @@ void MultiplayerGameState::HandleTeamRespawn(sf::Packet& packet) const
 	}
 }
 
+//Written by Paul Bichler (D00242563)
+//Informs the client that a checkpoint needs to be set (set it if it's your team)
 void MultiplayerGameState::HandleTeamCheckpointSet(sf::Packet& packet)
 {
 	sf::Int8 team_id;

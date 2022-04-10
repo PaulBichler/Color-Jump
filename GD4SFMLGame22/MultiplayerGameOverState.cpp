@@ -5,14 +5,14 @@
 
 #include "Utility.hpp"
 
+//Written by Paul Bichler (D00242563)
 MultiplayerGameOverState::MultiplayerGameOverState(StateStack& stack, Context& context, const bool has_won)
 	: State(stack, context)
 {
 	const sf::Font& font = context.m_fonts->Get(Fonts::kMain);
 	const sf::Vector2f viewSize = context.m_window->getView().getSize();
 
-	//Create the Win Title Text
-
+	//Create the Win/Lose Title Text
 	if(has_won)
 	{
 		m_title_text.setString("You Win!");
@@ -29,6 +29,7 @@ MultiplayerGameOverState::MultiplayerGameOverState(StateStack& stack, Context& c
 	Utility::CentreOrigin(m_title_text);
 	m_title_text.setPosition(0.5f * viewSize.x, 0.2f * viewSize.y);
 
+	//Create the leaderboard labels
 	context.m_multiplayer_manager->SetLeaderboardChangeCallback([this]{ UpdateLeaderboard(); });
 	const int number_of_teams = GetContext().m_multiplayer_manager->GetNumberOfTeams();
 	for(int i = 0; i < number_of_teams; i++)
@@ -53,6 +54,7 @@ MultiplayerGameOverState::MultiplayerGameOverState(StateStack& stack, Context& c
 	m_gui_container.Pack(main_menu_button);
 }
 
+//Written by Paul Bichler (D00242563)
 void MultiplayerGameOverState::Draw()
 {
 	sf::RenderWindow& window = *GetContext().m_window;
@@ -67,21 +69,27 @@ void MultiplayerGameOverState::Draw()
 	window.draw(m_gui_container);
 }
 
+//Written by Paul Bichler (D00242563)
 bool MultiplayerGameOverState::Update(sf::Time dt)
 {
+	//This state is pushed onto the MultiplayerGameState, which needs to update as well,
+	//otherwise the client will be timed out
 	return true;
 }
 
+//Written by Paul Bichler (D00242563)
 bool MultiplayerGameOverState::HandleEvent(const sf::Event& event)
 {
 	m_gui_container.HandleEvent(event);
 	return false;
 }
 
+//Written by Paul Bichler (D00242563)
 void MultiplayerGameOverState::UpdateLeaderboard() const
 {
 	const auto leaderboard = GetContext().m_multiplayer_manager->GetLeaderboard();
 
+	//Go through all of the players in the leaderboard (stored in the context) and update the labels
 	for(int i = 0; i < leaderboard.size(); i++)
 	{
 		auto player_names = GetContext().m_multiplayer_manager->GetPlayerNamesOfTeam(leaderboard[i].first);

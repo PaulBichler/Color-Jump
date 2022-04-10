@@ -2,11 +2,15 @@
 #include <fstream>
 #include <sstream>
 
+//Written by Paul Bichler (D00242563)
 PlayerDataManager::PlayerDataManager()
 {
 	Load();
 }
 
+//Written by Paul Bichler (D00242563)
+//Saves the player configuration to a file.
+//Data saved are: Player Name, Ip Address used to join a server, key bindings of player 1 and 2
 void PlayerDataManager::Save() const
 {
 	std::ofstream out("PlayerData/player_data.txt");
@@ -27,12 +31,15 @@ void PlayerDataManager::Save() const
 	out.close();
 }
 
+//Written by Paul Bichler (D00242563)
+//Load the player configuration from the save file.
 void PlayerDataManager::Load()
 {
 	std::ifstream in("PlayerData/player_data.txt");
 
 	if(in.fail())
 	{
+		//file was not found, do nothing (uses default values).
 		return;
 	}
 
@@ -73,6 +80,7 @@ void PlayerDataManager::Load()
 	in.close();
 }
 
+//Written by Paul Bichler (D00242563)
 PlayerDataManager::PlayerData& PlayerDataManager::GetData()
 {
 	return m_player_data;

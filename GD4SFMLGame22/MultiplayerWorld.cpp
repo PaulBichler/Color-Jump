@@ -14,10 +14,12 @@ MultiplayerWorld::MultiplayerWorld(sf::RenderTarget& output_target, SoundPlayer&
 {
 }
 
+//Written by Paul Bichler (D00242563)
 void MultiplayerWorld::Update(const sf::Time dt)
 {
 	World::Update(dt);
 
+	//point the camera on the client player character
 	if (m_client_player != nullptr)
 	{
 		sf::Vector2f camera_pos = m_camera.getCenter();
@@ -31,6 +33,7 @@ void MultiplayerWorld::Draw()
 	World::Draw();
 }
 
+//Returns the character with the specified ID
 Character* MultiplayerWorld::GetCharacter(const sf::Int8 identifier) const
 {
 	for (Character* character : m_players)
@@ -43,6 +46,7 @@ Character* MultiplayerWorld::GetCharacter(const sf::Int8 identifier) const
 	return nullptr;
 }
 
+//Removes the character with the specified ID
 void MultiplayerWorld::RemoveCharacter(const sf::Int8 identifier)
 {
 	Character* character = GetCharacter(identifier);
@@ -54,6 +58,7 @@ void MultiplayerWorld::RemoveCharacter(const sf::Int8 identifier)
 	}
 }
 
+//Adds a ghost character (character that is not in your team => has lower transparency)
 Character* MultiplayerWorld::AddGhostCharacterWithColor(const sf::Int8 identifier,
                                                         const EColorType color,
                                                         const sf::IntRect& int_rect,
@@ -67,7 +72,7 @@ Character* MultiplayerWorld::AddGhostCharacterWithColor(const sf::Int8 identifie
 	m_scene_layers[static_cast<int>(Layers::kCharacters)]->AttachChild(std::move(player));
 	return m_players.back();
 }
-
+//Adds a ghost character and decide what color it will receive
 Character* MultiplayerWorld::AddGhostCharacter(const sf::Int8 identifier, const sf::Int8 color)
 {
 	if (color == 1)
@@ -82,22 +87,23 @@ Character* MultiplayerWorld::AddGhostCharacter(const sf::Int8 identifier, const 
 	                                  m_level_info.m_blue_player_spawn_pos);
 }
 
-void MultiplayerWorld::UpdatePlatform(const sf::Int8 id, const sf::Int8 platform_id, const EPlatformType platform_color)
+//Update the platform with the specified ID
+void MultiplayerWorld::UpdatePlatform(const sf::Int8 id, const sf::Int8 platform_id, const EPlatformType platform_type)
 {
 	for (auto& platform : m_level_info.platforms)
 	{
 		if (platform->GetID() == platform_id)
 		{
-			if (platform_color == EPlatformType::kCheckpointActivated)
+			if (platform_type == EPlatformType::kCheckpointActivated)
 			{
 				if (GetClientCharacter()->GetIdentifier() == id)
 				{
-					platform->SetType(platform_color);
+					platform->SetType(platform_type);
 				}
 			}
 			else
 			{
-				platform->SetType(platform_color);
+				platform->SetType(platform_type);
 			}
 
 			//Initialize the first checkpoint (spawn platform)
@@ -107,6 +113,7 @@ void MultiplayerWorld::UpdatePlatform(const sf::Int8 id, const sf::Int8 platform
 	}
 }
 
+//Adds a normal character (a character for the player that is in your team) => is not opaque
 Character* MultiplayerWorld::AddCharacter(const sf::Int8 identifier, const sf::Int8 color, const bool is_client_player)
 {
 	Character* player_character = World::AddCharacter(identifier, color, is_client_player);

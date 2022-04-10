@@ -14,6 +14,42 @@ constexpr int TEAM_COL_2_POS_X = 950;
 constexpr int TEAM_BUTTON_GAP = 135;
 constexpr int FOOTER_POS_Y = 850;
 
+LobbyState::LobbyState(StateStack& stack, Context& context, const bool is_host)
+	: State(stack, context)
+	  , m_player_input_name(context.m_player_data_manager->GetData().m_player_name)
+	  , m_connected(false)
+	  , m_is_host(is_host)
+	  , m_unpaired_y_pos(TEAM_POS_Y - 20)
+	  , m_player_id(-1)
+	  , m_time_since_last_packet(sf::seconds(0.f))
+	  , m_client_timeout(sf::seconds(2.f))
+	  , m_lobby_time(sf::seconds(0))
+	  , m_send_time(sf::seconds(0.5f))
+	  , m_start_countdown_timer(sf::seconds(5.f))
+{
+	CreateUI(context);
+
+	if (m_is_host)
+	{
+		context.m_multiplayer_manager->HostServer();
+		ip = "127.0.0.1";
+	}
+	else
+	{
+		ip = context.m_player_data_manager->GetData().m_ip_address;
+	}
+
+	m_socket = context.m_multiplayer_manager->ConnectToServer(ip);
+	m_is_connecting = true;
+	m_failed_connection_clock.restart();
+
+
+	for (sf::Int8 i = 0; i < 8; ++i)
+	{
+		m_team_selections.try_emplace(i, std::vector<sf::Int8>());
+	}
+}
+
 void LobbyState::SendClientDisconnect(const sf::Int8 id) const
 {
 	sf::Packet packet;
@@ -149,42 +185,6 @@ void LobbyState::CreateUI(Context& context)
 	                     std::to_string(m_start_countdown_timer.asSeconds()), 30);
 	m_start_countdown_label->SetDrawPredicate([this] { return m_start_countdown; });
 	m_gui_container.Pack(m_start_countdown_label);
-}
-
-LobbyState::LobbyState(StateStack& stack, Context& context, const bool is_host)
-	: State(stack, context)
-	  , m_player_input_name(context.m_player_data_manager->GetData().m_player_name)
-	  , m_connected(false)
-	  , m_is_host(is_host)
-	  , m_unpaired_y_pos(TEAM_POS_Y - 20)
-	  , m_player_id(-1)
-	  , m_time_since_last_packet(sf::seconds(0.f))
-	  , m_client_timeout(sf::seconds(2.f))
-	  , m_lobby_time(sf::seconds(0))
-	  , m_send_time(sf::seconds(0.5f))
-	  , m_start_countdown_timer(sf::seconds(5.f))
-{
-	CreateUI(context);
-
-	if (m_is_host)
-	{
-		context.m_multiplayer_manager->HostServer();
-		ip = "127.0.0.1";
-	}
-	else
-	{
-		ip = context.m_player_data_manager->GetData().m_ip_address;
-	}
-
-	m_socket = context.m_multiplayer_manager->ConnectToServer(ip);
-	m_is_connecting = true;
-	m_failed_connection_clock.restart();
-
-
-	for (sf::Int8 i = 0; i < 8; ++i)
-	{
-		m_team_selections.try_emplace(i, std::vector<sf::Int8>());
-	}
 }
 
 bool LobbyState::TeamHasPlace(const sf::Int8 id)
@@ -472,8 +472,11 @@ bool LobbyState::HandleEvent(const sf::Event& event)
 	return false;
 }
 
+//Written by Paul Bichler (D00242563)
+//This method is called right before the state is popped
 void LobbyState::OnStackPopped()
 {
+	//disconnect the player if the state was popped (except when it was popped because the game started)
 	if (!m_game_started)
 		GetContext().m_multiplayer_manager->Disconnect();
 }
@@ -484,6 +487,7 @@ void LobbyState::HandleTeamSelection(sf::Packet& packet)
 	sf::Int8 team_identifier;
 	packet >> identifier >> team_identifier;
 
+	//move the player to the selected team (team_id 0 means leave current team)
 	if (team_identifier == 0)
 		MovePlayerBack(identifier);
 	else
@@ -602,6 +606,8 @@ void LobbyState::HandleInitialState(sf::Packet& packet)
 	}
 }
 
+//Written by Paul Bichler (D00242563)
+//Client has updated their name (inform all clients)
 void LobbyState::SendPlayerName(const sf::Int8 id, const std::string& name) const
 {
 	std::string display_name = name;
@@ -615,6 +621,8 @@ void LobbyState::SendPlayerName(const sf::Int8 id, const std::string& name) cons
 	m_socket->send(packet);
 }
 
+//Written by Paul Bichler (D00242563)
+//Game was started by Host (Tell all the clients to start the game countdown)
 void LobbyState::SendStartGameCountdown() const
 {
 	sf::Packet packet;

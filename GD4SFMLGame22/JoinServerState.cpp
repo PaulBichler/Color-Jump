@@ -1,11 +1,12 @@
-#include "JoinSettingsState.hpp"
+#include "JoinServerState.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
 #include "Button.hpp"
 #include "Label.hpp"
 
-JoinSettingsState::JoinSettingsState(StateStack& stack, Context& context)
+//Written by Paul Bichler (D00242563)
+JoinServerState::JoinServerState(StateStack& stack, Context& context)
 	: State(stack, context),
 	m_player_input_ip(context.m_player_data_manager->GetData().m_ip_address)
 {
@@ -49,25 +50,29 @@ JoinSettingsState::JoinSettingsState(StateStack& stack, Context& context)
 	m_gui_container.Pack(back_button);
 }
 
-void JoinSettingsState::Draw()
+//Written by Paul Bichler (D00242563)
+void JoinServerState::Draw()
 {
 	sf::RenderWindow& window = *GetContext().m_window;
 	window.draw(m_background_sprite);
 	window.draw(m_gui_container);
 }
 
-bool JoinSettingsState::Update(sf::Time dt)
+//Written by Paul Bichler (D00242563)
+bool JoinServerState::Update(sf::Time dt)
 {
 	return true;
 }
 
-bool JoinSettingsState::HandleEvent(const sf::Event& event)
+//Written by Paul Bichler (D00242563)
+bool JoinServerState::HandleEvent(const sf::Event& event)
 {
 	if (m_change_ip_button->IsActive())
 	{
 		//Ip Input
 		if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Return)
 		{
+			//Make Ip Address persistent by saving it once input in finished
 			m_change_ip_button->Deactivate();
 			GetContext().m_player_data_manager->GetData().m_ip_address = m_player_input_ip;
 			GetContext().m_player_data_manager->Save();
@@ -76,11 +81,13 @@ bool JoinSettingsState::HandleEvent(const sf::Event& event)
 		{
 			if (event.text.unicode == '\b')
 			{
+				//Handle backspace
 				if (!m_player_input_ip.empty())
 					m_player_input_ip.erase(m_player_input_ip.size() - 1, 1);
 			}
 			else if (event.text.unicode != '\n' && event.text.unicode != '\r')
 			{
+				//Handle player text input (new lines and carriage returns are not allowed!)
 				m_player_input_ip += event.text.unicode;
 				m_player_input_ip = m_player_input_ip.substr(0, 25);
 			}

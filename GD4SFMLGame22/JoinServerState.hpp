@@ -6,10 +6,10 @@
 #include "Label.hpp"
 #include "State.hpp"
 
-class JoinSettingsState : public State
+class JoinServerState : public State
 {
 public:
-	JoinSettingsState(StateStack& stack, Context& context);
+	JoinServerState(StateStack& stack, Context& context);
 	void Draw() override;
 	bool Update(sf::Time dt) override;
 	bool HandleEvent(const sf::Event& event) override;
