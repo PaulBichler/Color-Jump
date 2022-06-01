@@ -19,12 +19,6 @@
     <Filter Include="Source Files\Level">
       <UniqueIdentifier>{d418064a-eeaa-4324-bd6a-de0122db45c5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Player">
-      <UniqueIdentifier>{7687a4af-1529-4071-b14f-c999cd40e3af}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Player">
-      <UniqueIdentifier>{c7a715f6-55f6-4877-94f5-634ea860c540}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\GameStates">
       <UniqueIdentifier>{23eea77b-ad63-49ff-81ea-609d3b4c5eb8}</UniqueIdentifier>
     </Filter>
@@ -49,85 +43,79 @@
     <Filter Include="Source Files\Level\Multiplayer">
       <UniqueIdentifier>{ec2cdcae-6042-4ac1-bf8d-78254f4c0331}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Managers">
+      <UniqueIdentifier>{bf1a086e-8ead-4dce-a98d-10099c848af5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utilities">
+      <UniqueIdentifier>{8ab96962-ccef-453b-9082-e48ac5829a76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Enums">
+      <UniqueIdentifier>{0c611b9d-fa2f-41a1-bbfb-8b71d2695584}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GameStates\Base">
+      <UniqueIdentifier>{c746f38f-2784-4f30-92ee-b730e2b0a5da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{9a5ee76c-4990-4b92-9014-f256c48eb10e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Events">
+      <UniqueIdentifier>{3abf61b7-c545-47ab-a97d-e96dfd50c9d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Level\GameObjects">
+      <UniqueIdentifier>{3eefa30a-7e2b-4f1c-b622-6cb1c5595570}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Level\GameObjects\Player">
+      <UniqueIdentifier>{7687a4af-1529-4071-b14f-c999cd40e3af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Level\GameObjects\Base">
+      <UniqueIdentifier>{01808052-f48e-4d1e-837e-8ca9564a46d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Level\GameObjects\Effects">
+      <UniqueIdentifier>{4570fa50-f248-4a4d-89ad-571ddeb1ebef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameStates\Base">
+      <UniqueIdentifier>{aaee0797-7e4a-48c0-a88d-a938948211d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Level\GameObjects">
+      <UniqueIdentifier>{e5ba5f04-0a5f-4ae3-9c4e-8501550458bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Level\GameObjects\Base">
+      <UniqueIdentifier>{2511435a-ddad-41f9-a836-af38c8f2dfa7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Level\GameObjects\Effects">
+      <UniqueIdentifier>{dfa458e6-b93c-4941-854a-b2287a722848}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Level\GameObjects\Player">
+      <UniqueIdentifier>{c7a715f6-55f6-4877-94f5-634ea860c540}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Managers">
+      <UniqueIdentifier>{db2439d3-99ea-4cf1-8ba4-f87beab007c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Events">
+      <UniqueIdentifier>{66d9b969-dca0-4d91-a069-164c012ebe4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{28dff797-d659-4972-919e-18f7eead38b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utilities">
+      <UniqueIdentifier>{9df3d746-8119-4174-b608-3da9889b4362}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SpriteNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Command.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CommandQueue.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StateStack.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="State.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Utility.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Component.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Container.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Label.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Button.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DataTables.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TextNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Character.cpp">
-      <Filter>Source Files\Player</Filter>
+      <Filter>Source Files\Level\GameObjects\Player</Filter>
     </ClCompile>
     <ClCompile Include="LevelLoseState.cpp">
       <Filter>Source Files\GameStates</Filter>
     </ClCompile>
     <ClCompile Include="LevelWinState.cpp">
       <Filter>Source Files\GameStates</Filter>
-    </ClCompile>
-    <ClCompile Include="BloomEffect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundPlayer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MusicPlayer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PostEffect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ParticleNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LevelPauseState.cpp">
       <Filter>Source Files\GameStates</Filter>
@@ -145,19 +133,13 @@
       <Filter>Source Files\GameStates</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>Source Files\Player</Filter>
+      <Filter>Source Files\Level\GameObjects\Player</Filter>
     </ClCompile>
     <ClCompile Include="RayGround.cpp">
-      <Filter>Source Files\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="GameServer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Level\GameObjects\Player</Filter>
     </ClCompile>
     <ClCompile Include="MultiplayerWorld.cpp">
       <Filter>Source Files\Level\Multiplayer</Filter>
-    </ClCompile>
-    <ClCompile Include="KeyBinding.cpp">
-      <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="SinglePlayerWorld.cpp">
       <Filter>Source Files\Level\Singleplayer</Filter>
@@ -180,20 +162,11 @@
     <ClCompile Include="MultiplayerGameState.cpp">
       <Filter>Source Files\GameStates</Filter>
     </ClCompile>
-    <ClCompile Include="CollisionHandler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Platform.cpp">
       <Filter>Source Files\Level\Base</Filter>
     </ClCompile>
     <ClCompile Include="PlatformPart.cpp">
       <Filter>Source Files\Level\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="GhostCharacter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerDataManager.cpp">
-      <Filter>Source Files\Player</Filter>
     </ClCompile>
     <ClCompile Include="LobbyState.cpp">
       <Filter>Source Files\GameStates</Filter>
@@ -201,136 +174,106 @@
     <ClCompile Include="TutorialState.cpp">
       <Filter>Source Files\GameStates</Filter>
     </ClCompile>
-    <ClCompile Include="MultiplayerManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MultiplayerGameOverState.cpp">
       <Filter>Source Files\GameStates</Filter>
     </ClCompile>
     <ClCompile Include="JoinServerState.cpp">
       <Filter>Source Files\GameStates</Filter>
     </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>Source Files\GameStates\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="StateStack.cpp">
+      <Filter>Source Files\GameStates\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Source Files\Level\GameObjects\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleNode.cpp">
+      <Filter>Source Files\Level\GameObjects\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneNode.cpp">
+      <Filter>Source Files\Level\GameObjects\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundNode.cpp">
+      <Filter>Source Files\Level\GameObjects\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteNode.cpp">
+      <Filter>Source Files\Level\GameObjects\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="TextNode.cpp">
+      <Filter>Source Files\Level\GameObjects\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Source Files\Level\GameObjects\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="BloomEffect.cpp">
+      <Filter>Source Files\Level\GameObjects\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="PostEffect.cpp">
+      <Filter>Source Files\Level\GameObjects\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="GhostCharacter.cpp">
+      <Filter>Source Files\Level\GameObjects\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerDataManager.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiplayerManager.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GameServer.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="MusicPlayer.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundPlayer.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Command.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandQueue.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionHandler.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Container.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Label.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyBinding.cpp">
+      <Filter>Source Files\Level\GameObjects\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="DataTables.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Textures.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceHolder.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Entity.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneNode.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SpriteNode.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceIdentifiers.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Layers.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Category.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Command.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CommandQueue.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerAction.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StateStack.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StateID.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="State.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Fonts.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Application.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Utility.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Component.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Container.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Label.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Button.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DataTables.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TextNode.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EColorType.hpp">
-      <Filter>Header Files\Player</Filter>
-    </ClInclude>
     <ClInclude Include="Character.hpp">
-      <Filter>Header Files\Player</Filter>
+      <Filter>Header Files\Level\GameObjects\Player</Filter>
     </ClInclude>
     <ClInclude Include="LevelLoseState.hpp">
       <Filter>Header Files\GameStates</Filter>
     </ClInclude>
     <ClInclude Include="LevelWinState.hpp">
       <Filter>Header Files\GameStates</Filter>
-    </ClInclude>
-    <ClInclude Include="BloomEffect.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundPlayer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundEffect.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Shaders.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleNode.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleType.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PostEffect.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundNode.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Particle.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MusicPlayer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MusicThemes.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ButtonType.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation.hpp">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LevelPauseState.hpp">
       <Filter>Header Files\GameStates</Filter>
@@ -348,16 +291,10 @@
       <Filter>Header Files\GameStates</Filter>
     </ClInclude>
     <ClInclude Include="Player.hpp">
-      <Filter>Header Files\Player</Filter>
+      <Filter>Header Files\Level\GameObjects\Player</Filter>
     </ClInclude>
     <ClInclude Include="RayGround.hpp">
-      <Filter>Header Files\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="NetworkProtocol.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameServer.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Level\GameObjects\Player</Filter>
     </ClInclude>
     <ClInclude Include="SinglePlayerWorld.hpp">
       <Filter>Header Files\Level\Singleplayer</Filter>
@@ -383,14 +320,8 @@
     <ClInclude Include="TileFactory.hpp">
       <Filter>Header Files\Level\Base</Filter>
     </ClInclude>
-    <ClInclude Include="KeyBinding.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MultiplayerGameState.hpp">
       <Filter>Header Files\GameStates</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionHandler.hpp">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EPlatformType.hpp">
       <Filter>Header Files\Level\Base</Filter>
@@ -401,20 +332,11 @@
     <ClInclude Include="PlatformPart.hpp">
       <Filter>Header Files\Level\Base</Filter>
     </ClInclude>
-    <ClInclude Include="GhostCharacter.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerDataManager.hpp">
-      <Filter>Header Files\Player</Filter>
-    </ClInclude>
     <ClInclude Include="LobbyState.hpp">
       <Filter>Header Files\GameStates</Filter>
     </ClInclude>
     <ClInclude Include="TutorialState.hpp">
       <Filter>Header Files\GameStates</Filter>
-    </ClInclude>
-    <ClInclude Include="MultiplayerManager.hpp">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MultiplayerGameOverState.hpp">
       <Filter>Header Files\GameStates</Filter>
@@ -422,10 +344,139 @@
     <ClInclude Include="JoinServerState.hpp">
       <Filter>Header Files\GameStates</Filter>
     </ClInclude>
+    <ClInclude Include="MultiplayerManager.hpp">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="DataTables.hpp">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Fonts.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceHolder.hpp">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceIdentifiers.hpp">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="MusicThemes.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="MusicPlayer.hpp">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameServer.hpp">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleType.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkProtocol.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerAction.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="State.hpp">
+      <Filter>Header Files\GameStates\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility.hpp">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Textures.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="StateStack.hpp">
+      <Filter>Header Files\GameStates\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="StateID.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEffect.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundPlayer.hpp">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerDataManager.hpp">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Label.hpp">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.hpp">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Category.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="EColorType.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.hpp">
+      <Filter>Header Files\Level\GameObjects\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.hpp">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonType.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="Container.hpp">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Layers.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleNode.hpp">
+      <Filter>Header Files\Level\GameObjects\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneNode.hpp">
+      <Filter>Header Files\Level\GameObjects\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteNode.hpp">
+      <Filter>Header Files\Level\GameObjects\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundNode.hpp">
+      <Filter>Header Files\Level\GameObjects\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="TextNode.hpp">
+      <Filter>Header Files\Level\GameObjects\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="GhostCharacter.hpp">
+      <Filter>Header Files\Level\GameObjects\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionHandler.hpp">
+      <Filter>Header Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Command.hpp">
+      <Filter>Header Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandQueue.hpp">
+      <Filter>Header Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyBinding.hpp">
+      <Filter>Header Files\Level\GameObjects\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.hpp">
+      <Filter>Header Files\Level\GameObjects\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.hpp">
+      <Filter>Header Files\Level\GameObjects\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="PostEffect.hpp">
+      <Filter>Header Files\Level\GameObjects\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="BloomEffect.hpp">
+      <Filter>Header Files\Level\GameObjects\Effects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ResourceHolder.inl">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Utilities</Filter>
     </None>
   </ItemGroup>
 </Project>
