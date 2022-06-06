@@ -10,12 +10,12 @@ Happy Jumping!
 
 ## How To Play
 
-# Setup
+### Setup
 
 You can download a build of the LAN-Coop Version of Color Jump [here](https://drive.google.com/drive/folders/1bUFFN-dDshgtw4UCCD0bkkmc7t-T6UYR?usp=sharing). In order to play you need to open two instances of the game. Select "Host" on one of them and "Join" on the other. 
 if you want to launch the game in Visual Studio, you need to [setup the SFML SDK](https://www.sfml-dev.org/tutorials/2.5/start-vc.php) and you need to make sure that the Debug Platform is set to x86. To launch multiple instances, you have to right click on the project in the Solution Explorer and select "Debug" > "Start new instance".
 
-# Controls
+### Controls
 
 A - Move Left
 D - Move Right
